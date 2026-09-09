@@ -9,8 +9,8 @@ export class BedrockProvider implements LLMProvider{
  private async json(system:string,input:unknown){
  const {key,model,region}=this.config;if(!key||!model)throw new Error('Bedrock configuration incomplete. Set AWS_BEARER_TOKEN_BEDROCK and BEDROCK_MODEL_ID.');
  const base=this.config.endpoint||`https://bedrock-runtime.${region}.amazonaws.com`;
- const url=new URL(base);if(url.protocol!=='https:'||url.username||url.password||url.search||url.hash)throw new Error('Bedrock endpoint must be an HTTPS origin without credentials or query.');
- const response=await fetch(`${base.replace(/\/$/,'')}/model/${encodeURIComponent(model)}/converse`,{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${key}`},body:JSON.stringify({system:[{text:system}],messages:[{role:'user',content:[{text:JSON.stringify(input)}]}],inferenceConfig:{maxTokens:2800,temperature:0}}),signal:AbortSignal.timeout(25000)});
+ const url=new URL(base);if(url.protocol!=='https:'||url.pathname!=='/'||url.username||url.password||url.search||url.hash)throw new Error('Bedrock endpoint must be an HTTPS origin without credentials or query.');
+ const response=await fetch(`${base.replace(/\/$/,'')}/model/${encodeURIComponent(model)}/converse`,{method:'POST',redirect:'error',headers:{'Content-Type':'application/json',Authorization:`Bearer ${key}`},body:JSON.stringify({system:[{text:system}],messages:[{role:'user',content:[{text:JSON.stringify(input)}]}],inferenceConfig:{maxTokens:2800,temperature:0}}),signal:AbortSignal.timeout(25000)});
  if(!response.ok)throw new Error(`Bedrock request failed (HTTP ${response.status}); no state change committed.`);
  const result=await response.json() as {output?:{message?:{content?:{text?:string}[]}}};const text=(result.output?.message?.content??[]).map(x=>x.text??'').join('');if(text.length>50000)throw new Error('Model output exceeds size limit.');return JSON.parse(text.replace(/^```(?:json)?\s*/,'').replace(/\s*```$/,''));
  }
