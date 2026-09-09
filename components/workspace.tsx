@@ -44,6 +44,10 @@ import { Session, Trace, Ranked, DEMO, UPDATE } from "../schemas";
 import type { z } from "zod";
 import type { ComparisonSchema } from "../tools";
 const money = (n: number) => "S$" + n.toLocaleString("en-SG");
+const stageLabel = (stage: Trace["stage"]) =>
+  stage === "STATE"
+    ? "Memory"
+    : stage.charAt(0) + stage.slice(1).toLowerCase();
 type Comparison = z.infer<typeof ComparisonSchema>;
 async function api(path: string, data?: unknown) {
   const r = await fetch(path, {
@@ -229,14 +233,14 @@ export default function Workspace() {
     session?.status === "approved"
       ? "Approved"
       : busy
-        ? "Agent working"
+        ? "Working through the brief"
         : session?.status === "no-match"
           ? "Review constraints"
           : session?.status === "clarification"
             ? "Clarification needed"
             : session?.status === "error"
               ? "Run stopped safely"
-              : "Agent ready";
+              : "Ready for a buyer brief";
   return (
     <div className="application">
       <header className="topbar">
@@ -247,7 +251,7 @@ export default function Workspace() {
           PropMatch<span className="brand-agent">AGENT</span>
         </Link>
         <div className="topbar-middle">
-          <span>Agent workspace</span>
+          <span>Casework</span>
           <ChevronRight size={14} />
           <strong>Buyer matching</strong>
         </div>
@@ -261,10 +265,11 @@ export default function Workspace() {
       </header>
       <div className="workspace-heading">
         <div>
-          <div className="eyebrow">YOUR NEXT GREAT MATCH</div>
-          <h1>A better brief. A smarter shortlist.</h1>
+          <div className="eyebrow">Buyer matching workspace</div>
+          <h1>From buyer brief to trusted shortlist.</h1>
           <p>
-            Turn buyer conversations into recommendations you can stand behind.
+            Understand the brief, verify the evidence, and keep the final call
+            with your agent.
           </p>
         </div>
         <div className="heading-actions">
@@ -285,7 +290,7 @@ export default function Workspace() {
       <div className="dataset-banner">
         <ShieldCheck size={15} />
         <span>
-          <strong>Demo / synthetic property dataset</strong> · 72 fictional
+          <strong>Synthetic demo data</strong> · 72 fictional
           Singapore listings. Images are illustrative; routes and amenities are
           estimates.
         </span>
@@ -335,8 +340,8 @@ export default function Workspace() {
               </strong>
               <span>
                 {p?.commuteDestinations.length === 2
-                  ? "Two destinations. One home."
-                  : "Discover what home means to them."}
+                  ? "Two commutes, one considered shortlist."
+                  : "Start with what matters to them."}
               </span>
             </div>
           </div>
@@ -347,8 +352,9 @@ export default function Workspace() {
                 PropMatch
               </span>
               <p>
-                Tell me about your buyers. I’ll connect their budget, daily
-                journeys and lifestyle to a shortlist for your review.
+                Share what matters to your buyers. I’ll turn the conversation
+                into a brief, verify the options and prepare a shortlist for
+                your review.
               </p>
             </div>
             {session?.messages.map((m, i) => (
@@ -386,7 +392,7 @@ export default function Workspace() {
             )}
             {!session?.messages.length && (
               <div className="example-block">
-                <span className="eyebrow">TRY A BUYER BRIEF</span>
+                <span className="eyebrow">Example brief</span>
                 <button
                   onClick={loadDemo}
                   disabled={busy || !ready || !session}
@@ -419,7 +425,7 @@ export default function Workspace() {
             <div className="brief-snapshot">
               <div>
                 <span className="eyebrow">
-                  BUYER STATE · V{session?.version}
+                  Buyer state · v{session?.version}
                 </span>
                 <button
                   onClick={() => setProfileOpen(true)}
@@ -625,18 +631,18 @@ export default function Workspace() {
                     src="/images/residence.png"
                     alt="Illustration of a fictional Singapore condominium"
                   />
-                  <span>ILLUSTRATIVE PROPERTY IMAGE</span>
+                  <span>Illustrative property image</span>
                 </div>
                 <div className="empty-content">
                   <span className="eyebrow">
-                    GOOD RECOMMENDATIONS START WITH UNDERSTANDING
+                    Built for accountable recommendations
                   </span>
                   <h3>
                     {session?.status === "clarification"
                       ? "Let’s make the brief a little clearer."
                       : session?.status === "error"
                         ? "The run stopped safely."
-                        : "Find the right home, with the full picture."}
+                        : "Start with the buyer, not the filters."}
                   </h3>
                   <p>
                     {session?.status === "clarification" ||
@@ -708,8 +714,8 @@ export default function Workspace() {
                       <div className="photo-top">
                         <span className="rank-label">
                           {i === 0
-                            ? "TOP MATCH"
-                            : `MATCH ${String(i + 1).padStart(2, "0")}`}
+                            ? "Best match"
+                            : `Match ${String(i + 1).padStart(2, "0")}`}
                         </span>
                         <button
                           className={
@@ -733,7 +739,7 @@ export default function Workspace() {
                           {r.score}
                           <small>%</small>
                         </strong>
-                        <span>buyer match</span>
+                        <span>fit score</span>
                       </div>
                     </div>
                     <div className="property-body">
@@ -872,7 +878,7 @@ export default function Workspace() {
               <Activity size={17} />
               <h2>Agent activity</h2>
             </div>
-            <span className="live-badge">{busy ? "RUNNING" : "TRACE"}</span>
+            <span className="live-badge">{busy ? "Running" : "Trace"}</span>
           </div>
           <div className="agent-status">
             <span className={"status-icon " + (busy ? "running" : "")}>
@@ -892,7 +898,7 @@ export default function Workspace() {
             {!currentTrace.length ? (
               <>
                 <div className="trace-empty">
-                  <h3>Every recommendation has a trail.</h3>
+                  <h3>A clear record, step by step.</h3>
                   <p>
                     Follow the agent as it understands, retrieves, checks and
                     ranks.
@@ -941,7 +947,7 @@ export default function Workspace() {
                       <div>
                         <div className="trace-meta">
                           <strong>
-                            {t.stage === "STATE" ? "MEMORY" : t.stage}
+                            {stageLabel(t.stage)}
                           </strong>
                           <time>
                             {new Date(t.timestamp).toLocaleTimeString("en-SG", {
@@ -972,7 +978,7 @@ export default function Workspace() {
             <span>
               Action summaries only.
               <br />
-              No private model reasoning.
+              No private reasoning.
             </span>
             <Link href="/debug" aria-label="Open structured trace">
               <ArrowUpRight size={17} />
@@ -982,7 +988,7 @@ export default function Workspace() {
       </main>
       <footer className="app-footer">
         <span>
-          PROPMATCH AGENT <span>by 303forward</span>
+          PropMatch Agent <span>by 303forward</span>
         </span>
         <span>NUS-ISS Show Me Your Agents · D1IZFT7E</span>
         <Link href="/debug">
@@ -1001,7 +1007,7 @@ export default function Workspace() {
             <>
               <div className="detail-hero">
                 <strong>{money(detail.property.price)}</strong>
-                <span>{detail.score}% buyer match</span>
+                <span>{detail.score}% fit score</span>
               </div>
               <div className="score-breakdown">
                 {Object.entries(detail.components)

@@ -28,6 +28,7 @@ The local Next development application returned HTTP 200 and was exercised throu
 - A human ranking override was recorded, then the shortlist was approved.
 - A S$100k / four-bedroom update produced the explicit no-match state, zero visible matches and no approval control.
 - `/debug` displayed the persisted session and full structured event trail with JSON export enabled.
+- The redesigned workspace was visually checked at 1440 × 900 and 390 × 844. The three-panel desktop layout, stacked mobile layout, property details, comparison table and empty state all rendered without clipped or overlapping content.
 - No browser console errors were observed during the tested workflow.
 
 This browser check validates the deterministic demo path. It does not validate live Bedrock credentials, live property data, real transit data or AWS Lightsail infrastructure.
