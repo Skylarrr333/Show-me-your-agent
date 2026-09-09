@@ -21,10 +21,14 @@ After installing the npm lockfile: lint passed; 19/19 tests and 15/15 eval cases
 - Clarification/guardrail branches retained old recommendations; the UI could show stale approval controls. Numeric edits were anchored, but nonnumeric hard-constraint removals were not.
 - Demo parsing misinterpreted `not in Clementi` as both preferred and excluded; budget-minimum and shared-currency ranges were incomplete. Unsupported mandatory requirements could be ignored when mixed with recognized requirements.
 - Tool schemas checked shape, but route destination/mode and amenity category/radius needed semantic output validation. Ranking trusted incoming constraint labels even when recomputing eligibility.
-- Root/docs technical documents and submission checklists/scripts were duplicates. README referenced missing QA, deployment and PDF files and still instructed users to initialize a new repo.
+- Root/docs technical documents and submission checklists/scripts were duplicates. Canonical technical documents now live in `docs/`, submission-specific material lives in `submission/`, and README links to files that exist.
 - `app/chatgpt-auth.ts`, `db/index.ts`, `examples/d1`, starter SVGs and unused UI catalog entries were starter remnants. Runtime storage directly uses prepared D1 statements. Existing database/schema config needs an actual session schema.
 - `/trace` already reused `/debug`; no separate trace implementation to discard.
 - Docker is multi-stage, non-root, with durable volume, runtime env and healthcheck. The host has no Docker executable; CI can validate the image.
 - CI only built Next, so the broken Sites import/deployment path lacked its own build gate.
 
 Changes and validation evidence are recorded in the commit history and [QA.md](QA.md). Canonical domain responsibilities remain in `agents/`, `providers/`, `schemas/`, `tools/` and `lib/`.
+
+## Verified cleanup
+
+A TypeScript import-graph walk from both rendered workspaces found exactly five reachable UI primitives: dialog, button, tabs, checkbox and skeleton. The 56 unreachable catalog entries and their unused mobile hook were removed after checking project/test imports. Unreferenced starter auth/db helpers, opt-in notes examples and three starter SVGs were also removed. All are recoverable from the Git checkpoint. The existing property illustration, active UI primitives and domain code were preserved.

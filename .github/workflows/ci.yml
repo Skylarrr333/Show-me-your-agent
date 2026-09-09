@@ -16,5 +16,6 @@ jobs:
       - run: npm run typecheck
       - run: npm run test
       - run: npm run eval
+      - run: npm run build
       - run: npm run build:next
       - run: docker build -t propmatch-agent:ci .

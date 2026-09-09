@@ -10,10 +10,10 @@ Buyer messages and listing descriptions are untrusted. Model output is untrusted
 - User instruction-override patterns trigger a clarification checkpoint before any LLM call. This heuristic is only one layer, not a comprehensive injection classifier.
 - Listing descriptions never enter LLM context, planning, ranking or executable code. Suspicious descriptions are audited. React escapes all displayed text.
 - Only six domain tools exist. No model-accessible shell, raw SQL, generic URL fetching, filesystem operation or external messaging tool exists.
-- Numerical constraints are enforced after retrieval, inside ranking, after provider re-read and at approval. A valid-schema model attempting an unconfirmed numeric relaxation fails closed.
-- Source IDs are verified against the provider; unsupported compare/override IDs are rejected.
+- Numeric constraints are enforced after retrieval, inside ranking, after provider re-read and at approval. Independent extraction anchors supported numeric edits. Excluded areas, property types and commute limits also cannot be removed or relaxed by valid-schema model output unless the buyer explicitly requests the change.
+- Source IDs are verified against the provider; duplicate IDs and unsupported compare/override IDs are rejected. Route and amenity outputs must match the requested destination, mode, category and radius.
 - The Bedrock endpoint is server configuration only, HTTPS-only, with credentials prohibited in the URL. Only documented Converse JSON is sent; auth headers and raw upstream errors are not logged.
-- Session IDs are random UUID capabilities stored in HttpOnly SameSite cookies. Requests are size-bounded; mutating requests carrying another Origin are rejected. Payloads cannot choose arbitrary session IDs. Version checks prevent stale writes.
+- Session IDs are random UUID capabilities stored in HttpOnly SameSite cookies. Mutating JSON is limited by bytes while streaming. Cross-site browser requests are rejected, including through a reverse proxy. Payloads cannot choose arbitrary session IDs. Version checks prevent stale writes.
 - Node files use private permissions and atomic writes; D1 statements are parameterized. Docker uses a non-root runtime user. `.env*`, session data and build caches are ignored by Git and Docker.
 - Approval is an explicit human endpoint. Any shortlist/ranking edit resets approval. There is no send-to-client or transaction operation.
 
@@ -29,4 +29,4 @@ The independent numeric parser conservatively blocks existing-limit edits it can
 
 ## Adversarial regression evidence
 
-See tests for user/listing injection, numeric bypass attempts, invalid IDs, malformed model JSON, exact boundary conditions, output-schema rejection and stale-write protection. See `docs/EVALUATION.md` for real results. Passing these cases is not a claim of universal injection resistance.
+See tests for user/listing injection, numeric and nonnumeric hard-constraint bypass attempts, stale recommendations, invalid/duplicate IDs, semantically wrong tool evidence, malformed model JSON, request limits and stale-write protection. See `docs/EVALUATION.md` for real results. Passing these cases is not a claim of universal injection resistance.

@@ -39,11 +39,11 @@ The application includes 72 clearly marked fictional Singapore listings across 1
 
 ## Reproduction and deliverables
 
-Run `npm install`, then `npm run dev:next`. No key is required in demo mode. Run `npm run lint`, `npm run test`, `npm run eval` and `npm run build:next` for the primary quality gates. See README for environments, Docker and Lightsail deployment. Submission package includes this write-up, PDF, a demo video script, shot list, evaluation report and source repository.
+Run `npm ci`, then `npm run dev:next`. No key is required in demo mode. Run `npm run lint`, `npm run typecheck`, `npm test`, `npm run eval`, `npm run build` and `npm run build:next` for the quality gates. See README for environments, Docker and Lightsail deployment. Submission material includes this write-up, demo video script, shot list, evaluation report and source repository.
 
 ## Submission links
 
-- GitHub repository: to be supplied by team owner after pushing to their GitHub account.
+- GitHub repository: https://github.com/Skylarrr333/iss-show-me-your-agent
 - Demo video: to be supplied after recording and uploading.
 - Private demo: deployment evidence is recorded in docs/DEPLOYMENT.md when published.
 - AWS Lightsail evidence: to be supplied after deployment in the team's AWS account.

@@ -41,7 +41,7 @@ A buyer changes requirements conversationally and different briefs require diffe
 8. Produce evidence-based explanations and an unapproved top three; or escalate no-match.
 9. Persist messages, buyer state, results and trace with optimistic concurrency.
 
-The UI displays action summaries and tool facts, never private chain-of-thought. Explanations are deterministic, evidence-grounded templates in both modes; free LLM prose cannot change scores or introduce listings. See [ARCHITECTURE.md](ARCHITECTURE.md).
+The UI displays action summaries and tool facts, never private chain-of-thought. Explanations are deterministic, evidence-grounded templates in both modes; free LLM prose cannot change scores or introduce listings. See [Architecture](docs/ARCHITECTURE.md).
 
 ## Tools
 
@@ -66,20 +66,20 @@ Sessions use an opaque HttpOnly SameSite cookie, server-owned IDs, monotonic ver
 
 The agent recommends but cannot approve. An explicit human action is required; approval rechecks provider records and constraints. Changing the shortlist or overriding ranking revokes previous approval. An override changes presentation order and records the original score; it cannot edit the score or make an ineligible property valid.
 
-Strict schemas, source-ID grounding, independent numeric checks, untrusted listing text isolation, no executable tools, request-size caps, same-origin mutation checks and version checks protect the flow. See [SECURITY.md](SECURITY.md) for threats and limits, including the difference between a hackathon demo and a production multi-tenant service.
+Strict schemas, source-ID grounding, independent hard-constraint update checks, untrusted listing text isolation, no executable tools, byte-based request limits, same-origin mutation checks and version checks protect the flow. See [Security](docs/SECURITY.md) for threats and limits, including the difference between a hackathon demo and a production multi-tenant service.
 
 ## Tech stack
 
-Next.js 16 App Router, React 19, TypeScript, Tailwind CSS 4, Zod 3, Radix UI primitives and Lucide icons. Node built-in test runner via tsx. A secondary Vinext/Vite build runs the same application on Sites / Cloudflare Workers with D1. AWS Docker uses actual Next.js standalone output, not the Workers build. No Python backend is used; a small Python script only renders the submission PDF.
+Next.js 16 App Router, React 19, TypeScript, Tailwind CSS 4, Zod 3, Radix UI primitives and Lucide icons. Node's built-in test runner runs TypeScript through tsx. A secondary Vinext/Vite build runs the same application on Sites / Cloudflare Workers with D1. AWS Docker uses Next.js standalone output.
 
 ## Local setup (Node 22.13+)
 
 ```bash
-npm install
+npm ci
 cp .env.example .env.local
 ```
 
-For local Next development, change `SESSION_DIR` in `.env.local` to an existing writable absolute directory, or remove that line to use `.propmatch-sessions` in the project.
+Leave `SESSION_DIR` blank for project-local `.propmatch-sessions`, or set it to an existing writable absolute directory.
 
 ```bash
 npm run dev:next
@@ -111,10 +111,11 @@ npm run lint
 npm run typecheck
 npm run test
 npm run eval
+npm run build
 npm run build:next
 ```
 
-`npm run eval` regenerates `docs/EVALUATION.md`, root `EVALUATION.md`, and `evals/results.json`. It includes 15 required golden/edge/adversarial cases. Unit tests additionally cover scoring arithmetic, re-verification, human actions, concurrency and mocked Bedrock contract failures. See [docs/QA.md](docs/QA.md) for actual build/browser verification. These are fixture-based results; they are not live market or LLM accuracy metrics.
+`npm run eval` regenerates `docs/EVALUATION.md` and `evals/results.json`. It includes the required golden, edge and adversarial cases. Unit tests additionally cover scoring arithmetic, re-verification, human actions, request streaming, concurrency and mocked Bedrock failures. See [QA](docs/QA.md) for actual build and browser verification. These are fixture-based results; they are not live market or LLM accuracy metrics.
 
 ## Docker
 
@@ -156,27 +157,25 @@ Open `http://localhost:3000`. A Lightsail Container Service alternative needs du
 6. Submit `Budget SGD 100k, 4 bedrooms.` to demonstrate no-match escalation.
 7. Reset and reload the demo for the next judge.
 
-See [DEMO_SCRIPT.md](DEMO_SCRIPT.md) and [submission/DEMO_VIDEO_SCRIPT.md](submission/DEMO_VIDEO_SCRIPT.md).
+See [Demo script](DEMO_SCRIPT.md) and [video script](submission/DEMO_VIDEO_SCRIPT.md).
 
 ## GitHub and submission
 
-Source is Git-ready. To publish to a new empty GitHub repository:
+GitHub is the source of truth:
 
-```bash
-git remote add github https://github.com/YOUR_USERNAME/propmatch-agent.git
-git push -u github HEAD:main
-```
+[Skylarrr333/iss-show-me-your-agent](https://github.com/Skylarrr333/iss-show-me-your-agent)
 
-If using an extracted archive rather than the existing checkout, initialize Git first (`git init -b main`, `git add .`, `git commit -m "Build PropMatch Agent"`). The `github` remote name preserves any existing source backup remote. Authenticate with GitHub CLI, SSH or a credential manager, never a token embedded in the remote URL.
-
-Submission materials are in `submission/`: write-up Markdown and PDF, video narration, shot list and a checklist of the remaining owner-supplied URLs. Fill the actual GitHub, demo video and AWS deployment links; none are fabricated.
+Submission materials are in `submission/`: write-up, video narration, shot list and the remaining owner checklist. The repository does not fabricate video or AWS deployment evidence.
 
 ## Documentation
 
-- [ARCHITECTURE.md](ARCHITECTURE.md)
-- [SECURITY.md](SECURITY.md)
-- [EVALUATION.md](EVALUATION.md)
-- [DATA_PROVENANCE.md](DATA_PROVENANCE.md)
-- [SUBMISSION_CHECKLIST.md](SUBMISSION_CHECKLIST.md)
+- [Repository audit](docs/AUDIT.md)
+- [Architecture](docs/ARCHITECTURE.md)
+- [Security](docs/SECURITY.md)
+- [Evaluation](docs/EVALUATION.md)
+- [Data provenance](docs/DATA_PROVENANCE.md)
+- [QA evidence](docs/QA.md)
+- [Deployment status](docs/DEPLOYMENT.md)
+- [Submission checklist](submission/SUBMISSION_CHECKLIST.md)
 
 Technical references: [AWS Converse](https://docs.aws.amazon.com/bedrock/latest/APIReference/API_runtime_Converse.html), [Bedrock API keys](https://docs.aws.amazon.com/bedrock/latest/userguide/api-keys.html), [Next.js self-hosting](https://nextjs.org/docs/app/guides/self-hosting), [Lightsail containers documentation](https://docs.aws.amazon.com/lightsail/latest/userguide/amazon-lightsail-container-services.html). These describe platform contracts, not an organiser-specific gateway.
