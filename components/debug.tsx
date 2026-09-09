@@ -1,6 +1,96 @@
-'use client';
-import Link from 'next/link';
-import {useEffect,useState} from 'react';
-import {Session} from '../schemas';
-import {ArrowLeft,Download,RotateCcw} from 'lucide-react';
-export default function Debug(){const [s,set]=useState<Session|null>(null),[error,setError]=useState('');async function refresh(){try{const r=await fetch('/api/session');if(!r.ok)throw new Error('Cannot load trace');const j=await r.json() as {session:Session|null};set(j.session);setError('');}catch(e){setError((e as Error).message);}}useEffect(()=>{let active=true;fetch('/api/session').then(r=>r.json() as Promise<{session:Session|null}>).then(j=>{if(active)set(j.session);}).catch(()=>setError('Cannot load trace'));return()=>{active=false;};},[]);function download(){const url=URL.createObjectURL(new Blob([JSON.stringify(s,null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download=`propmatch-trace-${s?.id}.json`;a.click();URL.revokeObjectURL(url);}return <main className="debug-page"><Link className="button" href="/"><ArrowLeft size={15}/>Buyer workspace</Link><h1 className="mt-7">The full audit trail</h1><p>Structured actions, state changes, tool evidence and human decisions. No private model reasoning. Demo data, not live market evidence.</p><div className="debug-actions"><button className="button" onClick={refresh}><RotateCcw size={15}/>Refresh</button><button className="button primary" disabled={!s} onClick={download}><Download size={15}/>Export JSON</button></div>{error&&<p role="alert">{error}</p>}{s?<><p className="micro">Session {s.id} · version {s.version} · {s.mode} mode · {s.trace.length} events</p><div className="debug-events"><details><summary><strong>BUYER STATE</strong>Current validated profile</summary><pre>{JSON.stringify(s.profile,null,2)}</pre></details>{[...s.trace].reverse().map(t=><details key={t.id}><summary><strong>{t.stage}</strong>{t.summary}<span className="float-right text-xs text-slate-400">{new Date(t.timestamp).toLocaleTimeString()}</span></summary><pre>{JSON.stringify(t,null,2)}</pre></details>)}</div></>:<p>Create a buyer session in the workspace to inspect its trace.</p>}</main>;}
+"use client";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { Session } from "../schemas";
+import { ArrowLeft, Download, RotateCcw } from "lucide-react";
+export default function Debug() {
+  const [s, set] = useState<Session | null>(null),
+    [error, setError] = useState("");
+  async function refresh() {
+    try {
+      const r = await fetch("/api/session");
+      if (!r.ok) throw new Error("Cannot load trace");
+      const j = (await r.json()) as { session: Session | null };
+      set(j.session);
+      setError("");
+    } catch (e) {
+      setError((e as Error).message);
+    }
+  }
+  useEffect(() => {
+    let active = true;
+    fetch("/api/session")
+      .then((r) => r.json() as Promise<{ session: Session | null }>)
+      .then((j) => {
+        if (active) set(j.session);
+      })
+      .catch(() => setError("Cannot load trace"));
+    return () => {
+      active = false;
+    };
+  }, []);
+  function download() {
+    const url = URL.createObjectURL(
+      new Blob([JSON.stringify(s, null, 2)], { type: "application/json" }),
+    );
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `propmatch-trace-${s?.id}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+  return (
+    <main className="debug-page">
+      <Link className="button" href="/">
+        <ArrowLeft size={15} />
+        Buyer workspace
+      </Link>
+      <h1 className="mt-7">The full audit trail</h1>
+      <p>
+        Structured actions, state changes, tool evidence and human decisions. No
+        private model reasoning. Demo data, not live market evidence.
+      </p>
+      <div className="debug-actions">
+        <button className="button" onClick={refresh}>
+          <RotateCcw size={15} />
+          Refresh
+        </button>
+        <button className="button primary" disabled={!s} onClick={download}>
+          <Download size={15} />
+          Export JSON
+        </button>
+      </div>
+      {error && <p role="alert">{error}</p>}
+      {s ? (
+        <>
+          <p className="micro">
+            Session {s.id} · version {s.version} · {s.mode} mode ·{" "}
+            {s.trace.length} events
+          </p>
+          <div className="debug-events">
+            <details>
+              <summary>
+                <strong>BUYER STATE</strong>Current validated profile
+              </summary>
+              <pre>{JSON.stringify(s.profile, null, 2)}</pre>
+            </details>
+            {[...s.trace].reverse().map((t) => (
+              <details key={t.id}>
+                <summary>
+                  <strong>{t.stage}</strong>
+                  {t.summary}
+                  <span className="float-right text-xs text-slate-400">
+                    {new Date(t.timestamp).toLocaleTimeString()}
+                  </span>
+                </summary>
+                <pre>{JSON.stringify(t, null, 2)}</pre>
+              </details>
+            ))}
+          </div>
+        </>
+      ) : (
+        <p>Create a buyer session in the workspace to inspect its trace.</p>
+      )}
+    </main>
+  );
+}

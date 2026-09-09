@@ -1,7 +1,62 @@
-import test from 'node:test';
-import assert from 'node:assert/strict';
-import {BedrockProvider} from '../providers/bedrock';
-import {emptyProfile,DEMO} from '../schemas';
-import {DemoLLMProvider} from '../providers/demo-llm';
-test('Bedrock uses documented Converse envelope and validates returned JSON',async()=>{const original=globalThis.fetch;const expected=await new DemoLLMProvider().parse(DEMO,emptyProfile());let calls=0;globalThis.fetch=async(input,init)=>{calls++;assert.equal(String(input),'https://bedrock-runtime.ap-southeast-1.amazonaws.com/model/test-model/converse');assert.equal((init?.headers as Record<string,string>).Authorization,'Bearer fixture-not-a-secret');const body=JSON.parse(String(init?.body));assert.equal(body.messages[0].role,'user');assert(Array.isArray(body.system));assert.equal(body.inferenceConfig.temperature,0);return Response.json({output:{message:{content:[{text:JSON.stringify(expected)}]}}});};try{const provider=new BedrockProvider({endpoint:'',key:'fixture-not-a-secret',model:'test-model',region:'ap-southeast-1'});const actual=await provider.parse(DEMO,emptyProfile());assert.equal(actual.profile.budget.max,1600000);assert.equal(calls,1);}finally{globalThis.fetch=original;}});
-test('Bedrock malformed response and HTTP failures are not silently replaced by mock output',async()=>{const original=globalThis.fetch;const provider=new BedrockProvider({endpoint:'https://bedrock-runtime.ap-southeast-1.amazonaws.com',key:'fixture-not-a-secret',model:'test-model',region:'ap-southeast-1'});try{globalThis.fetch=async()=>Response.json({output:{message:{content:[{text:'not json'}]}}});await assert.rejects(provider.parse(DEMO,emptyProfile()));globalThis.fetch=async()=>new Response('upstream private error',{status:403});await assert.rejects(provider.parse(DEMO,emptyProfile()),/HTTP 403/);}finally{globalThis.fetch=original;}});
+import test from "node:test";
+import assert from "node:assert/strict";
+import { BedrockProvider } from "../providers/bedrock";
+import { emptyProfile, DEMO } from "../schemas";
+import { DemoLLMProvider } from "../providers/demo-llm";
+test("Bedrock uses documented Converse envelope and validates returned JSON", async () => {
+  const original = globalThis.fetch;
+  const expected = await new DemoLLMProvider().parse(DEMO, emptyProfile());
+  let calls = 0;
+  globalThis.fetch = async (input, init) => {
+    calls++;
+    assert.equal(
+      String(input),
+      "https://bedrock-runtime.ap-southeast-1.amazonaws.com/model/test-model/converse",
+    );
+    assert.equal(
+      (init?.headers as Record<string, string>).Authorization,
+      "Bearer fixture-not-a-secret",
+    );
+    const body = JSON.parse(String(init?.body));
+    assert.equal(body.messages[0].role, "user");
+    assert(Array.isArray(body.system));
+    assert.equal(body.inferenceConfig.temperature, 0);
+    return Response.json({
+      output: { message: { content: [{ text: JSON.stringify(expected) }] } },
+    });
+  };
+  try {
+    const provider = new BedrockProvider({
+      endpoint: "",
+      key: "fixture-not-a-secret",
+      model: "test-model",
+      region: "ap-southeast-1",
+    });
+    const actual = await provider.parse(DEMO, emptyProfile());
+    assert.equal(actual.profile.budget.max, 1600000);
+    assert.equal(calls, 1);
+  } finally {
+    globalThis.fetch = original;
+  }
+});
+test("Bedrock malformed response and HTTP failures are not silently replaced by mock output", async () => {
+  const original = globalThis.fetch;
+  const provider = new BedrockProvider({
+    endpoint: "https://bedrock-runtime.ap-southeast-1.amazonaws.com",
+    key: "fixture-not-a-secret",
+    model: "test-model",
+    region: "ap-southeast-1",
+  });
+  try {
+    globalThis.fetch = async () =>
+      Response.json({
+        output: { message: { content: [{ text: "not json" }] } },
+      });
+    await assert.rejects(provider.parse(DEMO, emptyProfile()));
+    globalThis.fetch = async () =>
+      new Response("upstream private error", { status: 403 });
+    await assert.rejects(provider.parse(DEMO, emptyProfile()), /HTTP 403/);
+  } finally {
+    globalThis.fetch = original;
+  }
+});

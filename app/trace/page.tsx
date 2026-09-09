@@ -1,1 +1,1 @@
-export {default} from '../debug/page';
+export { default } from "../debug/page";

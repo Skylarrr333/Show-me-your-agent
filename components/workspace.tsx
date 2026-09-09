@@ -1,61 +1,1105 @@
-'use client';
-import Link from 'next/link';
-import Image from 'next/image';
-import {useEffect,useRef,useState} from 'react';
-import {ArrowUpRight,ArrowUp,ArrowRight,Activity,Building2,Check,CheckCheck,ChevronRight,Clock3,Code2,GitCompareArrows,LoaderCircle,MapPin,MessageSquare,Plus,RotateCcw,Send,ShieldCheck,Sparkles,TrainFront,Users,Bookmark,TriangleAlert,SlidersHorizontal} from 'lucide-react';
-import {Dialog,DialogContent,DialogHeader,DialogTitle,DialogDescription} from './ui/dialog';
-import {Tabs,TabsList,TabsTrigger,TabsContent} from './ui/tabs';
-import {Checkbox} from './ui/checkbox';
-import {Skeleton} from './ui/skeleton';
-import {Session,Trace,Ranked,DEMO,UPDATE} from '../schemas';
-import type {z} from 'zod';
-import type {ComparisonSchema} from '../tools';
-const money=(n:number)=>'S$'+n.toLocaleString('en-SG');
-type Comparison=z.infer<typeof ComparisonSchema>;
-async function api(path:string,data?:unknown){const r=await fetch(path,{method:data===undefined?'GET':'POST',headers:{'Content-Type':'application/json'},...(data===undefined?{}:{body:JSON.stringify(data)})});const result=await r.json() as {session:Session;comparison:Comparison;error?:string};if(!r.ok)throw new Error(result.error??'Request failed');return result;}
-export default function Workspace(){
- const [session,setSession]=useState<Session|null>(null),[ready,setReady]=useState(false),[busy,setBusy]=useState(false),[text,setText]=useState(''),[error,setError]=useState(''),[live,setLive]=useState<Trace[]>([]),[compareIds,setCompareIds]=useState<string[]>([]),[comparison,setComparison]=useState<Comparison|null>(null),[detail,setDetail]=useState<Ranked|null>(null),[tab,setTab]=useState('recommendations'),[profileOpen,setProfileOpen]=useState(false),[pending,setPending]=useState('');
- const end=useRef<HTMLDivElement>(null);
- useEffect(()=>{api('/api/session').then(r=>r.session?r:api('/api/session',{})).then(r=>{setSession(r.session);setReady(true);}).catch(e=>{setError(e.message);setReady(true);});},[]);
- useEffect(()=>{end.current?.scrollIntoView({behavior:'smooth',block:'nearest'});},[session?.messages.length,busy]);
- async function reset(){if(busy)return;setBusy(true);setError('');try{const r=await api('/api/session',{});setSession(r.session);setLive([]);setCompareIds([]);setTab('recommendations');}catch(e){setError((e as Error).message);}finally{setBusy(false);}}
- async function run(message:string){if(!message.trim()||busy||!session)return;setBusy(true);setError('');setPending(message);setText('');setLive([]);setCompareIds([]);setTab('recommendations');try{const r=await fetch('/api/run',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message,version:session.version})});if(!r.ok){const j=await r.json() as {error:string};throw new Error(j.error);}const reader=r.body!.getReader();const decoder=new TextDecoder();let buffer='';while(true){const {done,value}=await reader.read();if(done)break;buffer+=decoder.decode(value,{stream:true});const lines=buffer.split('\n');buffer=lines.pop()??'';for(const line of lines){if(!line)continue;const event=JSON.parse(line);if(event.type==='trace')setLive(t=>[...t,event.trace]);if(event.type==='done'){setSession(event.session);setLive([]);}if(event.type==='error')throw new Error(event.error);}}}catch(e){setError((e as Error).message);}finally{setBusy(false);setPending('');}}
- async function action(action:string,propertyId?:string){if(!session||busy)return;setBusy(true);setError('');try{const r=await api('/api/action',{action,propertyId,version:session.version});setSession(r.session);}catch(e){setError((e as Error).message);}finally{setBusy(false);}}
- async function compare(){if(!session)return;setBusy(true);setError('');try{const r=await api('/api/compare',{propertyIds:compareIds,version:session.version});setComparison(r.comparison);setSession(r.session);}catch(e){setError((e as Error).message);}finally{setBusy(false);}}
- const p=session?.profile;const all=session?.recommendations??[];const rows=all.filter(r=>!session?.rejected.includes(r.property.id)&&(tab!=='shortlist'||session?.shortlist.includes(r.property.id)));const currentTrace=live.length?live:(session?.trace??[]).filter(t=>t.runId===session?.lastRunId);const grouped=currentTrace.reduce<Trace[]>((acc,t)=>{const index=t.stage==='TOOL'?acc.findIndex(e=>e.stage==='TOOL'&&e.summary===t.summary):-1;if(index>=0){const prior=acc[index];const count=((prior.data as {calls?:number})?.calls??1)+1;acc[index]={...prior,data:{calls:count,first:((prior.data as {first?:unknown})?.first??prior.data),last:t.data}};}else acc.push(t);return acc;},[]);
- const hasResults=all.length>0; const latestChanges=currentTrace.find(t=>t.stage==='STATE'&&(t.data as {changes?:unknown})?.changes)?.data as {changes?:{field:string;before:unknown;after:unknown}[]}|undefined;const activeStatus=session?.status==='approved'?'Approved':busy?'Agent working':session?.status==='no-match'?'Review constraints':'Agent ready';
- return <div className="application">
- <header className="topbar"><Link className="brand" href="/"><span className="brand-mark"><Building2 size={23}/></span>PropMatch<span className="brand-agent">AGENT</span></Link><div className="topbar-middle"><span>Agent workspace</span><ChevronRight size={14}/><strong>Buyer matching</strong></div><div className="topbar-right"><span className="demo-pill">{session?.mode==='bedrock'?'BEDROCK':'DEMO MODE'}</span><span className="team">303forward</span><div className="avatar">03</div></div></header>
- <div className="workspace-heading"><div><div className="eyebrow">YOUR NEXT GREAT MATCH</div><h1>A better brief. A smarter shortlist.</h1><p>Turn buyer conversations into recommendations you can stand behind.</p></div><div className="heading-actions"><button className="button ghost" onClick={reset} disabled={busy}><RotateCcw size={15}/>Reset Demo</button><button className="button primary" onClick={()=>run(DEMO)} disabled={busy||!ready}><Sparkles size={16}/>Load Demo Scenario</button></div></div>
- <div className="dataset-banner"><ShieldCheck size={15}/><span><strong>Demo / synthetic property dataset</strong> · 72 fictional Singapore listings. Images are illustrative; routes and amenities are estimates.</span><Link href="/debug">Data & trace <ArrowUpRight size={13}/></Link></div>
- {error&&<div className="error-banner" role="alert"><TriangleAlert size={17}/>{error}<button onClick={()=>{api('/api/session').then(r=>{setSession(r.session);setError('');}).catch(()=>setError('Connection unavailable. Try again.'));}}>Reload session</button></div>}
- <main className="workspace-grid">
- <section className="conversation panel"><div className="panel-title"><div><MessageSquare size={17}/><h2>Buyer conversation</h2></div><span className="small-label">{session?.messages.filter(m=>m.role==='user').length??0} turns</span></div>
- <div className="buyer-label"><div className="buyer-icon"><Users size={19}/></div><div><strong>{hasResults||p?.budget.max?'Buyer brief':'New buyer brief'}</strong><span>{p?.commuteDestinations.length===2?'Two destinations. One home.':'Discover what home means to them.'}</span></div></div>
- <div className="chat-scroll">
- <div className="assistant-message"><span className="mini-agent"><Sparkles size={13}/>PropMatch</span><p>Tell me about your buyers. I’ll connect their budget, daily journeys and lifestyle to a shortlist for your review.</p></div>
- {session?.messages.map((m,i)=><div key={i} className={m.role==='user'?'user-message':'assistant-message'}>{m.role==='assistant'&&<span className="mini-agent"><Sparkles size={13}/>PropMatch</span>}<p>{m.content}</p><time>{new Date(m.timestamp).toLocaleTimeString('en-SG',{hour:'2-digit',minute:'2-digit'})}</time></div>)}
- {pending&&<div className="user-message"><p>{pending}</p></div>}{busy&&pending&&<div className="thinking"><LoaderCircle size={14} className="spin"/>Checking the brief and evidence…</div>}
- {!session?.messages.length&&<div className="example-block"><span className="eyebrow">TRY A BUYER BRIEF</span><button onClick={()=>run(DEMO)} disabled={busy||!ready}><div className="example-icon"><TrainFront size={17}/></div><strong>City work, campus life</strong><span>A couple, NUS + Raffles Place, S$1.6M, room to unwind.</span><ArrowUpRight size={17}/></button><button className="simple-example" onClick={()=>run('Maximum budget SGD 1.4M, at least 2 bedrooms, MRT within 5 minutes.')} disabled={busy||!ready}>MRT-first buyer <ArrowRight size={14}/></button></div>}
- <div ref={end}/></div>
- {p?.budget.max!==null&&p&&<div className="brief-snapshot"><div><span className="eyebrow">BUYER STATE · V{session?.version}</span><button onClick={()=>setProfileOpen(true)} aria-label="View buyer profile"><SlidersHorizontal size={15}/></button></div><div className="brief-chips"><span>{money(p.budget.max!)} max</span><span>{p.property.minBedrooms??'?'}+ beds</span>{p.transport.maxMrtWalkingMinutes!==null&&<span>MRT ≤ {p.transport.maxMrtWalkingMinutes}m</span>}{p.transport.hasCar===false&&<span>No car</span>}{p.lifestyle.parks&&<span>Green space</span>}</div></div>}
- <div className="composer"><label htmlFor="buyer-message" className="sr-only">Buyer requirements</label><textarea id="buyer-message" value={text} onChange={e=>setText(e.target.value)} maxLength={4000} placeholder="Add a requirement or refine this brief…" onKeyDown={e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();run(text);}}}/><div><span>Enter to send · Shift + Enter for a new line</span><button aria-label="Send buyer requirements" onClick={()=>run(text)} disabled={busy||!text.trim()||!ready}><Send size={16}/></button></div></div>
- {hasResults&&<button className="follow-up" disabled={busy} onClick={()=>run(UPDATE)}><Plus size={14}/>Try: S$1.7M, MRT within 5 minutes</button>}
- </section>
- <section className="recommendations"><div className="results-top"><div><h2>Property recommendations</h2><p>{hasResults?`${all.length} verified candidates · ranked for this buyer`:'Your buyer’s next chapter starts here.'}</p></div><div className="result-tools">{hasResults&&<button className="button" disabled={busy||!['waiting','approved'].includes(session?.status??'')} onClick={()=>action('alternative')}>Request alternative</button>}</div></div>
- <Tabs value={tab} onValueChange={setTab}><div className="results-toolbar"><TabsList className="result-tabs"><TabsTrigger value="recommendations">Matches <span>{all.length}</span></TabsTrigger><TabsTrigger value="shortlist">Shortlist <span>{session?.shortlist.length??0}</span></TabsTrigger></TabsList><button className="button compare-button" disabled={busy||compareIds.length<2} onClick={compare}><GitCompareArrows size={15}/>Compare{compareIds.length>0?` (${compareIds.length})`:''}</button></div><TabsContent value="recommendations"/><TabsContent value="shortlist"/></Tabs>
- {(session?.messages.filter(m=>m.role==='user').length??0)>1&&latestChanges?.changes?.some(c=>c.field==='budget.max'||c.field==='transport.maxMrtWalkingMinutes')&&<div className="state-update"><CheckCheck size={15}/><div><strong>Buyer brief updated · memory retained</strong>{latestChanges.changes.filter(c=>c.field==='budget.max'||c.field==='transport.maxMrtWalkingMinutes').map(c=><span key={c.field}>{c.field==='budget.max'?'Budget':'MRT walk'}: {c.before===null?'unspecified':c.field==='budget.max'?money(Number(c.before)):String(c.before)+' min'} → {c.field==='budget.max'?money(Number(c.after)):String(c.after)+' min (hard limit)'}</span>)}</div></div>}<div className="cards-scroll">
- {!ready||busy&&pending?<div className="loading-cards" aria-label="Loading recommendations">{[0,1].map(i=><div className="skeleton-card" key={i}><Skeleton className="h-36 w-full"/><Skeleton className="mt-5 h-6 w-3/4"/><Skeleton className="mt-3 h-4 w-1/2"/><Skeleton className="mt-6 h-20 w-full"/></div>)}</div>:session?.status==='no-match'?<div className="no-match empty"><span className="empty-symbol"><SlidersHorizontal size={30}/></span><h3>No listing currently satisfies all hard constraints.</h3><p>Your buyer’s limits are unchanged. Choose a constraint to discuss, then submit the exact revised requirement.</p><div className="conflict-list">{Object.entries((currentTrace.find(t=>t.stage==='HUMAN'&&(t.data as {conflicts?:unknown})?.conflicts)?.data as {conflicts?:Record<string,number>})?.conflicts??{}).map(([key,count])=><div key={key}><span>{key}</span><strong>{count} listings</strong></div>)}</div><button className="button primary" onClick={()=>setText('I can increase the budget to SGD 1.7M.')}>Discuss a higher budget</button><button className="button" onClick={()=>setText('MRT must be within 10 minutes.')}>Discuss MRT distance</button></div>:!hasResults?<div className="empty"><div className="empty-photo"><Image unoptimized width={1536} height={1024} src="/images/residence.png" alt="Illustration of a fictional Singapore condominium"/><span>ILLUSTRATIVE PROPERTY IMAGE</span></div><div className="empty-content"><span className="eyebrow">GOOD RECOMMENDATIONS START WITH UNDERSTANDING</span><h3>{session?.status==='clarification'?'Let’s make the brief a little clearer.':session?.status==='error'?'The run stopped safely.':'Find the right home, with the full picture.'}</h3><p>{session?.status==='clarification'||session?.status==='error'?session.notice:'Share a buyer brief to see verified constraints, balanced commutes and honest trade-offs — together in one place.'}</p><div className="empty-features"><span><ShieldCheck size={16}/>Constraints checked</span><span><Activity size={16}/>Every action traced</span><span><Users size={16}/>You make the call</span></div><button className="button primary" disabled={busy} onClick={()=>run(DEMO)}>Explore the demo brief <ArrowRight size={15}/></button></div></div>:rows.length===0?<div className="empty empty-content"><h3>No properties in this view</h3><p>Add a verified recommendation to your shortlist, or request an alternative.</p><button className="button" onClick={()=>setTab('recommendations')}>View all matches</button></div>:<>{session?.status==='approved'&&<div className="approved-banner"><CheckCheck size={19}/><div><strong>Shortlist approved</strong><span>Your decision is saved in the audit trail.</span></div></div>}{rows.map((r,i)=><article className="property-card" key={r.property.id}><div className="property-visual"><Image unoptimized width={1536} height={1024} src={r.property.image} alt={`Illustrative condominium image for fictional ${r.property.name}`} style={{objectPosition:`${35+(i%3)*15}% ${40+(i%3)*10}%`}}/><div className="photo-top"><span className="rank-label">{i===0?'TOP MATCH':`MATCH ${String(i+1).padStart(2,'0')}`}</span><button className={'bookmark '+(session?.shortlist.includes(r.property.id)?'saved':'')} aria-label={`${session?.shortlist.includes(r.property.id)?'Remove':'Add'} ${r.property.name} ${session?.shortlist.includes(r.property.id)?'from':'to'} shortlist`} onClick={()=>action('shortlist',r.property.id)} disabled={busy}><Bookmark size={17}/></button></div><span className="photo-caption">Illustrative image · synthetic listing</span><div className="match-score"><strong>{r.score}<small>%</small></strong><span>buyer match</span></div></div>
- <div className="property-body"><div className="property-name-row"><div><h3>{r.property.name}</h3><p><MapPin size={13}/>{r.property.area} · {r.property.propertyType}</p></div><div className="price"><strong>{money(r.property.price)}</strong><span>{r.property.bedrooms} beds · {r.property.bathrooms} baths · {r.property.sizeSqft.toLocaleString()} sqft</span></div></div><div className="fact-strip"><span><TrainFront size={15}/>{r.property.mrtWalkingMinutes} min to {r.property.nearestMrt}</span>{r.commutes.slice(0,2).map(c=><span key={c.destination}><Clock3 size={15}/>{c.destination} <strong>~{c.travelMinutes}m</strong></span>)}</div><div className="constraint-pass"><ShieldCheck size={14}/>All hard constraints passed<span>{r.property.id}</span></div><div className="reason-columns"><div><h4><Sparkles size={13}/>Why this works</h4><p>{r.why.slice(1,3).join(' ')}</p></div><div><h4><SlidersHorizontal size={13}/>The trade-off</h4><p>{r.tradeoffs.slice(0,1).join(' ')}</p></div></div><div className="card-footer"><label className="compare-check"><Checkbox checked={compareIds.includes(r.property.id)} disabled={busy||(!compareIds.includes(r.property.id)&&compareIds.length>=4)} onCheckedChange={v=>setCompareIds(ids=>v===true?[...ids,r.property.id]:ids.filter(id=>id!==r.property.id))}/>Compare</label><button onClick={()=>action('reject',r.property.id)} disabled={busy}>Reject</button><button onClick={()=>setDetail(r)} className="detail-link">View details <ArrowUpRight size={14}/></button></div></div></article>)}</>}
- </div>
- {hasResults&&!busy&&<div className="approval-bar"><div><span className={session?.status==='approved'?'approved-dot':'approval-dot'}/><strong>{session?.status==='approved'?'Approved by property agent':'Waiting for Agent Approval'}</strong><span>{session?.shortlist.length} selected</span></div><button className="button primary" disabled={session?.status==='approved'||!session?.shortlist.length} onClick={()=>action('approve')}><Check size={15}/>Approve shortlist</button></div>}
- </section>
- <aside className="activity panel"><div className="panel-title"><div><Activity size={17}/><h2>Agent activity</h2></div><span className="live-badge">{busy?'RUNNING':'TRACE'}</span></div><div className="agent-status"><span className={'status-icon '+(busy?'running':'')}><Sparkles size={18}/></span><div><strong>{activeStatus}</strong><span>Single orchestrator · typed tools</span></div>{busy?<LoaderCircle size={16} className="spin"/>:<Check size={16}/>}</div><div className="trace-scroll">
- {!currentTrace.length?<><div className="trace-empty"><h3>Every recommendation has a trail.</h3><p>Follow the agent as it understands, retrieves, checks and ranks.</p></div><div className="workflow-preview">{[['01','Understand','Extract & update the buyer profile'],['02','Plan & retrieve','Select tools for this brief'],['03','Verify & rank','Enforce limits, score the evidence'],['04','Human review','Your approval. Your decision.']].map(([n,title,copy])=><div key={n}><span>{n}</span><div><strong>{title}</strong><p>{copy}</p></div></div>)}</div></>:<div className="trace-list">{grouped.map(t=><details key={t.id} className={'trace-item trace-'+t.stage.toLowerCase()}><summary><span className="trace-node">{t.stage==='TOOL'?<Code2 size={12}/>:t.stage==='HUMAN'?<Users size={12}/>:t.stage==='ERROR'||t.stage==='GUARDRAIL'?<TriangleAlert size={12}/>:<Check size={12}/>}</span><div><div className="trace-meta"><strong>{t.stage==='STATE'?'MEMORY':t.stage}</strong><time>{new Date(t.timestamp).toLocaleTimeString('en-SG',{hour12:false})}</time></div><p>{t.summary}{((t.data as {calls?:number})?.calls??0)>1&&<span className="call-count">{(t.data as {calls:number}).calls} calls</span>}</p></div></summary>{t.data!==undefined&&<pre>{JSON.stringify(t.data,null,2)}</pre>}</details>)}</div>}
- </div><div className="trace-footer"><ShieldCheck size={15}/><span>Action summaries only.<br/>No private model reasoning.</span><Link href="/debug" aria-label="Open structured trace"><ArrowUpRight size={17}/></Link></div></aside>
- </main><footer className="app-footer"><span>PROPMATCH AGENT <span>by 303forward</span></span><span>NUS-ISS Show Me Your Agents · D1IZFT7E</span><Link href="/debug">Full audit trail <ArrowUpRight size={12}/></Link></footer>
- <Dialog open={!!detail} onOpenChange={open=>!open&&setDetail(null)}><DialogContent className="detail-dialog"><DialogHeader><DialogTitle>{detail?.property.name}</DialogTitle><DialogDescription>Evidence, match components and trade-offs. Synthetic data only.</DialogDescription></DialogHeader>{detail&&<><div className="detail-hero"><strong>{money(detail.property.price)}</strong><span>{detail.score}% buyer match</span></div><div className="score-breakdown">{Object.entries(detail.components).filter(([k])=>detail.weights[k]>0).map(([k,v])=><div key={k}><span>{k}<small>weight {detail.weights[k]}</small></span><div className="score-track"><span style={{width:v+'%'}}/></div><strong>{v}%</strong></div>)}</div><p className="micro">Match score = weighted mean of the displayed components, rounded to a whole number. It is not a probability or a model confidence estimate.</p><h4>Why recommended</h4><ul>{detail.why.map(s=><li key={s}>{s}</li>)}</ul><h4>Trade-offs & verification</h4><ul>{detail.tradeoffs.map(s=><li key={s}>{s}</li>)}</ul><h4>Source evidence</h4><div className="evidence-list">{detail.evidence.map(e=><code key={e}>{e}</code>)}</div><div className="detail-actions"><button className="button" disabled={busy} onClick={()=>{action('override',detail.property.id);setDetail(null);}}><ArrowUp size={15}/>Move to first · human override</button><button className="button primary" onClick={()=>{action('shortlist',detail.property.id);setDetail(null);}} disabled={busy}><Bookmark size={15}/>Toggle shortlist</button></div></>}</DialogContent></Dialog>
- <Dialog open={!!comparison} onOpenChange={o=>!o&&setComparison(null)}><DialogContent className="compare-dialog"><DialogHeader><DialogTitle>Compare the full picture</DialogTitle><DialogDescription>Same buyer, same rules. A side-by-side view of verified candidates.</DialogDescription></DialogHeader>{comparison&&<div className="comparison-scroll"><table><thead><tr><th>Buyer fit</th>{comparison.properties.map(r=><th key={r.property.id}>{r.property.name}</th>)}</tr></thead><tbody>{[['Price',...comparison.properties.map(r=>money(r.property.price))],['Match score',...comparison.properties.map(r=>`${r.score}%`)],['Bedrooms',...comparison.properties.map(r=>String(r.property.bedrooms))],['Size',...comparison.properties.map(r=>`${r.property.sizeSqft} sqft`)],['MRT walk',...comparison.properties.map(r=>`${r.property.mrtWalkingMinutes} min`)],['Hard constraints',...comparison.properties.map(()=> 'All passed')],...(p?.commuteDestinations??[]).map(d=>[d.place,...comparison.properties.map(r=>`~${r.commutes.find(c=>c.destination===d.place)?.travelMinutes??'?'} min`)]),['Source',...comparison.properties.map(r=>r.property.id)]].map(row=><tr key={row[0]}>{row.map((v,i)=><td key={i}>{v}</td>)}</tr>)}</tbody></table><p className="micro">{comparison.summary}</p></div>}</DialogContent></Dialog>
- <Dialog open={profileOpen} onOpenChange={setProfileOpen}><DialogContent className="detail-dialog"><DialogHeader><DialogTitle>Buyer profile · version {session?.version}</DialogTitle><DialogDescription>Validated structured memory, carried across conversation turns.</DialogDescription></DialogHeader><pre className="profile-json">{JSON.stringify(p,null,2)}</pre></DialogContent></Dialog>
- </div>;
+"use client";
+import Link from "next/link";
+import PropertyComparison from "./property-comparison";
+import { readRunStream } from "../lib/run-stream";
+import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
+import {
+  ArrowUpRight,
+  ArrowUp,
+  ArrowRight,
+  Activity,
+  Building2,
+  Check,
+  CheckCheck,
+  ChevronRight,
+  Clock3,
+  Code2,
+  GitCompareArrows,
+  LoaderCircle,
+  MapPin,
+  MessageSquare,
+  Plus,
+  RotateCcw,
+  Send,
+  ShieldCheck,
+  Sparkles,
+  TrainFront,
+  Users,
+  Bookmark,
+  TriangleAlert,
+  SlidersHorizontal,
+} from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "./ui/dialog";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "./ui/tabs";
+import { Checkbox } from "./ui/checkbox";
+import { Skeleton } from "./ui/skeleton";
+import { Session, Trace, Ranked, DEMO, UPDATE } from "../schemas";
+import type { z } from "zod";
+import type { ComparisonSchema } from "../tools";
+const money = (n: number) => "S$" + n.toLocaleString("en-SG");
+type Comparison = z.infer<typeof ComparisonSchema>;
+async function api(path: string, data?: unknown) {
+  const r = await fetch(path, {
+    method: data === undefined ? "GET" : "POST",
+    headers: { "Content-Type": "application/json" },
+    ...(data === undefined ? {} : { body: JSON.stringify(data) }),
+  });
+  const result = (await r.json()) as {
+    session: Session;
+    comparison: Comparison;
+    error?: string;
+  };
+  if (!r.ok) throw new Error(result.error ?? "Request failed");
+  return result;
+}
+export default function Workspace() {
+  const [session, setSession] = useState<Session | null>(null),
+    [ready, setReady] = useState(false),
+    [busy, setBusy] = useState(false),
+    [text, setText] = useState(""),
+    [error, setError] = useState(""),
+    [live, setLive] = useState<Trace[]>([]),
+    [compareIds, setCompareIds] = useState<string[]>([]),
+    [comparison, setComparison] = useState<Comparison | null>(null),
+    [detail, setDetail] = useState<Ranked | null>(null),
+    [tab, setTab] = useState("recommendations"),
+    [profileOpen, setProfileOpen] = useState(false),
+    [pending, setPending] = useState("");
+  const end = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    api("/api/session")
+      .then((r) => (r.session ? r : api("/api/session", {})))
+      .then((r) => {
+        setSession(r.session);
+        setReady(true);
+      })
+      .catch((e) => {
+        setError(e.message);
+        setReady(true);
+      });
+  }, []);
+  useEffect(() => {
+    end.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }, [session?.messages.length, busy]);
+  async function reset() {
+    if (busy) return;
+    setBusy(true);
+    setError("");
+    try {
+      const r = await api("/api/session", {});
+      setSession(r.session);
+      setLive([]);
+      setCompareIds([]);
+      setComparison(null);
+      setDetail(null);
+      setProfileOpen(false);
+      setText("");
+      setTab("recommendations");
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+  async function run(message: string, baseSession = session) {
+    if (!message.trim() || busy || !baseSession) return;
+    setBusy(true);
+    setError("");
+    setPending(message);
+    setText("");
+    setComparison(null);
+    setDetail(null);
+    setLive([]);
+    setCompareIds([]);
+    setTab("recommendations");
+    try {
+      const r = await fetch("/api/run", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message, version: baseSession.version }),
+      });
+      if (!r.ok) {
+        const j = (await r.json()) as { error: string };
+        throw new Error(j.error);
+      }
+      if (!r.body) throw new Error("No run response. Reload the session.");
+      const completed = await readRunStream(r.body, (t) =>
+        setLive((events) => [...events, t]),
+      );
+      setSession(completed);
+      setLive([]);
+    } catch (e) {
+      setText(message);
+      setError((e as Error).message);
+    } finally {
+      setBusy(false);
+      setPending("");
+    }
+  }
+  async function loadDemo() {
+    if (busy) return;
+    setError("");
+    try {
+      const r = await api("/api/session", {});
+      setSession(r.session);
+      await run(DEMO, r.session);
+    } catch (e) {
+      setError((e as Error).message);
+    }
+  }
+  async function action(action: string, propertyId?: string) {
+    if (!session || busy) return;
+    setBusy(true);
+    setError("");
+    try {
+      const r = await api("/api/action", {
+        action,
+        propertyId,
+        version: session.version,
+      });
+      setSession(r.session);
+      if (action === "reject")
+        setCompareIds((ids) => ids.filter((id) => id !== propertyId));
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+  async function compare() {
+    if (!session || busy) return;
+    setBusy(true);
+    setError("");
+    try {
+      const r = await api("/api/compare", {
+        propertyIds: compareIds,
+        version: session.version,
+      });
+      setComparison(r.comparison);
+      setSession(r.session);
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+  const p = session?.profile;
+  const all = session?.recommendations ?? [];
+  const rows = all.filter(
+    (r) =>
+      !session?.rejected.includes(r.property.id) &&
+      (tab !== "shortlist" || session?.shortlist.includes(r.property.id)),
+  );
+  const currentTrace = live.length
+    ? live
+    : (session?.trace ?? []).filter((t) => t.runId === session?.lastRunId);
+  const grouped = currentTrace.reduce<Trace[]>((acc, t) => {
+    const index =
+      t.stage === "TOOL"
+        ? acc.findIndex((e) => e.stage === "TOOL" && e.summary === t.summary)
+        : -1;
+    if (index >= 0) {
+      const prior = acc[index];
+      const count = ((prior.data as { calls?: number })?.calls ?? 1) + 1;
+      acc[index] = {
+        ...prior,
+        data: {
+          calls: count,
+          first: (prior.data as { first?: unknown })?.first ?? prior.data,
+          last: t.data,
+        },
+      };
+    } else acc.push(t);
+    return acc;
+  }, []);
+  const hasResults = all.length > 0;
+  const latestChanges = currentTrace.find(
+    (t) => t.stage === "STATE" && (t.data as { changes?: unknown })?.changes,
+  )?.data as
+    | { changes?: { field: string; before: unknown; after: unknown }[] }
+    | undefined;
+  const activeStatus =
+    session?.status === "approved"
+      ? "Approved"
+      : busy
+        ? "Agent working"
+        : session?.status === "no-match"
+          ? "Review constraints"
+          : session?.status === "clarification"
+            ? "Clarification needed"
+            : session?.status === "error"
+              ? "Run stopped safely"
+              : "Agent ready";
+  return (
+    <div className="application">
+      <header className="topbar">
+        <Link className="brand" href="/">
+          <span className="brand-mark">
+            <Building2 size={23} />
+          </span>
+          PropMatch<span className="brand-agent">AGENT</span>
+        </Link>
+        <div className="topbar-middle">
+          <span>Agent workspace</span>
+          <ChevronRight size={14} />
+          <strong>Buyer matching</strong>
+        </div>
+        <div className="topbar-right">
+          <span className="demo-pill">
+            {session?.mode === "bedrock" ? "BEDROCK" : "DEMO MODE"}
+          </span>
+          <span className="team">303forward</span>
+          <div className="avatar">03</div>
+        </div>
+      </header>
+      <div className="workspace-heading">
+        <div>
+          <div className="eyebrow">YOUR NEXT GREAT MATCH</div>
+          <h1>A better brief. A smarter shortlist.</h1>
+          <p>
+            Turn buyer conversations into recommendations you can stand behind.
+          </p>
+        </div>
+        <div className="heading-actions">
+          <button className="button ghost" onClick={reset} disabled={busy}>
+            <RotateCcw size={15} />
+            Reset Demo
+          </button>
+          <button
+            className="button primary"
+            onClick={loadDemo}
+            disabled={busy || !ready || !session}
+          >
+            <Sparkles size={16} />
+            Load Demo Scenario
+          </button>
+        </div>
+      </div>
+      <div className="dataset-banner">
+        <ShieldCheck size={15} />
+        <span>
+          <strong>Demo / synthetic property dataset</strong> · 72 fictional
+          Singapore listings. Images are illustrative; routes and amenities are
+          estimates.
+        </span>
+        <Link href="/debug">
+          Data & trace <ArrowUpRight size={13} />
+        </Link>
+      </div>
+      {error && (
+        <div className="error-banner" role="alert">
+          <TriangleAlert size={17} />
+          {error}
+          <button
+            onClick={() => {
+              api("/api/session")
+                .then((r) => {
+                  setSession(r.session);
+                  setError("");
+                })
+                .catch(() => setError("Connection unavailable. Try again."));
+            }}
+          >
+            Reload session
+          </button>
+        </div>
+      )}
+      <main className="workspace-grid">
+        <section className="conversation panel">
+          <div className="panel-title">
+            <div>
+              <MessageSquare size={17} />
+              <h2>Buyer conversation</h2>
+            </div>
+            <span className="small-label">
+              {session?.messages.filter((m) => m.role === "user").length ?? 0}{" "}
+              turns
+            </span>
+          </div>
+          <div className="buyer-label">
+            <div className="buyer-icon">
+              <Users size={19} />
+            </div>
+            <div>
+              <strong>
+                {hasResults || p?.budget.max
+                  ? "Buyer brief"
+                  : "New buyer brief"}
+              </strong>
+              <span>
+                {p?.commuteDestinations.length === 2
+                  ? "Two destinations. One home."
+                  : "Discover what home means to them."}
+              </span>
+            </div>
+          </div>
+          <div className="chat-scroll">
+            <div className="assistant-message">
+              <span className="mini-agent">
+                <Sparkles size={13} />
+                PropMatch
+              </span>
+              <p>
+                Tell me about your buyers. I’ll connect their budget, daily
+                journeys and lifestyle to a shortlist for your review.
+              </p>
+            </div>
+            {session?.messages.map((m, i) => (
+              <div
+                key={i}
+                className={
+                  m.role === "user" ? "user-message" : "assistant-message"
+                }
+              >
+                {m.role === "assistant" && (
+                  <span className="mini-agent">
+                    <Sparkles size={13} />
+                    PropMatch
+                  </span>
+                )}
+                <p>{m.content}</p>
+                <time>
+                  {new Date(m.timestamp).toLocaleTimeString("en-SG", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </time>
+              </div>
+            ))}
+            {pending && (
+              <div className="user-message">
+                <p>{pending}</p>
+              </div>
+            )}
+            {busy && pending && (
+              <div className="thinking">
+                <LoaderCircle size={14} className="spin" />
+                Checking the brief and evidence…
+              </div>
+            )}
+            {!session?.messages.length && (
+              <div className="example-block">
+                <span className="eyebrow">TRY A BUYER BRIEF</span>
+                <button
+                  onClick={loadDemo}
+                  disabled={busy || !ready || !session}
+                >
+                  <div className="example-icon">
+                    <TrainFront size={17} />
+                  </div>
+                  <strong>City work, campus life</strong>
+                  <span>
+                    A couple, NUS + Raffles Place, S$1.6M, room to unwind.
+                  </span>
+                  <ArrowUpRight size={17} />
+                </button>
+                <button
+                  className="simple-example"
+                  onClick={() =>
+                    run(
+                      "Maximum budget SGD 1.4M, at least 2 bedrooms, MRT within 5 minutes.",
+                    )
+                  }
+                  disabled={busy || !ready || !session}
+                >
+                  MRT-first buyer <ArrowRight size={14} />
+                </button>
+              </div>
+            )}
+            <div ref={end} />
+          </div>
+          {p?.budget.max !== null && p && (
+            <div className="brief-snapshot">
+              <div>
+                <span className="eyebrow">
+                  BUYER STATE · V{session?.version}
+                </span>
+                <button
+                  onClick={() => setProfileOpen(true)}
+                  aria-label="View buyer profile"
+                >
+                  <SlidersHorizontal size={15} />
+                </button>
+              </div>
+              <div className="brief-chips">
+                <span>{money(p.budget.max!)} max</span>
+                <span>{p.property.minBedrooms ?? "?"}+ beds</span>
+                {p.transport.maxMrtWalkingMinutes !== null && (
+                  <span>MRT ≤ {p.transport.maxMrtWalkingMinutes}m</span>
+                )}
+                {p.transport.hasCar === false && <span>No car</span>}
+                {p.lifestyle.parks && <span>Green space</span>}
+              </div>
+            </div>
+          )}
+          <div className="composer">
+            <label htmlFor="buyer-message" className="sr-only">
+              Buyer requirements
+            </label>
+            <textarea
+              id="buyer-message"
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              maxLength={4000}
+              placeholder="Add a requirement or refine this brief…"
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  run(text);
+                }
+              }}
+            />
+            <div>
+              <span>Enter to send · Shift + Enter for a new line</span>
+              <button
+                aria-label="Send buyer requirements"
+                onClick={() => run(text)}
+                disabled={busy || !text.trim() || !ready || !session}
+              >
+                <Send size={16} />
+              </button>
+            </div>
+          </div>
+          {hasResults && (
+            <button
+              className="follow-up"
+              disabled={busy}
+              onClick={() => run(UPDATE)}
+            >
+              <Plus size={14} />
+              Try: S$1.7M, MRT within 5 minutes
+            </button>
+          )}
+        </section>
+        <section className="recommendations">
+          <div className="results-top">
+            <div>
+              <h2>Property recommendations</h2>
+              <p>
+                {hasResults
+                  ? `${all.length} verified candidates · ranked for this buyer`
+                  : "Your buyer’s next chapter starts here."}
+              </p>
+            </div>
+            <div className="result-tools">
+              {hasResults && (
+                <button
+                  className="button"
+                  disabled={
+                    busy ||
+                    !["waiting", "approved"].includes(session?.status ?? "")
+                  }
+                  onClick={() => action("alternative")}
+                >
+                  Request alternative
+                </button>
+              )}
+            </div>
+          </div>
+          <Tabs value={tab} onValueChange={setTab}>
+            <div className="results-toolbar">
+              <TabsList className="result-tabs">
+                <TabsTrigger value="recommendations">
+                  Matches <span>{all.length}</span>
+                </TabsTrigger>
+                <TabsTrigger value="shortlist">
+                  Shortlist <span>{session?.shortlist.length ?? 0}</span>
+                </TabsTrigger>
+              </TabsList>
+              <button
+                className="button compare-button"
+                disabled={busy || compareIds.length < 2}
+                onClick={compare}
+              >
+                <GitCompareArrows size={15} />
+                Compare{compareIds.length > 0 ? ` (${compareIds.length})` : ""}
+              </button>
+            </div>
+            <TabsContent value="recommendations" />
+            <TabsContent value="shortlist" />
+          </Tabs>
+          {(session?.messages.filter((m) => m.role === "user").length ?? 0) >
+            1 &&
+            latestChanges?.changes?.some(
+              (c) =>
+                c.field === "budget.max" ||
+                c.field === "transport.maxMrtWalkingMinutes",
+            ) && (
+              <div className="state-update">
+                <CheckCheck size={15} />
+                <div>
+                  <strong>Buyer brief updated · memory retained</strong>
+                  {latestChanges.changes
+                    .filter(
+                      (c) =>
+                        c.field === "budget.max" ||
+                        c.field === "transport.maxMrtWalkingMinutes",
+                    )
+                    .map((c) => (
+                      <span key={c.field}>
+                        {c.field === "budget.max" ? "Budget" : "MRT walk"}:{" "}
+                        {c.before === null
+                          ? "unspecified"
+                          : c.field === "budget.max"
+                            ? money(Number(c.before))
+                            : String(c.before) + " min"}{" "}
+                        →{" "}
+                        {c.field === "budget.max"
+                          ? money(Number(c.after))
+                          : String(c.after) + " min (hard limit)"}
+                      </span>
+                    ))}
+                </div>
+              </div>
+            )}
+          <div className="cards-scroll">
+            {!ready || (busy && pending) ? (
+              <div
+                className="loading-cards"
+                aria-label="Loading recommendations"
+              >
+                {[0, 1].map((i) => (
+                  <div className="skeleton-card" key={i}>
+                    <Skeleton className="h-36 w-full" />
+                    <Skeleton className="mt-5 h-6 w-3/4" />
+                    <Skeleton className="mt-3 h-4 w-1/2" />
+                    <Skeleton className="mt-6 h-20 w-full" />
+                  </div>
+                ))}
+              </div>
+            ) : session?.status === "no-match" ? (
+              <div className="no-match empty">
+                <span className="empty-symbol">
+                  <SlidersHorizontal size={30} />
+                </span>
+                <h3>No listing currently satisfies all hard constraints.</h3>
+                <p>
+                  Your buyer’s limits are unchanged. Choose a constraint to
+                  discuss, then submit the exact revised requirement.
+                </p>
+                <div className="conflict-list">
+                  {Object.entries(
+                    (
+                      currentTrace.find(
+                        (t) =>
+                          t.stage === "HUMAN" &&
+                          (t.data as { conflicts?: unknown })?.conflicts,
+                      )?.data as { conflicts?: Record<string, number> }
+                    )?.conflicts ?? {},
+                  ).map(([key, count]) => (
+                    <div key={key}>
+                      <span>{key}</span>
+                      <strong>{count} listings</strong>
+                    </div>
+                  ))}
+                </div>
+                <button
+                  className="button primary"
+                  onClick={() =>
+                    setText("I can increase the budget to SGD 1.7M.")
+                  }
+                >
+                  Discuss a higher budget
+                </button>
+                <button
+                  className="button"
+                  onClick={() => setText("MRT must be within 10 minutes.")}
+                >
+                  Discuss MRT distance
+                </button>
+              </div>
+            ) : !hasResults ? (
+              <div className="empty">
+                <div className="empty-photo">
+                  <Image
+                    unoptimized
+                    width={1536}
+                    height={1024}
+                    src="/images/residence.png"
+                    alt="Illustration of a fictional Singapore condominium"
+                  />
+                  <span>ILLUSTRATIVE PROPERTY IMAGE</span>
+                </div>
+                <div className="empty-content">
+                  <span className="eyebrow">
+                    GOOD RECOMMENDATIONS START WITH UNDERSTANDING
+                  </span>
+                  <h3>
+                    {session?.status === "clarification"
+                      ? "Let’s make the brief a little clearer."
+                      : session?.status === "error"
+                        ? "The run stopped safely."
+                        : "Find the right home, with the full picture."}
+                  </h3>
+                  <p>
+                    {session?.status === "clarification" ||
+                    session?.status === "error"
+                      ? session.notice
+                      : "Share a buyer brief to see verified constraints, balanced commutes and honest trade-offs — together in one place."}
+                  </p>
+                  <div className="empty-features">
+                    <span>
+                      <ShieldCheck size={16} />
+                      Constraints checked
+                    </span>
+                    <span>
+                      <Activity size={16} />
+                      Every action traced
+                    </span>
+                    <span>
+                      <Users size={16} />
+                      You make the call
+                    </span>
+                  </div>
+                  <button
+                    className="button primary"
+                    disabled={busy}
+                    onClick={loadDemo}
+                  >
+                    Explore the demo brief <ArrowRight size={15} />
+                  </button>
+                </div>
+              </div>
+            ) : rows.length === 0 ? (
+              <div className="empty empty-content">
+                <h3>No properties in this view</h3>
+                <p>
+                  Add a verified recommendation to your shortlist, or request an
+                  alternative.
+                </p>
+                <button
+                  className="button"
+                  onClick={() => setTab("recommendations")}
+                >
+                  View all matches
+                </button>
+              </div>
+            ) : (
+              <>
+                {session?.status === "approved" && (
+                  <div className="approved-banner">
+                    <CheckCheck size={19} />
+                    <div>
+                      <strong>Shortlist approved</strong>
+                      <span>Your decision is saved in the audit trail.</span>
+                    </div>
+                  </div>
+                )}
+                {rows.map((r, i) => (
+                  <article className="property-card" key={r.property.id}>
+                    <div className="property-visual">
+                      <Image
+                        unoptimized
+                        width={1536}
+                        height={1024}
+                        src={r.property.image}
+                        alt={`Illustrative condominium image for fictional ${r.property.name}`}
+                        style={{
+                          objectPosition: `${35 + (i % 3) * 15}% ${40 + (i % 3) * 10}%`,
+                        }}
+                      />
+                      <div className="photo-top">
+                        <span className="rank-label">
+                          {i === 0
+                            ? "TOP MATCH"
+                            : `MATCH ${String(i + 1).padStart(2, "0")}`}
+                        </span>
+                        <button
+                          className={
+                            "bookmark " +
+                            (session?.shortlist.includes(r.property.id)
+                              ? "saved"
+                              : "")
+                          }
+                          aria-label={`${session?.shortlist.includes(r.property.id) ? "Remove" : "Add"} ${r.property.name} ${session?.shortlist.includes(r.property.id) ? "from" : "to"} shortlist`}
+                          onClick={() => action("shortlist", r.property.id)}
+                          disabled={busy}
+                        >
+                          <Bookmark size={17} />
+                        </button>
+                      </div>
+                      <span className="photo-caption">
+                        Illustrative image · synthetic listing
+                      </span>
+                      <div className="match-score">
+                        <strong>
+                          {r.score}
+                          <small>%</small>
+                        </strong>
+                        <span>buyer match</span>
+                      </div>
+                    </div>
+                    <div className="property-body">
+                      <div className="property-name-row">
+                        <div>
+                          <h3>{r.property.name}</h3>
+                          <p>
+                            <MapPin size={13} />
+                            {r.property.area} · {r.property.propertyType}
+                          </p>
+                        </div>
+                        <div className="price">
+                          <strong>{money(r.property.price)}</strong>
+                          <span>
+                            {r.property.bedrooms} beds · {r.property.bathrooms}{" "}
+                            baths · {r.property.sizeSqft.toLocaleString()} sqft
+                          </span>
+                        </div>
+                      </div>
+                      <div className="fact-strip">
+                        <span>
+                          <TrainFront size={15} />
+                          {r.property.mrtWalkingMinutes} min to{" "}
+                          {r.property.nearestMrt}
+                        </span>
+                        {r.commutes.slice(0, 2).map((c) => (
+                          <span key={c.destination}>
+                            <Clock3 size={15} />
+                            {c.destination} <strong>~{c.travelMinutes}m</strong>
+                          </span>
+                        ))}
+                      </div>
+                      <p className="amenity-summary">
+                        Amenities ·{" "}
+                        {(r.amenities.length
+                          ? r.amenities
+                          : r.property.amenities
+                        )
+                          .slice(0, 2)
+                          .map((a) => `${a.name} · ${a.distanceMeters} m`)
+                          .join("; ") || "None recorded"}
+                      </p>
+                      <div className="constraint-pass">
+                        <ShieldCheck size={14} />
+                        All hard constraints passed<span>{r.property.id}</span>
+                      </div>
+                      <div className="reason-columns">
+                        <div>
+                          <h4>
+                            <Sparkles size={13} />
+                            Why this works
+                          </h4>
+                          <p>{r.why.slice(1, 3).join(" ")}</p>
+                        </div>
+                        <div>
+                          <h4>
+                            <SlidersHorizontal size={13} />
+                            The trade-off
+                          </h4>
+                          <p>{r.tradeoffs.slice(0, 1).join(" ")}</p>
+                        </div>
+                      </div>
+                      <div className="card-footer">
+                        <label className="compare-check">
+                          <Checkbox
+                            checked={compareIds.includes(r.property.id)}
+                            disabled={
+                              busy ||
+                              (!compareIds.includes(r.property.id) &&
+                                compareIds.length >= 4)
+                            }
+                            onCheckedChange={(v) =>
+                              setCompareIds((ids) =>
+                                v === true
+                                  ? [...ids, r.property.id]
+                                  : ids.filter((id) => id !== r.property.id),
+                              )
+                            }
+                          />
+                          Compare
+                        </label>
+                        <button
+                          onClick={() => action("reject", r.property.id)}
+                          disabled={busy}
+                        >
+                          Reject
+                        </button>
+                        <button
+                          onClick={() => setDetail(r)}
+                          className="detail-link"
+                        >
+                          View details <ArrowUpRight size={14} />
+                        </button>
+                      </div>
+                    </div>
+                  </article>
+                ))}
+              </>
+            )}
+          </div>
+          {hasResults &&
+            !busy &&
+            ["waiting", "approved"].includes(session?.status ?? "") && (
+              <div className="approval-bar">
+                <div>
+                  <span
+                    className={
+                      session?.status === "approved"
+                        ? "approved-dot"
+                        : "approval-dot"
+                    }
+                  />
+                  <strong>
+                    {session?.status === "approved"
+                      ? "Approved by property agent"
+                      : "Waiting for Agent Approval"}
+                  </strong>
+                  <span>{session?.shortlist.length} selected</span>
+                </div>
+                <button
+                  className="button primary"
+                  disabled={
+                    session?.status === "approved" || !session?.shortlist.length
+                  }
+                  onClick={() => action("approve")}
+                >
+                  <Check size={15} />
+                  Approve shortlist
+                </button>
+              </div>
+            )}
+        </section>
+        <aside className="activity panel">
+          <div className="panel-title">
+            <div>
+              <Activity size={17} />
+              <h2>Agent activity</h2>
+            </div>
+            <span className="live-badge">{busy ? "RUNNING" : "TRACE"}</span>
+          </div>
+          <div className="agent-status">
+            <span className={"status-icon " + (busy ? "running" : "")}>
+              <Sparkles size={18} />
+            </span>
+            <div>
+              <strong>{activeStatus}</strong>
+              <span>Single orchestrator · typed tools</span>
+            </div>
+            {busy ? (
+              <LoaderCircle size={16} className="spin" />
+            ) : (
+              <Check size={16} />
+            )}
+          </div>
+          <div className="trace-scroll">
+            {!currentTrace.length ? (
+              <>
+                <div className="trace-empty">
+                  <h3>Every recommendation has a trail.</h3>
+                  <p>
+                    Follow the agent as it understands, retrieves, checks and
+                    ranks.
+                  </p>
+                </div>
+                <div className="workflow-preview">
+                  {[
+                    ["01", "Understand", "Extract & update the buyer profile"],
+                    ["02", "Plan & retrieve", "Select tools for this brief"],
+                    [
+                      "03",
+                      "Verify & rank",
+                      "Enforce limits, score the evidence",
+                    ],
+                    ["04", "Human review", "Your approval. Your decision."],
+                  ].map(([n, title, copy]) => (
+                    <div key={n}>
+                      <span>{n}</span>
+                      <div>
+                        <strong>{title}</strong>
+                        <p>{copy}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : (
+              <div className="trace-list">
+                {grouped.map((t) => (
+                  <details
+                    key={t.id}
+                    className={"trace-item trace-" + t.stage.toLowerCase()}
+                  >
+                    <summary>
+                      <span className="trace-node">
+                        {t.stage === "TOOL" ? (
+                          <Code2 size={12} />
+                        ) : t.stage === "HUMAN" ? (
+                          <Users size={12} />
+                        ) : t.stage === "ERROR" || t.stage === "GUARDRAIL" ? (
+                          <TriangleAlert size={12} />
+                        ) : (
+                          <Check size={12} />
+                        )}
+                      </span>
+                      <div>
+                        <div className="trace-meta">
+                          <strong>
+                            {t.stage === "STATE" ? "MEMORY" : t.stage}
+                          </strong>
+                          <time>
+                            {new Date(t.timestamp).toLocaleTimeString("en-SG", {
+                              hour12: false,
+                            })}
+                          </time>
+                        </div>
+                        <p>
+                          {t.summary}
+                          {((t.data as { calls?: number })?.calls ?? 0) > 1 && (
+                            <span className="call-count">
+                              {(t.data as { calls: number }).calls} calls
+                            </span>
+                          )}
+                        </p>
+                      </div>
+                    </summary>
+                    {t.data !== undefined && (
+                      <pre>{JSON.stringify(t.data, null, 2)}</pre>
+                    )}
+                  </details>
+                ))}
+              </div>
+            )}
+          </div>
+          <div className="trace-footer">
+            <ShieldCheck size={15} />
+            <span>
+              Action summaries only.
+              <br />
+              No private model reasoning.
+            </span>
+            <Link href="/debug" aria-label="Open structured trace">
+              <ArrowUpRight size={17} />
+            </Link>
+          </div>
+        </aside>
+      </main>
+      <footer className="app-footer">
+        <span>
+          PROPMATCH AGENT <span>by 303forward</span>
+        </span>
+        <span>NUS-ISS Show Me Your Agents · D1IZFT7E</span>
+        <Link href="/debug">
+          Full audit trail <ArrowUpRight size={12} />
+        </Link>
+      </footer>
+      <Dialog open={!!detail} onOpenChange={(open) => !open && setDetail(null)}>
+        <DialogContent className="detail-dialog">
+          <DialogHeader>
+            <DialogTitle>{detail?.property.name}</DialogTitle>
+            <DialogDescription>
+              Evidence, match components and trade-offs. Synthetic data only.
+            </DialogDescription>
+          </DialogHeader>
+          {detail && (
+            <>
+              <div className="detail-hero">
+                <strong>{money(detail.property.price)}</strong>
+                <span>{detail.score}% buyer match</span>
+              </div>
+              <div className="score-breakdown">
+                {Object.entries(detail.components)
+                  .filter(([k]) => detail.weights[k] > 0)
+                  .map(([k, v]) => (
+                    <div key={k}>
+                      <span>
+                        {k}
+                        <small>weight {detail.weights[k]}</small>
+                      </span>
+                      <div className="score-track">
+                        <span style={{ width: v + "%" }} />
+                      </div>
+                      <strong>{v}%</strong>
+                    </div>
+                  ))}
+              </div>
+              <p className="micro">
+                Match score = weighted mean of the displayed components, rounded
+                to a whole number. It is not a probability or a model confidence
+                estimate.
+              </p>
+              <h4>Why recommended</h4>
+              <ul>
+                {detail.why.map((s) => (
+                  <li key={s}>{s}</li>
+                ))}
+              </ul>
+              <h4>Trade-offs & verification</h4>
+              <ul>
+                {detail.tradeoffs.map((s) => (
+                  <li key={s}>{s}</li>
+                ))}
+              </ul>
+              <h4>Source evidence</h4>
+              <div className="evidence-list">
+                {detail.evidence.map((e) => (
+                  <code key={e}>{e}</code>
+                ))}
+              </div>
+              <div className="detail-actions">
+                <button
+                  className="button"
+                  disabled={busy}
+                  onClick={() => {
+                    action("override", detail.property.id);
+                    setDetail(null);
+                  }}
+                >
+                  <ArrowUp size={15} />
+                  Move to first · human override
+                </button>
+                <button
+                  className="button primary"
+                  onClick={() => {
+                    action("shortlist", detail.property.id);
+                    setDetail(null);
+                  }}
+                  disabled={busy}
+                >
+                  <Bookmark size={15} />
+                  Toggle shortlist
+                </button>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+      <Dialog
+        open={!!comparison}
+        onOpenChange={(o) => !o && setComparison(null)}
+      >
+        <DialogContent className="compare-dialog">
+          <DialogHeader>
+            <DialogTitle>Compare the full picture</DialogTitle>
+            <DialogDescription>
+              Same buyer, same rules. A side-by-side view of verified
+              candidates.
+            </DialogDescription>
+          </DialogHeader>
+          {comparison && p && (
+            <PropertyComparison comparison={comparison} profile={p} />
+          )}
+        </DialogContent>
+      </Dialog>
+      <Dialog open={profileOpen} onOpenChange={setProfileOpen}>
+        <DialogContent className="detail-dialog">
+          <DialogHeader>
+            <DialogTitle>
+              Buyer profile · version {session?.version}
+            </DialogTitle>
+            <DialogDescription>
+              Validated structured memory, carried across conversation turns.
+            </DialogDescription>
+          </DialogHeader>
+          <pre className="profile-json">{JSON.stringify(p, null, 2)}</pre>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
 }

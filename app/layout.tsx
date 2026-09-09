@@ -3,7 +3,8 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "PropMatch Agent | 303forward",
-  description: "Evidence-backed property recommendations with verified constraints, transparent trade-offs and human approval.",
+  description:
+    "Evidence-backed property recommendations with verified constraints, transparent trade-offs and human approval.",
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",

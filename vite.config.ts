@@ -52,10 +52,23 @@ export default defineConfig(async () => {
   const { cloudflare } = await import("@cloudflare/vite-plugin");
 
   return {
-    resolve: { alias: [{ find: "./store-runtime", replacement: fileURLToPath(new URL("./lib/store-cloudflare.ts", import.meta.url)) }] },
+    resolve: {
+      alias: [
+        {
+          find: "./store-runtime",
+          replacement: fileURLToPath(
+            new URL("./lib/store-cloudflare.ts", import.meta.url),
+          ),
+        },
+      ],
+    },
     server: {
-      ...(managedLinux ? { host: "0.0.0.0", allowedHosts: ["terminal.local"] } : {}),
-      ...(isCodexSeatbeltSandbox ? { watch: { useFsEvents: false, usePolling: true } } : {}),
+      ...(managedLinux
+        ? { host: "0.0.0.0", allowedHosts: ["terminal.local"] }
+        : {}),
+      ...(isCodexSeatbeltSandbox
+        ? { watch: { useFsEvents: false, usePolling: true } }
+        : {}),
     },
     plugins: [
       vinext(),
