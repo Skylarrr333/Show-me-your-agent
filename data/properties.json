@@ -1,0 +1,4250 @@
+[
+  {
+    "id": "PM-001",
+    "name": "Clementi Grove",
+    "area": "Clementi",
+    "address": "10 Demo Clementi Lane (fictional)",
+    "price": 1150000,
+    "bedrooms": 1,
+    "bathrooms": 1,
+    "sizeSqft": 650,
+    "propertyType": "Condo",
+    "latitude": 1.315,
+    "longitude": 103.765,
+    "nearestMrt": "Clementi",
+    "mrtWalkingMinutes": 3,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "Clementi Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 180,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Clementi Market (fictional)",
+        "category": "food",
+        "distanceMeters": 120,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Clementi Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 450,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Clementi School (fictional)",
+        "category": "schools",
+        "distanceMeters": 600,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Clementi Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 900,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional grove residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 60
+  },
+  {
+    "id": "PM-002",
+    "name": "Clementi Terrace",
+    "area": "Clementi",
+    "address": "13 Demo Clementi Lane (fictional)",
+    "price": 1265000,
+    "bedrooms": 2,
+    "bathrooms": 2,
+    "sizeSqft": 770,
+    "propertyType": "Condo",
+    "latitude": 1.3159999999999998,
+    "longitude": 103.766,
+    "nearestMrt": "Clementi",
+    "mrtWalkingMinutes": 6,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "Clementi Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 281,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Clementi Market (fictional)",
+        "category": "food",
+        "distanceMeters": 210,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Clementi Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 570,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Clementi School (fictional)",
+        "category": "schools",
+        "distanceMeters": 690,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Clementi Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 980,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional terrace residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 67
+  },
+  {
+    "id": "PM-003",
+    "name": "Clementi Residences",
+    "area": "Clementi",
+    "address": "16 Demo Clementi Lane (fictional)",
+    "price": 1380000,
+    "bedrooms": 2,
+    "bathrooms": 2,
+    "sizeSqft": 890,
+    "propertyType": "Condo",
+    "latitude": 1.317,
+    "longitude": 103.767,
+    "nearestMrt": "Clementi",
+    "mrtWalkingMinutes": 4,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "Clementi Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 382,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Clementi Market (fictional)",
+        "category": "food",
+        "distanceMeters": 300,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Clementi Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 690,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Clementi School (fictional)",
+        "category": "schools",
+        "distanceMeters": 780,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Clementi Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 1060,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional residences residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 74
+  },
+  {
+    "id": "PM-004",
+    "name": "Clementi Gardens",
+    "area": "Clementi",
+    "address": "19 Demo Clementi Lane (fictional)",
+    "price": 1495000,
+    "bedrooms": 2,
+    "bathrooms": 2,
+    "sizeSqft": 1010,
+    "propertyType": "Condo",
+    "latitude": 1.3179999999999998,
+    "longitude": 103.768,
+    "nearestMrt": "Clementi",
+    "mrtWalkingMinutes": 9,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "Clementi Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 483,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Clementi Market (fictional)",
+        "category": "food",
+        "distanceMeters": 390,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Clementi Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 810,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Clementi School (fictional)",
+        "category": "schools",
+        "distanceMeters": 870,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Clementi Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 1140,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional gardens residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 81
+  },
+  {
+    "id": "PM-005",
+    "name": "Clementi Court",
+    "area": "Clementi",
+    "address": "22 Demo Clementi Lane (fictional)",
+    "price": 1610000,
+    "bedrooms": 3,
+    "bathrooms": 2,
+    "sizeSqft": 1130,
+    "propertyType": "Condo",
+    "latitude": 1.319,
+    "longitude": 103.769,
+    "nearestMrt": "Clementi",
+    "mrtWalkingMinutes": 5,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "Clementi Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 584,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Clementi Market (fictional)",
+        "category": "food",
+        "distanceMeters": 480,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Clementi Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 930,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Clementi School (fictional)",
+        "category": "schools",
+        "distanceMeters": 960,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Clementi Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 1220,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional court residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 88
+  },
+  {
+    "id": "PM-006",
+    "name": "Clementi Heights",
+    "area": "Clementi",
+    "address": "25 Demo Clementi Lane (fictional)",
+    "price": 1725000,
+    "bedrooms": 3,
+    "bathrooms": 2,
+    "sizeSqft": 1250,
+    "propertyType": "HDB",
+    "latitude": 1.3199999999999998,
+    "longitude": 103.77,
+    "nearestMrt": "Clementi",
+    "mrtWalkingMinutes": 12,
+    "availability": "unavailable",
+    "amenities": [
+      {
+        "name": "Clementi Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 685,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Clementi Market (fictional)",
+        "category": "food",
+        "distanceMeters": 570,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Clementi Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 1050,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Clementi School (fictional)",
+        "category": "schools",
+        "distanceMeters": 1050,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Clementi Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 1300,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional heights residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 95
+  },
+  {
+    "id": "PM-007",
+    "name": "Buona Vista Grove",
+    "area": "Buona Vista",
+    "address": "10 Demo Buona Vista Lane (fictional)",
+    "price": 1300000,
+    "bedrooms": 1,
+    "bathrooms": 1,
+    "sizeSqft": 650,
+    "propertyType": "Condo",
+    "latitude": 1.307,
+    "longitude": 103.79,
+    "nearestMrt": "Buona Vista",
+    "mrtWalkingMinutes": 3,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "Buona Vista Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 263,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Buona Vista Market (fictional)",
+        "category": "food",
+        "distanceMeters": 120,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Buona Vista Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 450,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Buona Vista School (fictional)",
+        "category": "schools",
+        "distanceMeters": 600,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Buona Vista Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 900,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional grove residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 63
+  },
+  {
+    "id": "PM-008",
+    "name": "Buona Vista Terrace",
+    "area": "Buona Vista",
+    "address": "13 Demo Buona Vista Lane (fictional)",
+    "price": 1415000,
+    "bedrooms": 2,
+    "bathrooms": 2,
+    "sizeSqft": 770,
+    "propertyType": "Condo",
+    "latitude": 1.3079999999999998,
+    "longitude": 103.79100000000001,
+    "nearestMrt": "Buona Vista",
+    "mrtWalkingMinutes": 6,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "Buona Vista Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 364,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Buona Vista Market (fictional)",
+        "category": "food",
+        "distanceMeters": 210,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Buona Vista Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 570,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Buona Vista School (fictional)",
+        "category": "schools",
+        "distanceMeters": 690,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Buona Vista Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 980,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional terrace residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 70
+  },
+  {
+    "id": "PM-009",
+    "name": "Buona Vista Residences",
+    "area": "Buona Vista",
+    "address": "16 Demo Buona Vista Lane (fictional)",
+    "price": 1530000,
+    "bedrooms": 2,
+    "bathrooms": 2,
+    "sizeSqft": 890,
+    "propertyType": "Condo",
+    "latitude": 1.309,
+    "longitude": 103.792,
+    "nearestMrt": "Buona Vista",
+    "mrtWalkingMinutes": 4,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "Buona Vista Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 465,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Buona Vista Market (fictional)",
+        "category": "food",
+        "distanceMeters": 300,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Buona Vista Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 690,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Buona Vista School (fictional)",
+        "category": "schools",
+        "distanceMeters": 780,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Buona Vista Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 1060,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional residences residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 77
+  },
+  {
+    "id": "PM-010",
+    "name": "Buona Vista Gardens",
+    "area": "Buona Vista",
+    "address": "19 Demo Buona Vista Lane (fictional)",
+    "price": 1645000,
+    "bedrooms": 2,
+    "bathrooms": 2,
+    "sizeSqft": 1010,
+    "propertyType": "Condo",
+    "latitude": 1.3099999999999998,
+    "longitude": 103.793,
+    "nearestMrt": "Buona Vista",
+    "mrtWalkingMinutes": 9,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "Buona Vista Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 566,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Buona Vista Market (fictional)",
+        "category": "food",
+        "distanceMeters": 390,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Buona Vista Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 810,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Buona Vista School (fictional)",
+        "category": "schools",
+        "distanceMeters": 870,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Buona Vista Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 1140,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional gardens residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 84
+  },
+  {
+    "id": "PM-011",
+    "name": "Buona Vista Court",
+    "area": "Buona Vista",
+    "address": "22 Demo Buona Vista Lane (fictional)",
+    "price": 1760000,
+    "bedrooms": 3,
+    "bathrooms": 2,
+    "sizeSqft": 1130,
+    "propertyType": "Condo",
+    "latitude": 1.311,
+    "longitude": 103.79400000000001,
+    "nearestMrt": "Buona Vista",
+    "mrtWalkingMinutes": 5,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "Buona Vista Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 667,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Buona Vista Market (fictional)",
+        "category": "food",
+        "distanceMeters": 480,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Buona Vista Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 930,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Buona Vista School (fictional)",
+        "category": "schools",
+        "distanceMeters": 960,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Buona Vista Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 1220,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional court residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 91
+  },
+  {
+    "id": "PM-012",
+    "name": "Buona Vista Heights",
+    "area": "Buona Vista",
+    "address": "25 Demo Buona Vista Lane (fictional)",
+    "price": 1875000,
+    "bedrooms": 3,
+    "bathrooms": 2,
+    "sizeSqft": 1250,
+    "propertyType": "HDB",
+    "latitude": 1.3119999999999998,
+    "longitude": 103.795,
+    "nearestMrt": "Buona Vista",
+    "mrtWalkingMinutes": 12,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "Buona Vista Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 768,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Buona Vista Market (fictional)",
+        "category": "food",
+        "distanceMeters": 570,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Buona Vista Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 1050,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Buona Vista School (fictional)",
+        "category": "schools",
+        "distanceMeters": 1050,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Buona Vista Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 1300,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional heights residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 61
+  },
+  {
+    "id": "PM-013",
+    "name": "Queenstown Grove",
+    "area": "Queenstown",
+    "address": "10 Demo Queenstown Lane (fictional)",
+    "price": 1320000,
+    "bedrooms": 1,
+    "bathrooms": 1,
+    "sizeSqft": 650,
+    "propertyType": "Condo",
+    "latitude": 1.295,
+    "longitude": 103.806,
+    "nearestMrt": "Queenstown",
+    "mrtWalkingMinutes": 3,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "Queenstown Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 346,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Queenstown Market (fictional)",
+        "category": "food",
+        "distanceMeters": 120,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Queenstown Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 450,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Queenstown School (fictional)",
+        "category": "schools",
+        "distanceMeters": 600,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Queenstown Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 900,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional grove residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 66
+  },
+  {
+    "id": "PM-014",
+    "name": "Queenstown Terrace",
+    "area": "Queenstown",
+    "address": "13 Demo Queenstown Lane (fictional)",
+    "price": 1435000,
+    "bedrooms": 2,
+    "bathrooms": 2,
+    "sizeSqft": 770,
+    "propertyType": "Condo",
+    "latitude": 1.2959999999999998,
+    "longitude": 103.807,
+    "nearestMrt": "Queenstown",
+    "mrtWalkingMinutes": 6,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "Queenstown Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 447,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Queenstown Market (fictional)",
+        "category": "food",
+        "distanceMeters": 210,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Queenstown Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 570,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Queenstown School (fictional)",
+        "category": "schools",
+        "distanceMeters": 690,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Queenstown Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 980,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional terrace residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 73
+  },
+  {
+    "id": "PM-015",
+    "name": "Queenstown Residences",
+    "area": "Queenstown",
+    "address": "16 Demo Queenstown Lane (fictional)",
+    "price": 1550000,
+    "bedrooms": 2,
+    "bathrooms": 2,
+    "sizeSqft": 890,
+    "propertyType": "Condo",
+    "latitude": 1.297,
+    "longitude": 103.80799999999999,
+    "nearestMrt": "Queenstown",
+    "mrtWalkingMinutes": 4,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "Queenstown Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 548,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Queenstown Market (fictional)",
+        "category": "food",
+        "distanceMeters": 300,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Queenstown Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 690,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Queenstown School (fictional)",
+        "category": "schools",
+        "distanceMeters": 780,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Queenstown Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 1060,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional residences residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 80
+  },
+  {
+    "id": "PM-016",
+    "name": "Queenstown Gardens",
+    "area": "Queenstown",
+    "address": "19 Demo Queenstown Lane (fictional)",
+    "price": 1665000,
+    "bedrooms": 2,
+    "bathrooms": 2,
+    "sizeSqft": 1010,
+    "propertyType": "Condo",
+    "latitude": 1.2979999999999998,
+    "longitude": 103.809,
+    "nearestMrt": "Queenstown",
+    "mrtWalkingMinutes": 9,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "Queenstown Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 649,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Queenstown Market (fictional)",
+        "category": "food",
+        "distanceMeters": 390,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Queenstown Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 810,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Queenstown School (fictional)",
+        "category": "schools",
+        "distanceMeters": 870,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Queenstown Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 1140,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional gardens residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 87
+  },
+  {
+    "id": "PM-017",
+    "name": "Queenstown Court",
+    "area": "Queenstown",
+    "address": "22 Demo Queenstown Lane (fictional)",
+    "price": 1780000,
+    "bedrooms": 3,
+    "bathrooms": 2,
+    "sizeSqft": 1130,
+    "propertyType": "Condo",
+    "latitude": 1.299,
+    "longitude": 103.81,
+    "nearestMrt": "Queenstown",
+    "mrtWalkingMinutes": 5,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "Queenstown Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 750,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Queenstown Market (fictional)",
+        "category": "food",
+        "distanceMeters": 480,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Queenstown Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 930,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Queenstown School (fictional)",
+        "category": "schools",
+        "distanceMeters": 960,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Queenstown Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 1220,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional court residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 94
+  },
+  {
+    "id": "PM-018",
+    "name": "Queenstown Heights",
+    "area": "Queenstown",
+    "address": "25 Demo Queenstown Lane (fictional)",
+    "price": 1895000,
+    "bedrooms": 3,
+    "bathrooms": 2,
+    "sizeSqft": 1250,
+    "propertyType": "HDB",
+    "latitude": 1.2999999999999998,
+    "longitude": 103.81099999999999,
+    "nearestMrt": "Queenstown",
+    "mrtWalkingMinutes": 12,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "Queenstown Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 851,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Queenstown Market (fictional)",
+        "category": "food",
+        "distanceMeters": 570,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Queenstown Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 1050,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Queenstown School (fictional)",
+        "category": "schools",
+        "distanceMeters": 1050,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Queenstown Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 1300,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional heights residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 64
+  },
+  {
+    "id": "PM-019",
+    "name": "Kent Ridge Grove",
+    "area": "Kent Ridge",
+    "address": "10 Demo Kent Ridge Lane (fictional)",
+    "price": 1250000,
+    "bedrooms": 1,
+    "bathrooms": 1,
+    "sizeSqft": 650,
+    "propertyType": "Condo",
+    "latitude": 1.293,
+    "longitude": 103.785,
+    "nearestMrt": "Kent Ridge",
+    "mrtWalkingMinutes": 3,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "Kent Ridge Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 429,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Kent Ridge Market (fictional)",
+        "category": "food",
+        "distanceMeters": 120,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Kent Ridge Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 450,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Kent Ridge School (fictional)",
+        "category": "schools",
+        "distanceMeters": 600,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Kent Ridge Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 900,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional grove residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 69
+  },
+  {
+    "id": "PM-020",
+    "name": "Kent Ridge Terrace",
+    "area": "Kent Ridge",
+    "address": "13 Demo Kent Ridge Lane (fictional)",
+    "price": 1365000,
+    "bedrooms": 2,
+    "bathrooms": 2,
+    "sizeSqft": 770,
+    "propertyType": "Condo",
+    "latitude": 1.2939999999999998,
+    "longitude": 103.786,
+    "nearestMrt": "Kent Ridge",
+    "mrtWalkingMinutes": 6,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "Kent Ridge Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 530,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Kent Ridge Market (fictional)",
+        "category": "food",
+        "distanceMeters": 210,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Kent Ridge Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 570,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Kent Ridge School (fictional)",
+        "category": "schools",
+        "distanceMeters": 690,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Kent Ridge Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 980,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional terrace residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 76
+  },
+  {
+    "id": "PM-021",
+    "name": "Kent Ridge Residences",
+    "area": "Kent Ridge",
+    "address": "16 Demo Kent Ridge Lane (fictional)",
+    "price": 1480000,
+    "bedrooms": 2,
+    "bathrooms": 2,
+    "sizeSqft": 890,
+    "propertyType": "Condo",
+    "latitude": 1.295,
+    "longitude": 103.78699999999999,
+    "nearestMrt": "Kent Ridge",
+    "mrtWalkingMinutes": 4,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "Kent Ridge Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 631,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Kent Ridge Market (fictional)",
+        "category": "food",
+        "distanceMeters": 300,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Kent Ridge Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 690,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Kent Ridge School (fictional)",
+        "category": "schools",
+        "distanceMeters": 780,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Kent Ridge Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 1060,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional residences residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 83
+  },
+  {
+    "id": "PM-022",
+    "name": "Kent Ridge Gardens",
+    "area": "Kent Ridge",
+    "address": "19 Demo Kent Ridge Lane (fictional)",
+    "price": 1595000,
+    "bedrooms": 2,
+    "bathrooms": 2,
+    "sizeSqft": 1010,
+    "propertyType": "Condo",
+    "latitude": 1.2959999999999998,
+    "longitude": 103.788,
+    "nearestMrt": "Kent Ridge",
+    "mrtWalkingMinutes": 9,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "Kent Ridge Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 732,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Kent Ridge Market (fictional)",
+        "category": "food",
+        "distanceMeters": 390,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Kent Ridge Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 810,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Kent Ridge School (fictional)",
+        "category": "schools",
+        "distanceMeters": 870,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Kent Ridge Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 1140,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional gardens residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 90
+  },
+  {
+    "id": "PM-023",
+    "name": "Kent Ridge Court",
+    "area": "Kent Ridge",
+    "address": "22 Demo Kent Ridge Lane (fictional)",
+    "price": 1710000,
+    "bedrooms": 3,
+    "bathrooms": 2,
+    "sizeSqft": 1130,
+    "propertyType": "Condo",
+    "latitude": 1.297,
+    "longitude": 103.789,
+    "nearestMrt": "Kent Ridge",
+    "mrtWalkingMinutes": 5,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "Kent Ridge Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 833,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Kent Ridge Market (fictional)",
+        "category": "food",
+        "distanceMeters": 480,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Kent Ridge Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 930,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Kent Ridge School (fictional)",
+        "category": "schools",
+        "distanceMeters": 960,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Kent Ridge Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 1220,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional court residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 60
+  },
+  {
+    "id": "PM-024",
+    "name": "Kent Ridge Heights",
+    "area": "Kent Ridge",
+    "address": "25 Demo Kent Ridge Lane (fictional)",
+    "price": 1825000,
+    "bedrooms": 3,
+    "bathrooms": 2,
+    "sizeSqft": 1250,
+    "propertyType": "HDB",
+    "latitude": 1.2979999999999998,
+    "longitude": 103.78999999999999,
+    "nearestMrt": "Kent Ridge",
+    "mrtWalkingMinutes": 12,
+    "availability": "unavailable",
+    "amenities": [
+      {
+        "name": "Kent Ridge Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 934,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Kent Ridge Market (fictional)",
+        "category": "food",
+        "distanceMeters": 570,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Kent Ridge Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 1050,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Kent Ridge School (fictional)",
+        "category": "schools",
+        "distanceMeters": 1050,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Kent Ridge Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 1300,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional heights residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 67
+  },
+  {
+    "id": "PM-025",
+    "name": "Jurong East Grove",
+    "area": "Jurong East",
+    "address": "10 Demo Jurong East Lane (fictional)",
+    "price": 980000,
+    "bedrooms": 1,
+    "bathrooms": 1,
+    "sizeSqft": 650,
+    "propertyType": "Condo",
+    "latitude": 1.333,
+    "longitude": 103.742,
+    "nearestMrt": "Jurong East",
+    "mrtWalkingMinutes": 3,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "Jurong East Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 512,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Jurong East Market (fictional)",
+        "category": "food",
+        "distanceMeters": 120,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Jurong East Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 450,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Jurong East School (fictional)",
+        "category": "schools",
+        "distanceMeters": 600,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Jurong East Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 900,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional grove residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 72
+  },
+  {
+    "id": "PM-026",
+    "name": "Jurong East Terrace",
+    "area": "Jurong East",
+    "address": "13 Demo Jurong East Lane (fictional)",
+    "price": 1095000,
+    "bedrooms": 2,
+    "bathrooms": 2,
+    "sizeSqft": 770,
+    "propertyType": "Condo",
+    "latitude": 1.3339999999999999,
+    "longitude": 103.74300000000001,
+    "nearestMrt": "Jurong East",
+    "mrtWalkingMinutes": 6,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "Jurong East Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 613,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Jurong East Market (fictional)",
+        "category": "food",
+        "distanceMeters": 210,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Jurong East Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 570,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Jurong East School (fictional)",
+        "category": "schools",
+        "distanceMeters": 690,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Jurong East Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 980,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional terrace residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 79
+  },
+  {
+    "id": "PM-027",
+    "name": "Jurong East Residences",
+    "area": "Jurong East",
+    "address": "16 Demo Jurong East Lane (fictional)",
+    "price": 1210000,
+    "bedrooms": 2,
+    "bathrooms": 2,
+    "sizeSqft": 890,
+    "propertyType": "Condo",
+    "latitude": 1.335,
+    "longitude": 103.744,
+    "nearestMrt": "Jurong East",
+    "mrtWalkingMinutes": 4,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "Jurong East Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 714,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Jurong East Market (fictional)",
+        "category": "food",
+        "distanceMeters": 300,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Jurong East Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 690,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Jurong East School (fictional)",
+        "category": "schools",
+        "distanceMeters": 780,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Jurong East Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 1060,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional residences residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 86
+  },
+  {
+    "id": "PM-028",
+    "name": "Jurong East Gardens",
+    "area": "Jurong East",
+    "address": "19 Demo Jurong East Lane (fictional)",
+    "price": 1325000,
+    "bedrooms": 2,
+    "bathrooms": 2,
+    "sizeSqft": 1010,
+    "propertyType": "Condo",
+    "latitude": 1.3359999999999999,
+    "longitude": 103.745,
+    "nearestMrt": "Jurong East",
+    "mrtWalkingMinutes": 9,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "Jurong East Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 815,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Jurong East Market (fictional)",
+        "category": "food",
+        "distanceMeters": 390,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Jurong East Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 810,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Jurong East School (fictional)",
+        "category": "schools",
+        "distanceMeters": 870,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Jurong East Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 1140,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional gardens residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 93
+  },
+  {
+    "id": "PM-029",
+    "name": "Jurong East Court",
+    "area": "Jurong East",
+    "address": "22 Demo Jurong East Lane (fictional)",
+    "price": 1440000,
+    "bedrooms": 3,
+    "bathrooms": 2,
+    "sizeSqft": 1130,
+    "propertyType": "Condo",
+    "latitude": 1.337,
+    "longitude": 103.74600000000001,
+    "nearestMrt": "Jurong East",
+    "mrtWalkingMinutes": 5,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "Jurong East Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 916,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Jurong East Market (fictional)",
+        "category": "food",
+        "distanceMeters": 480,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Jurong East Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 930,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Jurong East School (fictional)",
+        "category": "schools",
+        "distanceMeters": 960,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Jurong East Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 1220,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional court residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 63
+  },
+  {
+    "id": "PM-030",
+    "name": "Jurong East Heights",
+    "area": "Jurong East",
+    "address": "25 Demo Jurong East Lane (fictional)",
+    "price": 1555000,
+    "bedrooms": 3,
+    "bathrooms": 2,
+    "sizeSqft": 1250,
+    "propertyType": "HDB",
+    "latitude": 1.3379999999999999,
+    "longitude": 103.747,
+    "nearestMrt": "Jurong East",
+    "mrtWalkingMinutes": 12,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "Jurong East Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 1017,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Jurong East Market (fictional)",
+        "category": "food",
+        "distanceMeters": 570,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Jurong East Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 1050,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Jurong East School (fictional)",
+        "category": "schools",
+        "distanceMeters": 1050,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Jurong East Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 1300,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional heights residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 70
+  },
+  {
+    "id": "PM-031",
+    "name": "Bishan Grove",
+    "area": "Bishan",
+    "address": "10 Demo Bishan Lane (fictional)",
+    "price": 1380000,
+    "bedrooms": 1,
+    "bathrooms": 1,
+    "sizeSqft": 650,
+    "propertyType": "Condo",
+    "latitude": 1.351,
+    "longitude": 103.849,
+    "nearestMrt": "Bishan",
+    "mrtWalkingMinutes": 3,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "Bishan Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 595,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Bishan Market (fictional)",
+        "category": "food",
+        "distanceMeters": 120,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Bishan Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 450,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Bishan School (fictional)",
+        "category": "schools",
+        "distanceMeters": 600,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Bishan Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 900,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional grove residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 75
+  },
+  {
+    "id": "PM-032",
+    "name": "Bishan Terrace",
+    "area": "Bishan",
+    "address": "13 Demo Bishan Lane (fictional)",
+    "price": 1495000,
+    "bedrooms": 2,
+    "bathrooms": 2,
+    "sizeSqft": 770,
+    "propertyType": "Condo",
+    "latitude": 1.3519999999999999,
+    "longitude": 103.85000000000001,
+    "nearestMrt": "Bishan",
+    "mrtWalkingMinutes": 6,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "Bishan Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 696,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Bishan Market (fictional)",
+        "category": "food",
+        "distanceMeters": 210,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Bishan Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 570,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Bishan School (fictional)",
+        "category": "schools",
+        "distanceMeters": 690,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Bishan Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 980,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional terrace residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 82
+  },
+  {
+    "id": "PM-033",
+    "name": "Bishan Residences",
+    "area": "Bishan",
+    "address": "16 Demo Bishan Lane (fictional)",
+    "price": 1610000,
+    "bedrooms": 2,
+    "bathrooms": 2,
+    "sizeSqft": 890,
+    "propertyType": "Condo",
+    "latitude": 1.353,
+    "longitude": 103.851,
+    "nearestMrt": "Bishan",
+    "mrtWalkingMinutes": 4,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "Bishan Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 797,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Bishan Market (fictional)",
+        "category": "food",
+        "distanceMeters": 300,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Bishan Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 690,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Bishan School (fictional)",
+        "category": "schools",
+        "distanceMeters": 780,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Bishan Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 1060,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional residences residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 89
+  },
+  {
+    "id": "PM-034",
+    "name": "Bishan Gardens",
+    "area": "Bishan",
+    "address": "19 Demo Bishan Lane (fictional)",
+    "price": 1725000,
+    "bedrooms": 2,
+    "bathrooms": 2,
+    "sizeSqft": 1010,
+    "propertyType": "Condo",
+    "latitude": 1.3539999999999999,
+    "longitude": 103.852,
+    "nearestMrt": "Bishan",
+    "mrtWalkingMinutes": 9,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "Bishan Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 898,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Bishan Market (fictional)",
+        "category": "food",
+        "distanceMeters": 390,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Bishan Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 810,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Bishan School (fictional)",
+        "category": "schools",
+        "distanceMeters": 870,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Bishan Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 1140,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional gardens residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 96
+  },
+  {
+    "id": "PM-035",
+    "name": "Bishan Court",
+    "area": "Bishan",
+    "address": "22 Demo Bishan Lane (fictional)",
+    "price": 1840000,
+    "bedrooms": 3,
+    "bathrooms": 2,
+    "sizeSqft": 1130,
+    "propertyType": "Condo",
+    "latitude": 1.355,
+    "longitude": 103.85300000000001,
+    "nearestMrt": "Bishan",
+    "mrtWalkingMinutes": 5,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "Bishan Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 999,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Bishan Market (fictional)",
+        "category": "food",
+        "distanceMeters": 480,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Bishan Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 930,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Bishan School (fictional)",
+        "category": "schools",
+        "distanceMeters": 960,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Bishan Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 1220,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional court residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 66
+  },
+  {
+    "id": "PM-036",
+    "name": "Bishan Heights",
+    "area": "Bishan",
+    "address": "25 Demo Bishan Lane (fictional)",
+    "price": 1955000,
+    "bedrooms": 3,
+    "bathrooms": 2,
+    "sizeSqft": 1250,
+    "propertyType": "HDB",
+    "latitude": 1.3559999999999999,
+    "longitude": 103.854,
+    "nearestMrt": "Bishan",
+    "mrtWalkingMinutes": 12,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "Bishan Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 1100,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Bishan Market (fictional)",
+        "category": "food",
+        "distanceMeters": 570,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Bishan Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 1050,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Bishan School (fictional)",
+        "category": "schools",
+        "distanceMeters": 1050,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Bishan Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 1300,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional heights residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 73
+  },
+  {
+    "id": "PM-037",
+    "name": "Toa Payoh Grove",
+    "area": "Toa Payoh",
+    "address": "10 Demo Toa Payoh Lane (fictional)",
+    "price": 1200000,
+    "bedrooms": 1,
+    "bathrooms": 1,
+    "sizeSqft": 650,
+    "propertyType": "Condo",
+    "latitude": 1.332,
+    "longitude": 103.848,
+    "nearestMrt": "Toa Payoh",
+    "mrtWalkingMinutes": 3,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "Toa Payoh Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 678,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Toa Payoh Market (fictional)",
+        "category": "food",
+        "distanceMeters": 120,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Toa Payoh Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 450,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Toa Payoh School (fictional)",
+        "category": "schools",
+        "distanceMeters": 600,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Toa Payoh Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 900,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional grove residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 78
+  },
+  {
+    "id": "PM-038",
+    "name": "Toa Payoh Terrace",
+    "area": "Toa Payoh",
+    "address": "13 Demo Toa Payoh Lane (fictional)",
+    "price": 1315000,
+    "bedrooms": 2,
+    "bathrooms": 2,
+    "sizeSqft": 770,
+    "propertyType": "Condo",
+    "latitude": 1.333,
+    "longitude": 103.849,
+    "nearestMrt": "Toa Payoh",
+    "mrtWalkingMinutes": 6,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "Toa Payoh Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 779,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Toa Payoh Market (fictional)",
+        "category": "food",
+        "distanceMeters": 210,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Toa Payoh Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 570,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Toa Payoh School (fictional)",
+        "category": "schools",
+        "distanceMeters": 690,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Toa Payoh Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 980,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional terrace residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 85
+  },
+  {
+    "id": "PM-039",
+    "name": "Toa Payoh Residences",
+    "area": "Toa Payoh",
+    "address": "16 Demo Toa Payoh Lane (fictional)",
+    "price": 1430000,
+    "bedrooms": 2,
+    "bathrooms": 2,
+    "sizeSqft": 890,
+    "propertyType": "Condo",
+    "latitude": 1.334,
+    "longitude": 103.85,
+    "nearestMrt": "Toa Payoh",
+    "mrtWalkingMinutes": 4,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "Toa Payoh Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 880,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Toa Payoh Market (fictional)",
+        "category": "food",
+        "distanceMeters": 300,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Toa Payoh Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 690,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Toa Payoh School (fictional)",
+        "category": "schools",
+        "distanceMeters": 780,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Toa Payoh Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 1060,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional residences residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 92
+  },
+  {
+    "id": "PM-040",
+    "name": "Toa Payoh Gardens",
+    "area": "Toa Payoh",
+    "address": "19 Demo Toa Payoh Lane (fictional)",
+    "price": 1545000,
+    "bedrooms": 2,
+    "bathrooms": 2,
+    "sizeSqft": 1010,
+    "propertyType": "Condo",
+    "latitude": 1.335,
+    "longitude": 103.851,
+    "nearestMrt": "Toa Payoh",
+    "mrtWalkingMinutes": 9,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "Toa Payoh Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 981,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Toa Payoh Market (fictional)",
+        "category": "food",
+        "distanceMeters": 390,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Toa Payoh Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 810,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Toa Payoh School (fictional)",
+        "category": "schools",
+        "distanceMeters": 870,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Toa Payoh Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 1140,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional gardens residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 62
+  },
+  {
+    "id": "PM-041",
+    "name": "Toa Payoh Court",
+    "area": "Toa Payoh",
+    "address": "22 Demo Toa Payoh Lane (fictional)",
+    "price": 1660000,
+    "bedrooms": 3,
+    "bathrooms": 2,
+    "sizeSqft": 1130,
+    "propertyType": "Condo",
+    "latitude": 1.336,
+    "longitude": 103.852,
+    "nearestMrt": "Toa Payoh",
+    "mrtWalkingMinutes": 5,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "Toa Payoh Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 1082,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Toa Payoh Market (fictional)",
+        "category": "food",
+        "distanceMeters": 480,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Toa Payoh Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 930,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Toa Payoh School (fictional)",
+        "category": "schools",
+        "distanceMeters": 960,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Toa Payoh Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 1220,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional court residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 69
+  },
+  {
+    "id": "PM-042",
+    "name": "Toa Payoh Heights",
+    "area": "Toa Payoh",
+    "address": "25 Demo Toa Payoh Lane (fictional)",
+    "price": 1775000,
+    "bedrooms": 3,
+    "bathrooms": 2,
+    "sizeSqft": 1250,
+    "propertyType": "HDB",
+    "latitude": 1.337,
+    "longitude": 103.853,
+    "nearestMrt": "Toa Payoh",
+    "mrtWalkingMinutes": 12,
+    "availability": "unavailable",
+    "amenities": [
+      {
+        "name": "Toa Payoh Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 1183,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Toa Payoh Market (fictional)",
+        "category": "food",
+        "distanceMeters": 570,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Toa Payoh Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 1050,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Toa Payoh School (fictional)",
+        "category": "schools",
+        "distanceMeters": 1050,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Toa Payoh Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 1300,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional heights residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 76
+  },
+  {
+    "id": "PM-043",
+    "name": "Novena Grove",
+    "area": "Novena",
+    "address": "10 Demo Novena Lane (fictional)",
+    "price": 1490000,
+    "bedrooms": 1,
+    "bathrooms": 1,
+    "sizeSqft": 650,
+    "propertyType": "Condo",
+    "latitude": 1.32,
+    "longitude": 103.844,
+    "nearestMrt": "Novena",
+    "mrtWalkingMinutes": 3,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "Novena Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 761,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Novena Market (fictional)",
+        "category": "food",
+        "distanceMeters": 120,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Novena Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 450,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Novena School (fictional)",
+        "category": "schools",
+        "distanceMeters": 600,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Novena Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 900,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional grove residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 81
+  },
+  {
+    "id": "PM-044",
+    "name": "Novena Terrace",
+    "area": "Novena",
+    "address": "13 Demo Novena Lane (fictional)",
+    "price": 1605000,
+    "bedrooms": 2,
+    "bathrooms": 2,
+    "sizeSqft": 770,
+    "propertyType": "Condo",
+    "latitude": 1.321,
+    "longitude": 103.845,
+    "nearestMrt": "Novena",
+    "mrtWalkingMinutes": 6,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "Novena Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 862,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Novena Market (fictional)",
+        "category": "food",
+        "distanceMeters": 210,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Novena Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 570,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Novena School (fictional)",
+        "category": "schools",
+        "distanceMeters": 690,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Novena Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 980,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional terrace residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 88
+  },
+  {
+    "id": "PM-045",
+    "name": "Novena Residences",
+    "area": "Novena",
+    "address": "16 Demo Novena Lane (fictional)",
+    "price": 1720000,
+    "bedrooms": 2,
+    "bathrooms": 2,
+    "sizeSqft": 890,
+    "propertyType": "Condo",
+    "latitude": 1.322,
+    "longitude": 103.84599999999999,
+    "nearestMrt": "Novena",
+    "mrtWalkingMinutes": 4,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "Novena Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 963,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Novena Market (fictional)",
+        "category": "food",
+        "distanceMeters": 300,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Novena Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 690,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Novena School (fictional)",
+        "category": "schools",
+        "distanceMeters": 780,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Novena Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 1060,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional residences residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 95
+  },
+  {
+    "id": "PM-046",
+    "name": "Novena Gardens",
+    "area": "Novena",
+    "address": "19 Demo Novena Lane (fictional)",
+    "price": 1835000,
+    "bedrooms": 2,
+    "bathrooms": 2,
+    "sizeSqft": 1010,
+    "propertyType": "Condo",
+    "latitude": 1.323,
+    "longitude": 103.847,
+    "nearestMrt": "Novena",
+    "mrtWalkingMinutes": 9,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "Novena Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 1064,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Novena Market (fictional)",
+        "category": "food",
+        "distanceMeters": 390,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Novena Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 810,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Novena School (fictional)",
+        "category": "schools",
+        "distanceMeters": 870,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Novena Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 1140,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional gardens residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 65
+  },
+  {
+    "id": "PM-047",
+    "name": "Novena Court",
+    "area": "Novena",
+    "address": "22 Demo Novena Lane (fictional)",
+    "price": 1950000,
+    "bedrooms": 3,
+    "bathrooms": 2,
+    "sizeSqft": 1130,
+    "propertyType": "Condo",
+    "latitude": 1.324,
+    "longitude": 103.848,
+    "nearestMrt": "Novena",
+    "mrtWalkingMinutes": 5,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "Novena Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 1165,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Novena Market (fictional)",
+        "category": "food",
+        "distanceMeters": 480,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Novena Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 930,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Novena School (fictional)",
+        "category": "schools",
+        "distanceMeters": 960,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Novena Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 1220,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional court residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 72
+  },
+  {
+    "id": "PM-048",
+    "name": "Novena Heights",
+    "area": "Novena",
+    "address": "25 Demo Novena Lane (fictional)",
+    "price": 2065000,
+    "bedrooms": 3,
+    "bathrooms": 2,
+    "sizeSqft": 1250,
+    "propertyType": "HDB",
+    "latitude": 1.325,
+    "longitude": 103.84899999999999,
+    "nearestMrt": "Novena",
+    "mrtWalkingMinutes": 12,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "Novena Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 1266,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Novena Market (fictional)",
+        "category": "food",
+        "distanceMeters": 570,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Novena Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 1050,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Novena School (fictional)",
+        "category": "schools",
+        "distanceMeters": 1050,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Novena Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 1300,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional heights residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 79
+  },
+  {
+    "id": "PM-049",
+    "name": "River Valley Grove",
+    "area": "River Valley",
+    "address": "10 Demo River Valley Lane (fictional)",
+    "price": 1570000,
+    "bedrooms": 1,
+    "bathrooms": 1,
+    "sizeSqft": 650,
+    "propertyType": "Condo",
+    "latitude": 1.296,
+    "longitude": 103.835,
+    "nearestMrt": "Great World",
+    "mrtWalkingMinutes": 3,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "River Valley Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 844,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "River Valley Market (fictional)",
+        "category": "food",
+        "distanceMeters": 120,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "River Valley Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 450,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "River Valley School (fictional)",
+        "category": "schools",
+        "distanceMeters": 600,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "River Valley Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 900,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional grove residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 84
+  },
+  {
+    "id": "PM-050",
+    "name": "River Valley Terrace",
+    "area": "River Valley",
+    "address": "13 Demo River Valley Lane (fictional)",
+    "price": 1685000,
+    "bedrooms": 2,
+    "bathrooms": 2,
+    "sizeSqft": 770,
+    "propertyType": "Condo",
+    "latitude": 1.297,
+    "longitude": 103.836,
+    "nearestMrt": "Great World",
+    "mrtWalkingMinutes": 6,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "River Valley Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 945,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "River Valley Market (fictional)",
+        "category": "food",
+        "distanceMeters": 210,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "River Valley Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 570,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "River Valley School (fictional)",
+        "category": "schools",
+        "distanceMeters": 690,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "River Valley Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 980,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional terrace residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 91
+  },
+  {
+    "id": "PM-051",
+    "name": "River Valley Residences",
+    "area": "River Valley",
+    "address": "16 Demo River Valley Lane (fictional)",
+    "price": 1800000,
+    "bedrooms": 2,
+    "bathrooms": 2,
+    "sizeSqft": 890,
+    "propertyType": "Condo",
+    "latitude": 1.298,
+    "longitude": 103.83699999999999,
+    "nearestMrt": "Great World",
+    "mrtWalkingMinutes": 4,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "River Valley Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 1046,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "River Valley Market (fictional)",
+        "category": "food",
+        "distanceMeters": 300,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "River Valley Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 690,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "River Valley School (fictional)",
+        "category": "schools",
+        "distanceMeters": 780,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "River Valley Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 1060,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional residences residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 61
+  },
+  {
+    "id": "PM-052",
+    "name": "River Valley Gardens",
+    "area": "River Valley",
+    "address": "19 Demo River Valley Lane (fictional)",
+    "price": 1915000,
+    "bedrooms": 2,
+    "bathrooms": 2,
+    "sizeSqft": 1010,
+    "propertyType": "Condo",
+    "latitude": 1.299,
+    "longitude": 103.838,
+    "nearestMrt": "Great World",
+    "mrtWalkingMinutes": 9,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "River Valley Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 1147,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "River Valley Market (fictional)",
+        "category": "food",
+        "distanceMeters": 390,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "River Valley Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 810,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "River Valley School (fictional)",
+        "category": "schools",
+        "distanceMeters": 870,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "River Valley Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 1140,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional gardens residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 68
+  },
+  {
+    "id": "PM-053",
+    "name": "River Valley Court",
+    "area": "River Valley",
+    "address": "22 Demo River Valley Lane (fictional)",
+    "price": 2030000,
+    "bedrooms": 3,
+    "bathrooms": 2,
+    "sizeSqft": 1130,
+    "propertyType": "Condo",
+    "latitude": 1.3,
+    "longitude": 103.839,
+    "nearestMrt": "Great World",
+    "mrtWalkingMinutes": 5,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "River Valley Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 1248,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "River Valley Market (fictional)",
+        "category": "food",
+        "distanceMeters": 480,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "River Valley Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 930,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "River Valley School (fictional)",
+        "category": "schools",
+        "distanceMeters": 960,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "River Valley Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 1220,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional court residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 75
+  },
+  {
+    "id": "PM-054",
+    "name": "River Valley Heights",
+    "area": "River Valley",
+    "address": "25 Demo River Valley Lane (fictional)",
+    "price": 2145000,
+    "bedrooms": 3,
+    "bathrooms": 2,
+    "sizeSqft": 1250,
+    "propertyType": "HDB",
+    "latitude": 1.301,
+    "longitude": 103.83999999999999,
+    "nearestMrt": "Great World",
+    "mrtWalkingMinutes": 12,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "River Valley Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 249,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "River Valley Market (fictional)",
+        "category": "food",
+        "distanceMeters": 570,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "River Valley Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 1050,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "River Valley School (fictional)",
+        "category": "schools",
+        "distanceMeters": 1050,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "River Valley Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 1300,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional heights residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 82
+  },
+  {
+    "id": "PM-055",
+    "name": "Tiong Bahru Grove",
+    "area": "Tiong Bahru",
+    "address": "10 Demo Tiong Bahru Lane (fictional)",
+    "price": 1360000,
+    "bedrooms": 1,
+    "bathrooms": 1,
+    "sizeSqft": 650,
+    "propertyType": "Condo",
+    "latitude": 1.286,
+    "longitude": 103.827,
+    "nearestMrt": "Tiong Bahru",
+    "mrtWalkingMinutes": 3,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "Tiong Bahru Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 927,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Tiong Bahru Market (fictional)",
+        "category": "food",
+        "distanceMeters": 120,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Tiong Bahru Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 450,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Tiong Bahru School (fictional)",
+        "category": "schools",
+        "distanceMeters": 600,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Tiong Bahru Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 900,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional grove residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 87
+  },
+  {
+    "id": "PM-056",
+    "name": "Tiong Bahru Terrace",
+    "area": "Tiong Bahru",
+    "address": "13 Demo Tiong Bahru Lane (fictional)",
+    "price": 1475000,
+    "bedrooms": 2,
+    "bathrooms": 2,
+    "sizeSqft": 770,
+    "propertyType": "Condo",
+    "latitude": 1.287,
+    "longitude": 103.828,
+    "nearestMrt": "Tiong Bahru",
+    "mrtWalkingMinutes": 6,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "Tiong Bahru Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 1028,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Tiong Bahru Market (fictional)",
+        "category": "food",
+        "distanceMeters": 210,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Tiong Bahru Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 570,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Tiong Bahru School (fictional)",
+        "category": "schools",
+        "distanceMeters": 690,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Tiong Bahru Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 980,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional terrace residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 94
+  },
+  {
+    "id": "PM-057",
+    "name": "Tiong Bahru Residences",
+    "area": "Tiong Bahru",
+    "address": "16 Demo Tiong Bahru Lane (fictional)",
+    "price": 1590000,
+    "bedrooms": 2,
+    "bathrooms": 2,
+    "sizeSqft": 890,
+    "propertyType": "Condo",
+    "latitude": 1.288,
+    "longitude": 103.829,
+    "nearestMrt": "Tiong Bahru",
+    "mrtWalkingMinutes": 4,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "Tiong Bahru Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 1129,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Tiong Bahru Market (fictional)",
+        "category": "food",
+        "distanceMeters": 300,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Tiong Bahru Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 690,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Tiong Bahru School (fictional)",
+        "category": "schools",
+        "distanceMeters": 780,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Tiong Bahru Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 1060,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional residences residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 64
+  },
+  {
+    "id": "PM-058",
+    "name": "Tiong Bahru Gardens",
+    "area": "Tiong Bahru",
+    "address": "19 Demo Tiong Bahru Lane (fictional)",
+    "price": 1705000,
+    "bedrooms": 2,
+    "bathrooms": 2,
+    "sizeSqft": 1010,
+    "propertyType": "Condo",
+    "latitude": 1.289,
+    "longitude": 103.83,
+    "nearestMrt": "Tiong Bahru",
+    "mrtWalkingMinutes": 9,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "Tiong Bahru Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 1230,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Tiong Bahru Market (fictional)",
+        "category": "food",
+        "distanceMeters": 390,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Tiong Bahru Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 810,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Tiong Bahru School (fictional)",
+        "category": "schools",
+        "distanceMeters": 870,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Tiong Bahru Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 1140,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional gardens residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 71
+  },
+  {
+    "id": "PM-059",
+    "name": "Tiong Bahru Court",
+    "area": "Tiong Bahru",
+    "address": "22 Demo Tiong Bahru Lane (fictional)",
+    "price": 1820000,
+    "bedrooms": 3,
+    "bathrooms": 2,
+    "sizeSqft": 1130,
+    "propertyType": "Condo",
+    "latitude": 1.29,
+    "longitude": 103.831,
+    "nearestMrt": "Tiong Bahru",
+    "mrtWalkingMinutes": 5,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "Tiong Bahru Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 231,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Tiong Bahru Market (fictional)",
+        "category": "food",
+        "distanceMeters": 480,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Tiong Bahru Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 930,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Tiong Bahru School (fictional)",
+        "category": "schools",
+        "distanceMeters": 960,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Tiong Bahru Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 1220,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional court residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 78
+  },
+  {
+    "id": "PM-060",
+    "name": "Tiong Bahru Heights",
+    "area": "Tiong Bahru",
+    "address": "25 Demo Tiong Bahru Lane (fictional)",
+    "price": 1935000,
+    "bedrooms": 3,
+    "bathrooms": 2,
+    "sizeSqft": 1250,
+    "propertyType": "HDB",
+    "latitude": 1.291,
+    "longitude": 103.832,
+    "nearestMrt": "Tiong Bahru",
+    "mrtWalkingMinutes": 12,
+    "availability": "unavailable",
+    "amenities": [
+      {
+        "name": "Tiong Bahru Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 332,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Tiong Bahru Market (fictional)",
+        "category": "food",
+        "distanceMeters": 570,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Tiong Bahru Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 1050,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Tiong Bahru School (fictional)",
+        "category": "schools",
+        "distanceMeters": 1050,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Tiong Bahru Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 1300,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional heights residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 85
+  },
+  {
+    "id": "PM-061",
+    "name": "CBD Fringe Grove",
+    "area": "CBD Fringe",
+    "address": "10 Demo CBD Fringe Lane (fictional)",
+    "price": 1450000,
+    "bedrooms": 1,
+    "bathrooms": 1,
+    "sizeSqft": 650,
+    "propertyType": "Condo",
+    "latitude": 1.279,
+    "longitude": 103.843,
+    "nearestMrt": "Outram Park",
+    "mrtWalkingMinutes": 3,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "CBD Fringe Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 1010,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "CBD Fringe Market (fictional)",
+        "category": "food",
+        "distanceMeters": 120,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "CBD Fringe Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 450,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "CBD Fringe School (fictional)",
+        "category": "schools",
+        "distanceMeters": 600,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "CBD Fringe Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 900,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional grove residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 90
+  },
+  {
+    "id": "PM-062",
+    "name": "CBD Fringe Terrace",
+    "area": "CBD Fringe",
+    "address": "13 Demo CBD Fringe Lane (fictional)",
+    "price": 1565000,
+    "bedrooms": 2,
+    "bathrooms": 2,
+    "sizeSqft": 770,
+    "propertyType": "Condo",
+    "latitude": 1.2799999999999998,
+    "longitude": 103.84400000000001,
+    "nearestMrt": "Outram Park",
+    "mrtWalkingMinutes": 6,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "CBD Fringe Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 1111,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "CBD Fringe Market (fictional)",
+        "category": "food",
+        "distanceMeters": 210,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "CBD Fringe Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 570,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "CBD Fringe School (fictional)",
+        "category": "schools",
+        "distanceMeters": 690,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "CBD Fringe Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 980,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional terrace residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 60
+  },
+  {
+    "id": "PM-063",
+    "name": "CBD Fringe Residences",
+    "area": "CBD Fringe",
+    "address": "16 Demo CBD Fringe Lane (fictional)",
+    "price": 1680000,
+    "bedrooms": 2,
+    "bathrooms": 2,
+    "sizeSqft": 890,
+    "propertyType": "Condo",
+    "latitude": 1.281,
+    "longitude": 103.845,
+    "nearestMrt": "Outram Park",
+    "mrtWalkingMinutes": 4,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "CBD Fringe Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 1212,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "CBD Fringe Market (fictional)",
+        "category": "food",
+        "distanceMeters": 300,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "CBD Fringe Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 690,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "CBD Fringe School (fictional)",
+        "category": "schools",
+        "distanceMeters": 780,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "CBD Fringe Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 1060,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional residences residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 67
+  },
+  {
+    "id": "PM-064",
+    "name": "CBD Fringe Gardens",
+    "area": "CBD Fringe",
+    "address": "19 Demo CBD Fringe Lane (fictional)",
+    "price": 1795000,
+    "bedrooms": 2,
+    "bathrooms": 2,
+    "sizeSqft": 1010,
+    "propertyType": "Condo",
+    "latitude": 1.2819999999999998,
+    "longitude": 103.846,
+    "nearestMrt": "Outram Park",
+    "mrtWalkingMinutes": 9,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "CBD Fringe Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 213,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "CBD Fringe Market (fictional)",
+        "category": "food",
+        "distanceMeters": 390,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "CBD Fringe Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 810,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "CBD Fringe School (fictional)",
+        "category": "schools",
+        "distanceMeters": 870,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "CBD Fringe Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 1140,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional gardens residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 74
+  },
+  {
+    "id": "PM-065",
+    "name": "CBD Fringe Court",
+    "area": "CBD Fringe",
+    "address": "22 Demo CBD Fringe Lane (fictional)",
+    "price": 1910000,
+    "bedrooms": 3,
+    "bathrooms": 2,
+    "sizeSqft": 1130,
+    "propertyType": "Condo",
+    "latitude": 1.283,
+    "longitude": 103.84700000000001,
+    "nearestMrt": "Outram Park",
+    "mrtWalkingMinutes": 5,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "CBD Fringe Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 314,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "CBD Fringe Market (fictional)",
+        "category": "food",
+        "distanceMeters": 480,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "CBD Fringe Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 930,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "CBD Fringe School (fictional)",
+        "category": "schools",
+        "distanceMeters": 960,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "CBD Fringe Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 1220,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional court residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 81
+  },
+  {
+    "id": "PM-066",
+    "name": "CBD Fringe Heights",
+    "area": "CBD Fringe",
+    "address": "25 Demo CBD Fringe Lane (fictional)",
+    "price": 2025000,
+    "bedrooms": 3,
+    "bathrooms": 2,
+    "sizeSqft": 1250,
+    "propertyType": "HDB",
+    "latitude": 1.2839999999999998,
+    "longitude": 103.848,
+    "nearestMrt": "Outram Park",
+    "mrtWalkingMinutes": 12,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "CBD Fringe Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 415,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "CBD Fringe Market (fictional)",
+        "category": "food",
+        "distanceMeters": 570,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "CBD Fringe Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 1050,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "CBD Fringe School (fictional)",
+        "category": "schools",
+        "distanceMeters": 1050,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "CBD Fringe Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 1300,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional heights residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 88
+  },
+  {
+    "id": "PM-067",
+    "name": "Pasir Panjang Grove",
+    "area": "Pasir Panjang",
+    "address": "10 Demo Pasir Panjang Lane (fictional)",
+    "price": 1200000,
+    "bedrooms": 1,
+    "bathrooms": 1,
+    "sizeSqft": 650,
+    "propertyType": "Condo",
+    "latitude": 1.281,
+    "longitude": 103.781,
+    "nearestMrt": "Pasir Panjang",
+    "mrtWalkingMinutes": 3,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "Pasir Panjang Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 1093,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Pasir Panjang Market (fictional)",
+        "category": "food",
+        "distanceMeters": 120,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Pasir Panjang Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 450,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Pasir Panjang School (fictional)",
+        "category": "schools",
+        "distanceMeters": 600,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Pasir Panjang Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 900,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional grove residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 93
+  },
+  {
+    "id": "PM-068",
+    "name": "Pasir Panjang Terrace",
+    "area": "Pasir Panjang",
+    "address": "13 Demo Pasir Panjang Lane (fictional)",
+    "price": 1315000,
+    "bedrooms": 2,
+    "bathrooms": 2,
+    "sizeSqft": 770,
+    "propertyType": "Condo",
+    "latitude": 1.2819999999999998,
+    "longitude": 103.78200000000001,
+    "nearestMrt": "Pasir Panjang",
+    "mrtWalkingMinutes": 6,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "Pasir Panjang Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 1194,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Pasir Panjang Market (fictional)",
+        "category": "food",
+        "distanceMeters": 210,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Pasir Panjang Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 570,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Pasir Panjang School (fictional)",
+        "category": "schools",
+        "distanceMeters": 690,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Pasir Panjang Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 980,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional terrace residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 63
+  },
+  {
+    "id": "PM-069",
+    "name": "Pasir Panjang Residences",
+    "area": "Pasir Panjang",
+    "address": "16 Demo Pasir Panjang Lane (fictional)",
+    "price": 1430000,
+    "bedrooms": 2,
+    "bathrooms": 2,
+    "sizeSqft": 890,
+    "propertyType": "Condo",
+    "latitude": 1.283,
+    "longitude": 103.783,
+    "nearestMrt": "Pasir Panjang",
+    "mrtWalkingMinutes": 4,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "Pasir Panjang Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 195,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Pasir Panjang Market (fictional)",
+        "category": "food",
+        "distanceMeters": 300,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Pasir Panjang Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 690,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Pasir Panjang School (fictional)",
+        "category": "schools",
+        "distanceMeters": 780,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Pasir Panjang Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 1060,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional residences residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 70
+  },
+  {
+    "id": "PM-070",
+    "name": "Pasir Panjang Gardens",
+    "area": "Pasir Panjang",
+    "address": "19 Demo Pasir Panjang Lane (fictional)",
+    "price": 1545000,
+    "bedrooms": 2,
+    "bathrooms": 2,
+    "sizeSqft": 1010,
+    "propertyType": "Condo",
+    "latitude": 1.2839999999999998,
+    "longitude": 103.784,
+    "nearestMrt": "Pasir Panjang",
+    "mrtWalkingMinutes": 9,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "Pasir Panjang Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 296,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Pasir Panjang Market (fictional)",
+        "category": "food",
+        "distanceMeters": 390,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Pasir Panjang Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 810,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Pasir Panjang School (fictional)",
+        "category": "schools",
+        "distanceMeters": 870,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Pasir Panjang Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 1140,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional gardens residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 77
+  },
+  {
+    "id": "PM-071",
+    "name": "Pasir Panjang Court",
+    "area": "Pasir Panjang",
+    "address": "22 Demo Pasir Panjang Lane (fictional)",
+    "price": 1660000,
+    "bedrooms": 3,
+    "bathrooms": 2,
+    "sizeSqft": 1130,
+    "propertyType": "Condo",
+    "latitude": 1.285,
+    "longitude": 103.78500000000001,
+    "nearestMrt": "Pasir Panjang",
+    "mrtWalkingMinutes": 5,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "Pasir Panjang Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 397,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Pasir Panjang Market (fictional)",
+        "category": "food",
+        "distanceMeters": 480,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Pasir Panjang Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 930,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Pasir Panjang School (fictional)",
+        "category": "schools",
+        "distanceMeters": 960,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Pasir Panjang Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 1220,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional court residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2026-09-09T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 84
+  },
+  {
+    "id": "PM-072",
+    "name": "Pasir Panjang Heights",
+    "area": "Pasir Panjang",
+    "address": "25 Demo Pasir Panjang Lane (fictional)",
+    "price": 1775000,
+    "bedrooms": 3,
+    "bathrooms": 2,
+    "sizeSqft": 1250,
+    "propertyType": "HDB",
+    "latitude": 1.2859999999999998,
+    "longitude": 103.786,
+    "nearestMrt": "Pasir Panjang",
+    "mrtWalkingMinutes": 12,
+    "availability": "available",
+    "amenities": [
+      {
+        "name": "Pasir Panjang Green (fictional)",
+        "category": "parks",
+        "distanceMeters": 498,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Pasir Panjang Market (fictional)",
+        "category": "food",
+        "distanceMeters": 570,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Pasir Panjang Centre (fictional)",
+        "category": "shopping",
+        "distanceMeters": 1050,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Pasir Panjang School (fictional)",
+        "category": "schools",
+        "distanceMeters": 1050,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      },
+      {
+        "name": "Pasir Panjang Evening Quarter (fictional)",
+        "category": "nightlife",
+        "distanceMeters": 1300,
+        "source": "synthetic-amenities-v1",
+        "confidence": "low"
+      }
+    ],
+    "description": "Fictional heights residence for testing buyer-property matching. No real unit is offered for sale.",
+    "image": "/images/residence.png",
+    "updatedAt": "2025-01-01T00:00:00.000Z",
+    "source": "synthetic-singapore-v1",
+    "isSynthetic": true,
+    "quietScore": 91
+  }
+]

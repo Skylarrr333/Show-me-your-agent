@@ -1,0 +1,182 @@
+# PropMatch Agent
+
+**303forward · Team code D1IZFT7E**  
+NUS-ISS Show Me Your Agents Hackathon · Property Recommendation
+
+An AI property recommendation copilot for property agents. Convert a messy buyer conversation into validated buyer state, retrieve evidence, enforce hard constraints, compare scored candidates and approve a shortlist. The desktop workspace shows conversation, property recommendations and an auditable action trace side by side.
+
+**Demo / synthetic property dataset.** All 72 listings, unit details, amenity facts, availability and quietness indexes are fictional. The image is AI-generated illustration. Routes are distance-based estimates. No live listing or real-world accuracy claim is made.
+
+## What works
+
+- One-click couple / NUS / Raffles Place / S$1.6M demo, plus reset.
+- Multi-turn update to S$1.7M and MRT within 5 minutes; existing bedrooms, destinations, no-car and lifestyle requirements persist.
+- Validated inputs and outputs for all six tools; deterministic hard constraints and explainable weighted ranking.
+- Adaptive tool selection: no route calls without destinations, no amenities calls without relevant preferences.
+- Details with component scores, why recommended, trade-offs, source IDs and timestamps.
+- Comparison of 2-4 verified listings; shortlist toggles, approval, rejection, alternative and recorded ranking override.
+- No-match escalation with conflict counts; no automatic relaxation.
+- Streaming action trace, persistent session state and `/debug` / `/trace` with JSON export.
+- Golden, edge and adversarial tests; machine-readable eval results.
+
+## Business problem and scope
+
+Agents repeatedly reconcile budgets, bedrooms, transport and lifestyle while listings change. PropMatch makes the shortlist reviewable: each candidate carries source evidence, constraint results and a concise explanation. Business value is reduced manual comparison effort and clearer buyer discussions; actual time savings have not been measured. No messaging, purchases, booking, financing or eligibility decisions are automated.
+
+## Why an agent
+
+A buyer changes requirements conversationally and different briefs require different evidence. A stateful orchestrator interprets updates, selects the required tool set, rechecks current listings and knows when to stop for human input. A static search form alone would not demonstrate this update / planning / verification loop. Demo mode is a deterministic parser and planner; live mode uses Bedrock for structured interpretation and a bounded tool-plan proposal. The system does not pretend that demo mode is a live LLM.
+
+## Architecture and reasoning loop
+
+`React workspace → Next.js route handlers → single orchestrator → typed providers/tools → deterministic constraints + ranking → provider re-verification → human approval`
+
+1. Read server-side session and validated BuyerProfile.
+2. Parse the current message and merge only explicit changes.
+3. Validate the complete model response with strict Zod schemas; compare numeric edits against independent extraction.
+4. Ask for clarification on missing, conflicting or unsupported requirements.
+5. Request a bounded tool plan. Policy ensures evidence tools required by the profile are present and omits unnecessary tools.
+6. Search, enrich requested commutes/amenities, check constraints and rank.
+7. Re-read candidate IDs and remove changed or withdrawn listings.
+8. Produce evidence-based explanations and an unapproved top three; or escalate no-match.
+9. Persist messages, buyer state, results and trace with optimistic concurrency.
+
+The UI displays action summaries and tool facts, never private chain-of-thought. Explanations are deterministic, evidence-grounded templates in both modes; free LLM prose cannot change scores or introduce listings. See [ARCHITECTURE.md](ARCHITECTURE.md).
+
+## Tools
+
+| Tool | Purpose | Validation |
+|---|---|---|
+| `search_properties` | Read-only provider search by budget, bedrooms, type, area, availability | `SearchInput` → `Property[]` |
+| `calculate_commute` | Requested destination and mode only | `CommuteInput` → `Commute` |
+| `find_nearby_amenities` | Requested categories and bounded radius | `AmenitiesInput` → `Amenity[]` |
+| `check_constraints` | Numeric limits, availability, freshness, excluded areas, commute limits | `ConstraintInput` → passed, violations, warnings |
+| `rank_properties` | Weighted reproducible scoring of eligible candidates | `RankInput` → ranked evidence |
+| `compare_properties` | 2-4 distinct current verified property IDs | `CompareInput` → structured comparison |
+
+All contracts are exported in `tools/index.ts`. Providers implement `ListingProvider`, `RoutingProvider`, `AmenitiesProvider`, `LLMProvider` from `providers/contracts.ts`. There is no model-accessible SQL, shell, URL fetch or arbitrary code tool.
+
+## State and memory
+
+BuyerProfile includes budget, property requirements, preferred/excluded areas, destinations, transport, six lifestyle preferences, hard/soft summaries, unknowns and other preferences. Numeric limits and excluded areas are hard. `preferredAreas` are soft and influence location score. Mandatory geography / subjective hard limits that cannot be encoded must trigger clarification.
+
+Sessions use an opaque HttpOnly SameSite cookie, server-owned IDs, monotonic versions and optimistic compare-and-swap. Updates append events with before/after field changes. Node deployment writes atomic private JSON files to `SESSION_DIR`; Sites preview/deployment maps the adapter to D1. A reset creates a fresh session; previous records are retained on the server. The same browser cookie restores the current session after reload. There is no cross-device user account system. `/debug` sees only the current cookie session.
+
+## Human review and guardrails
+
+The agent recommends but cannot approve. An explicit human action is required; approval rechecks provider records and constraints. Changing the shortlist or overriding ranking revokes previous approval. An override changes presentation order and records the original score; it cannot edit the score or make an ineligible property valid.
+
+Strict schemas, source-ID grounding, independent numeric checks, untrusted listing text isolation, no executable tools, request-size caps, same-origin mutation checks and version checks protect the flow. See [SECURITY.md](SECURITY.md) for threats and limits, including the difference between a hackathon demo and a production multi-tenant service.
+
+## Tech stack
+
+Next.js 16 App Router, React 19, TypeScript, Tailwind CSS 4, Zod 3, Radix UI primitives and Lucide icons. Node built-in test runner via tsx. A secondary Vinext/Vite build runs the same application on Sites / Cloudflare Workers with D1. AWS Docker uses actual Next.js standalone output, not the Workers build. No Python backend is used; a small Python script only renders the submission PDF.
+
+## Local setup (Node 22.13+)
+
+```bash
+npm install
+cp .env.example .env.local
+```
+
+For local Next development, change `SESSION_DIR` in `.env.local` to an existing writable absolute directory, or remove that line to use `.propmatch-sessions` in the project.
+
+```bash
+npm run dev:next
+```
+
+Open `http://localhost:3000`. Demo needs no credentials or network calls. `npm run dev` is the included Sites/Vite development target. `npm run build:next && npm run start:next` runs a Next production build. `npm run build` creates the alternative Sites/Workers bundle.
+
+## Environment variables
+
+| Variable | Default / use |
+|---|---|
+| `LLM_MODE` | `auto`; `.env.example` sets `demo`. `bedrock` fails closed if configuration is missing. |
+| `AWS_REGION` | `ap-southeast-1` |
+| `AWS_BEARER_TOKEN_BEDROCK` | Bedrock API bearer token; server only, never `NEXT_PUBLIC_*` |
+| `BEDROCK_MODEL_ID` | Enabled Claude Sonnet 4.5 model/inference-profile ID from your account; no invented default |
+| `BEDROCK_ENDPOINT` | Optional documented Converse-compatible HTTPS origin; blank uses regional AWS runtime |
+| `SESSION_DIR` | Private writable Node storage folder; Docker uses `/app/storage`; ignored for D1 |
+| `NEXT_TELEMETRY_DISABLED` | `1` in Docker |
+| `DOMAIN` | Hostname used only by optional Caddy HTTPS compose profile |
+
+**Official hackathon gateway schema was not provided.** `BedrockProvider` implements AWS's documented Converse REST API using a Bedrock bearer API key. It does not claim compatibility with an undocumented organiser gateway. Standard IAM access-key/SigV4 credentials are not interchangeable with the bearer token. If organisers issue a custom gateway, implement that exact envelope as another `LLMProvider` after obtaining the specification. No fake successful call is returned on auth or model errors.
+
+The independent numeric-edit guard is deliberately conservative; unsupported phrasings for relaxing existing constraints require restating explicit numbers. Supported fixture destinations: NUS, Raffles Place, Jurong East, Changi Airport. Unknown routing destinations trigger clarification.
+
+## Evaluation and quality gates
+
+```bash
+npm run lint
+npm run typecheck
+npm run test
+npm run eval
+npm run build:next
+```
+
+`npm run eval` regenerates `docs/EVALUATION.md`, root `EVALUATION.md`, and `evals/results.json`. It includes 15 required golden/edge/adversarial cases. Unit tests additionally cover scoring arithmetic, re-verification, human actions, concurrency and mocked Bedrock contract failures. See [docs/QA.md](docs/QA.md) for actual build/browser verification. These are fixture-based results; they are not live market or LLM accuracy metrics.
+
+## Docker
+
+```bash
+cp .env.example .env
+docker compose up -d --build
+curl http://localhost:3000/api/session
+```
+
+The app binds to the host loopback by default; sessions survive container recreation in the named `sessions` volume. The image runs as UID 1001, has a healthcheck and includes only standalone runtime output and public assets. Docker was not available in the authoring environment, so image execution must be checked on a Docker-enabled machine; CI includes a Docker build gate.
+
+## Amazon Lightsail deployment
+
+Use a Lightsail Linux instance with Docker Engine and Compose installed, a static IP and enough RAM to build Next (4 GB is a practical starting point; deploy prebuilt images if using a smaller instance). Upload or clone this repository. Set `.env` with demo mode initially, then run Docker Compose as above. Keep the `sessions` volume backed up. Restrict SSH to your IP. Do not open port 3000 publicly.
+
+For HTTPS, point your domain to the instance static IP, set `DOMAIN=your-domain.example` in `.env`, open Lightsail firewall ports 80/443, then:
+
+```bash
+docker compose --profile https up -d --build
+```
+
+Caddy obtains HTTPS certificates and proxies streaming responses. Before enabling paid Bedrock mode on a public URL, put the service behind authentication and an edge rate limiter, or restrict access for the demo. The supplied app is a session-isolated hackathon prototype, not an authenticated agency tenant system.
+
+For a private rehearsal without a domain, forward the loopback-bound port:
+
+```bash
+ssh -L 3000:127.0.0.1:3000 ubuntu@YOUR_LIGHTSAIL_IP
+```
+
+Open `http://localhost:3000`. A Lightsail Container Service alternative needs durable external session storage because container filesystem state is ephemeral; use the VM + named-volume deployment for this version.
+
+## Demo instructions
+
+1. Click **Load Demo Scenario** and show the buyer profile, weighted property scores and tool trace.
+2. Click **Try: S$1.7M, MRT within 5 minutes**. Show changed fields and retained destinations/lifestyle.
+3. Select two **Compare** checkboxes, then click **Compare**.
+4. Open **View details**, explain components and **Move to first · human override**.
+5. Click **Approve shortlist**, then open `/debug` to show the audit record.
+6. Submit `Budget SGD 100k, 4 bedrooms.` to demonstrate no-match escalation.
+7. Reset and reload the demo for the next judge.
+
+See [DEMO_SCRIPT.md](DEMO_SCRIPT.md) and [submission/DEMO_VIDEO_SCRIPT.md](submission/DEMO_VIDEO_SCRIPT.md).
+
+## GitHub and submission
+
+Source is Git-ready. To publish to a new empty GitHub repository:
+
+```bash
+git remote add github https://github.com/YOUR_USERNAME/propmatch-agent.git
+git push -u github HEAD:main
+```
+
+If using an extracted archive rather than the existing checkout, initialize Git first (`git init -b main`, `git add .`, `git commit -m "Build PropMatch Agent"`). The `github` remote name preserves any existing source backup remote. Authenticate with GitHub CLI, SSH or a credential manager, never a token embedded in the remote URL.
+
+Submission materials are in `submission/`: write-up Markdown and PDF, video narration, shot list and a checklist of the remaining owner-supplied URLs. Fill the actual GitHub, demo video and AWS deployment links; none are fabricated.
+
+## Documentation
+
+- [ARCHITECTURE.md](ARCHITECTURE.md)
+- [SECURITY.md](SECURITY.md)
+- [EVALUATION.md](EVALUATION.md)
+- [DATA_PROVENANCE.md](DATA_PROVENANCE.md)
+- [SUBMISSION_CHECKLIST.md](SUBMISSION_CHECKLIST.md)
+
+Technical references: [AWS Converse](https://docs.aws.amazon.com/bedrock/latest/APIReference/API_runtime_Converse.html), [Bedrock API keys](https://docs.aws.amazon.com/bedrock/latest/userguide/api-keys.html), [Next.js self-hosting](https://nextjs.org/docs/app/guides/self-hosting), [Lightsail containers documentation](https://docs.aws.amazon.com/lightsail/latest/userguide/amazon-lightsail-container-services.html). These describe platform contracts, not an organiser-specific gateway.
