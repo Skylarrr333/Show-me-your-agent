@@ -24,6 +24,12 @@ Grant a Bedrock credential only the model invocation scope needed for the select
 
 ## Known limits
 
+### Dependency review for the Lightsail release (22 September 2026)
+
+Next.js and its ESLint configuration are pinned to 16.3.5, and compatible transitive patches are recorded in the lockfile. This includes the upstream [AVIF image optimization security fix](https://github.com/vercel/next.js/security/advisories/GHSA-2xp9-vwfh-vxw4). `npm audit --omit=dev` reports **0 known vulnerabilities** for the production dependency graph at this check. CI rejects high/critical findings in that graph.
+
+The full development-tool graph still reports **14 findings (4 moderate, 10 high)**, including the optional Vinext/Cloudflare, database migration and development RSC tooling. These tools are not started by the Lightsail standalone server. This is not a clean audit of all development dependencies: do not expose development servers publicly, and review their remaining upgrades before using another hosting target. No force-upgrade or untested major tool migration was applied as part of the Lightsail rollout.
+
 This is a hackathon prototype, not a production multi-tenant CRM. It has no identity-based agent roles, cross-device accounts, retention automation, encryption-at-rest policy, tamper-evident audit ledger or external monitoring integration. Possession of a session capability grants access to that session, so do not share exported traces containing its ID. Node process termination in the tiny lock-held interval can leave a lock file requiring operator recovery; D1 avoids local filesystem locks. In-flight traces commit at run completion, not durably event-by-event.
 
 The independent numeric parser conservatively blocks existing-limit edits it cannot recognize. Other semantic prompt-injection variants and novel contradictory phrasings require broader live model evaluation. Synthetic scores and route estimates are not evidence of actual property suitability, eligibility or availability. HDB inventory fixtures are fictional; the separate official HDB transaction snapshot is historical evidence only. No resale eligibility check is implemented. Agents must verify real records and domain requirements before real use.
