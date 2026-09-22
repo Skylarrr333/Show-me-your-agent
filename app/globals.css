@@ -735,6 +735,17 @@ svg {
   gap: 10px;
 }
 
+.alternative-help {
+  margin: 0 0 12px;
+  color: #59665f;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.recommendations .result-error {
+  margin: 0 0 12px;
+}
+
 .result-tabs {
   height: 36px !important;
   padding: 3px !important;

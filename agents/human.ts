@@ -97,8 +97,10 @@ export function humanAction(old: Session, raw: z.infer<typeof ActionSchema>) {
           "No additional verified candidates. Update your buyer requirements.",
         );
       s.shortlist = ids;
-      s.notice =
-        "Alternative shortlist selected from already verified candidates.";
+      const names = s.recommendations
+        .filter((r) => ids.includes(r.property.id))
+        .map((r) => r.property.name);
+      s.notice = `Alternative shortlist: ${names.join(", ")}. Selected from existing matches; buyer requirements unchanged. Review and approve this shortlist.`;
       event(s, "HUMAN", "Human requested alternative shortlist", {
         listingIds: ids,
       });

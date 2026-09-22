@@ -298,6 +298,10 @@ Open `http://localhost:3000`. A Lightsail Container Service alternative needs du
 
 ## Demo instructions
 
+Chinese quick start: [网页使用指南](docs/USER_GUIDE_ZH.md).
+
+**Matches** shows all candidates in the current result set. **Shortlist** shows the selected homes. **Choose alternative shortlist** replaces that selection with up to three other non-rejected candidates and opens the Shortlist tab with a confirmation naming the selected homes. It does not call the model or run a new search. Repeated clicks can return to earlier selections; use **Reject** to exclude a home, or edit the buyer brief to retrieve and rank again. When there are no alternatives, the button is disabled with an explanation. Any changed selection needs a new approval.
+
 1. Click **Load Demo Scenario** and show the buyer profile, weighted property scores and tool trace.
 2. Click **Try: S$1.7M, MRT within 5 minutes**. Show changed fields and retained destinations/lifestyle.
 3. Select two **Compare** checkboxes, then click **Compare**.

@@ -71,6 +71,7 @@ export default function Workspace() {
     [busy, setBusy] = useState(false),
     [text, setText] = useState(""),
     [error, setError] = useState(""),
+    [pendingAction, setPendingAction] = useState(""),
     [live, setLive] = useState<Trace[]>([]),
     [compareIds, setCompareIds] = useState<string[]>([]),
     [comparison, setComparison] = useState<Comparison | null>(null),
@@ -187,6 +188,7 @@ export default function Workspace() {
   async function action(action: string, propertyId?: string) {
     if (!session || busy) return;
     setBusy(true);
+    setPendingAction(action);
     setError("");
     try {
       const r = await api("/api/action", {
@@ -195,12 +197,19 @@ export default function Workspace() {
         version: session.version,
       });
       setSession(r.session);
+      if (action === "alternative") {
+        setTab("shortlist");
+        setCompareIds([]);
+        setComparison(null);
+        setDetail(null);
+      }
       if (action === "reject")
         setCompareIds((ids) => ids.filter((id) => id !== propertyId));
     } catch (e) {
       setError((e as Error).message);
     } finally {
       setBusy(false);
+      setPendingAction("");
     }
   }
   async function compare() {
@@ -222,6 +231,10 @@ export default function Workspace() {
   }
   const p = session?.profile;
   const all = session?.recommendations ?? [];
+  const alternativeCount = all.filter(
+    (r) => !session?.rejected.includes(r.property.id) &&
+      !session?.shortlist.includes(r.property.id),
+  ).length;
   const rows = all.filter(
     (r) =>
       !session?.rejected.includes(r.property.id) &&
@@ -560,15 +573,25 @@ export default function Workspace() {
                   className="button"
                   disabled={
                     busy ||
+                    alternativeCount === 0 ||
                     !["waiting", "approved"].includes(session?.status ?? "")
                   }
+                  aria-describedby="alternative-help"
                   onClick={() => action("alternative")}
                 >
-                  Request alternative
+                  {pendingAction === "alternative" && <LoaderCircle size={14} className="spin" />}
+                  {pendingAction === "alternative" ? "Choosing alternatives…" : "Choose alternative shortlist"}
                 </button>
               )}
             </div>
           </div>
+          {hasResults && (
+            <p className="alternative-help" id="alternative-help">
+              {alternativeCount
+                ? `Choose up to 3 of the ${alternativeCount} other matches for your shortlist. Previously selected homes may appear again; reject a home to exclude it.`
+                : "No other matches in this result set. Edit the buyer brief to search again."}
+            </p>
+          )}
           <Tabs value={tab} onValueChange={setTab}>
             <div className="results-toolbar">
               <TabsList className="result-tabs">
@@ -591,6 +614,17 @@ export default function Workspace() {
             <TabsContent value="recommendations" />
             <TabsContent value="shortlist" />
           </Tabs>
+          {hasResults && session?.notice && (
+            <div className="state-update" role="status" aria-atomic="true">
+              <CheckCheck size={15} />
+              <div>{session.notice}</div>
+            </div>
+          )}
+          {hasResults && error && (
+            <div className="error-banner result-error" role="alert">
+              <TriangleAlert size={17} />{error}
+            </div>
+          )}
           {(session?.messages.filter((m) => m.role === "user").length ?? 0) >
             1 &&
             latestChanges?.changes?.some(
@@ -773,7 +807,9 @@ export default function Workspace() {
                       />
                       <div className="photo-top">
                         <span className="rank-label">
-                          {i === 0
+                          {tab === "shortlist"
+                            ? "Shortlisted"
+                            : i === 0
                             ? "Best match"
                             : `Match ${String(i + 1).padStart(2, "0")}`}
                         </span>
