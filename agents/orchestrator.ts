@@ -20,18 +20,15 @@ import {
   RoutingProvider,
   AmenitiesProvider,
 } from "../providers/contracts";
-import {
-  SyntheticListingProvider,
-  SyntheticRoutingProvider,
-  SyntheticAmenitiesProvider,
-  destinations,
-} from "../providers/synthetic";
+import { destinations } from "../providers/synthetic";
+import { getDataProviders, dataRevision, EvidenceUnavailableError } from "../providers/evidence";
 import {
   validateProfileUpdate,
   unsupportedHardRequirement,
 } from "../lib/profile-update";
 import { requiredPlan } from "../providers/demo-llm";
 import * as tools from "../tools";
+import { lookup_market_comparables } from "../tools/market";
 export function newSession(id = crypto.randomUUID()): Session {
   return {
     id,
@@ -68,7 +65,7 @@ export function event(
   s.trace.push(t);
   return t;
 }
-type Dependencies = {
+export type Dependencies = {
   llm?: LLMProvider;
   listings?: ListingProvider;
   routing?: RoutingProvider;
@@ -79,23 +76,28 @@ export async function runAgent(
   message: string,
   emit: (t: Trace) => void = () => {},
   deps: Dependencies = {},
+  options: { refresh?: boolean } = {},
 ): Promise<Session> {
   const s = SessionSchema.parse(structuredClone(old));
   s.lastRunId = crypto.randomUUID();
   s.updatedAt = new Date().toISOString();
-  s.messages.push({ role: "user", content: message, timestamp: s.updatedAt });
+  if (!options.refresh) s.messages.push({ role: "user", content: message, timestamp: s.updatedAt });
   const add = (stage: Trace["stage"], summary: string, data?: unknown) =>
     emit(event(s, stage, summary, data));
   const llm = deps.llm ?? getLLM();
-  const listings = deps.listings ?? new SyntheticListingProvider();
-  const routing = deps.routing ?? new SyntheticRoutingProvider();
-  const amenities = deps.amenities ?? new SyntheticAmenitiesProvider();
   s.mode = llm.mode;
   const start = Date.now();
   s.recommendations = [];
   s.shortlist = [];
-  s.rejected = [];
+  s.marketEvidence = undefined;
+  s.rejected = options.refresh ? [...old.rejected] : [];
   try {
+    const providers = getDataProviders(s);
+    const listings = deps.listings ?? providers.listings;
+    const routing = deps.routing ?? providers.routing;
+    const amenities = deps.amenities ?? providers.amenities;
+    s.dataMode = providers.mode;
+    if (!deps.listings && !deps.routing && !deps.amenities) s.dataRevision = await dataRevision(s);
     add("UNDERSTAND", "Reading request and existing buyer state", {
       profileVersion: s.version,
       mode: llm.mode,
@@ -107,13 +109,15 @@ export async function runAgent(
       add("GUARDRAIL", s.notice);
       return finish();
     }
-    const parsed = ParseSchema.parse(await llm.parse(message, s.profile));
+    const parsed = ParseSchema.parse(options.refresh
+      ? { profile: s.profile, clarification: null, summary: "Rechecking saved buyer brief after source changes" }
+      : await llm.parse(message, s.profile));
     const next = normalizeProfile(parsed.profile);
     const diff = changes(s.profile, next);
     // Independent numeric extraction anchors explicit limits even if a model tries to relax them.
     const { DemoLLMProvider } = await import("../providers/demo-llm");
     const anchor = await new DemoLLMProvider().parse(message, s.profile);
-    validateProfileUpdate(s.profile, next, anchor.profile);
+    if (!options.refresh) validateProfileUpdate(s.profile, next, anchor.profile);
     const unsupportedHard = unsupportedHardRequirement(message);
     if (unsupportedHard) {
       s.status = "clarification";
@@ -155,8 +159,7 @@ export async function runAgent(
     }
     s.recommendations = [];
     s.shortlist = [];
-    s.rejected = [];
-    const proposed = PlanSchema.parse(await llm.plan(s.profile));
+    const proposed = PlanSchema.parse(options.refresh ? requiredPlan(s.profile) : await llm.plan(s.profile));
     const required = requiredPlan(s.profile);
     const selected = required.tools;
     add("PLAN", required.summary, {
@@ -180,6 +183,12 @@ export async function runAgent(
       emit(t);
       return result;
     }
+    if (selected.includes("lookup_market_comparables")) {
+      s.marketEvidence = await call("lookup_market_comparables", {
+        budget: s.profile.budget, areas: s.profile.locations, size: s.profile.property,
+        purpose: "Historical HDB context only; never current inventory",
+      }, () => lookup_market_comparables(s.profile));
+    }
     const search = {
       budget: s.profile.budget,
       bedrooms: s.profile.property.minBedrooms,
@@ -192,6 +201,7 @@ export async function runAgent(
     );
     const evaluated: Candidate[] = [];
     for (const p of found) {
+      if (s.rejected.includes(p.id)) continue;
       if (suspicious(p.description))
         add(
           "GUARDRAIL",
@@ -223,11 +233,14 @@ export async function runAgent(
                 ? ("car" as const)
                 : ("transit" as const),
           };
-          commutes.push(
+          try { commutes.push(
             await call("calculate_commute", { listingId: p.id, ...input }, () =>
               tools.calculate_commute(input, routing),
             ),
-          );
+          ); } catch (error) {
+            if (!(error instanceof EvidenceUnavailableError)) throw error;
+            add("VERIFY", "Requested route has no current evidence; not estimated", { listingId: p.id, destination: d.place });
+          }
         }
       let nearby: Candidate["amenities"] = [];
       if (selected.includes("find_nearby_amenities")) {
@@ -328,7 +341,7 @@ export async function runAgent(
     } else {
       s.shortlist = s.recommendations.slice(0, 3).map((r) => r.property.id);
       s.status = "waiting";
-      s.notice = `${s.recommendations.length} verified candidates. Top ${s.shortlist.length} ready for your review. All hard constraints pass against the synthetic dataset.`;
+      s.notice = `${s.recommendations.length} candidates pass the recorded hard constraints. Top ${s.shortlist.length} ready for your review. ${s.dataMode === "file" ? "Imported evidence snapshots; review unknown facts and source times." : "Synthetic demonstration data."}`;
       add("RECOMMEND", `Top ${s.shortlist.length} generated`, {
         listingIds: s.shortlist,
         evidence: s.recommendations.slice(0, 3).map((r) => r.evidence),
@@ -342,13 +355,15 @@ export async function runAgent(
     s.status = "error";
     s.notice =
       error instanceof Error &&
-      /^(Bedrock|Model numeric|Unconfirmed|Unsupported)/.test(error.message)
+      /^(Bedrock|DeepSeek|Gateway|Model numeric|Unconfirmed|Unsupported)/.test(error.message)
         ? error.message
         : "Run stopped safely: invalid provider output or tool failure. Buyer profile retained; retry or reset demo.";
     add("ERROR", s.notice, { category: "VALIDATION_OR_PROVIDER_ERROR" });
   }
   return finish();
   function finish() {
+    for (const metric of llm.drainMetrics?.() ?? [])
+      add("TOOL", `${llm.mode}_model_call()`, metric);
     s.messages.push({
       role: "assistant",
       content: s.notice,

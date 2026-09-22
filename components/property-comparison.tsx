@@ -39,7 +39,7 @@ export default function PropertyComparison({
       "Nearest MRT",
       properties.map(
         (r) =>
-          `${r.property.nearestMrt} · ${r.property.mrtWalkingMinutes} min walk${r.property.id === comparison.fastestMrtId ? " · shortest walk" : ""}`,
+          r.property.mrtWalkingMinutes === null ? "Unverified" : `${r.property.nearestMrt} · ${r.property.mrtWalkingMinutes} min walk${r.property.id === comparison.fastestMrtId ? " · shortest walk" : ""}`,
       ),
     ),
     row(
@@ -62,7 +62,7 @@ export default function PropertyComparison({
       ),
     ),
     row(
-      "Amenities (fixture)",
+      "Recorded amenities",
       properties.map(
         (r) =>
           (r.amenities.length ? r.amenities : r.property.amenities)
@@ -135,7 +135,7 @@ export default function PropertyComparison({
       </table>
       <p className="micro">
         {comparison.summary} Scores are weighted fit measures, not
-        probabilities. All routes and amenities are illustrative.
+        probabilities. Check source timestamps; synthetic facts are illustrative.
       </p>
     </div>
   );

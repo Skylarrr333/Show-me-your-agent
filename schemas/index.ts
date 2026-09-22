@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { MarketEvidenceSchema } from "../tools/market-schema";
 export const Priority = z.enum(["low", "medium", "high"]);
 export const PropertyType = z.enum(["Condo", "HDB", "Landed"]);
 const num = z.number().finite().nonnegative();
@@ -107,7 +108,7 @@ export const PropertySchema = z
     latitude: z.number().min(-90).max(90),
     longitude: z.number().min(-180).max(180),
     nearestMrt: z.string(),
-    mrtWalkingMinutes: num,
+    mrtWalkingMinutes: num.nullable(),
     availability: z.enum(["available", "unavailable"]),
     amenities: z.array(AmenitySchema),
     description: z.string(),
@@ -115,7 +116,10 @@ export const PropertySchema = z
     updatedAt: z.string().datetime(),
     source: z.string(),
     isSynthetic: z.boolean(),
-    quietScore: num.max(100),
+    quietScore: num.max(100).nullable(),
+    sourceUrl: z.string().url().refine((s) => s.startsWith("https://")).optional(),
+    sourceListingId: z.string().max(150).optional(),
+    checkedAt: z.string().datetime().optional(),
   })
   .strict();
 export type Property = z.infer<typeof PropertySchema>;
@@ -163,11 +167,12 @@ export const PlanSchema = z
           "search_properties",
           "calculate_commute",
           "find_nearby_amenities",
+          "lookup_market_comparables",
           "check_constraints",
           "rank_properties",
         ]),
       )
-      .max(5),
+      .max(6),
     summary: z.string().max(400),
   })
   .strict();
@@ -224,9 +229,17 @@ export const SessionSchema = z.object({
     "error",
   ]),
   notice: z.string(),
-  mode: z.enum(["demo", "bedrock"]),
+  mode: z.enum(["demo", "bedrock", "deepseek", "gateway"]),
   lastRunId: z.string().nullable(),
   updatedAt: z.string(),
+  dataRevision: z.string().optional(),
+  dataMode: z.enum(["synthetic", "file"]).optional(),
+  marketEvidence: MarketEvidenceSchema.optional(),
+  demoChanges: z.array(z.object({
+    id: PropertySchema.shape.id,
+    availability: PropertySchema.shape.availability.optional(),
+    price: num.optional(),
+  }).strict()).max(100).optional(),
 });
 export type Session = z.infer<typeof SessionSchema>;
 export const DEMO =

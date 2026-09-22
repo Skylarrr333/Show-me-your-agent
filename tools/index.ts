@@ -127,7 +127,7 @@ export function check_constraints(
     violations.push("Excluded area");
   if (
     b.transport.maxMrtWalkingMinutes !== null &&
-    p.mrtWalkingMinutes > b.transport.maxMrtWalkingMinutes
+    (p.mrtWalkingMinutes === null || p.mrtWalkingMinutes > b.transport.maxMrtWalkingMinutes)
   )
     violations.push("MRT walking limit exceeded");
   if (p.availability !== "available") violations.push("Listing unavailable");
@@ -135,8 +135,17 @@ export function check_constraints(
   const age = (clock.getTime() - Date.parse(p.updatedAt)) / 86400000;
   if (age > 30 || age < -1)
     violations.push("Listing timestamp stale or invalid");
+  if (!p.isSynthetic) {
+    const checkedAge = p.checkedAt ? clock.getTime() - Date.parse(p.checkedAt) : Infinity;
+    if (checkedAge < -60000 || checkedAge > 24 * 3600000)
+      violations.push("Listing availability has not been verified within 24 hours");
+    if (!p.sourceUrl || !p.sourceListingId) violations.push("Listing source evidence missing");
+  }
+  if (p.mrtWalkingMinutes === null) warnings.push("MRT walking time is unverified.");
+  if (b.lifestyle.quiet && p.quietScore === null) warnings.push("Quietness is unverified; no measured score is available.");
   for (const d of b.commuteDestinations) {
     const c = commutes.find((c) => c.destination === d.place);
+    if (!c) warnings.push(`${d.place} commute is unverified.`);
     if (
       d.maxTravelMinutes !== null &&
       (!c || c.travelMinutes > d.maxTravelMinutes)
@@ -208,7 +217,7 @@ export function rank_properties(input: z.infer<typeof RankInput>) {
           }, 0) / (commuteWeight || 1);
         const park = c.amenities.find((a) => a.category === "parks");
         const lifestyleParts = [
-          ...(b.lifestyle.quiet ? [p.quietScore] : []),
+          ...(b.lifestyle.quiet ? [p.quietScore ?? 0] : []),
           ...(b.lifestyle.parks
             ? [park ? fit(105 - park.distanceMeters / 20) : 0]
             : []),
@@ -226,7 +235,7 @@ export function rank_properties(input: z.infer<typeof RankInput>) {
                 10,
           ),
           commute: fit(commute),
-          transport: fit(106 - p.mrtWalkingMinutes * 5),
+          transport: p.mrtWalkingMinutes === null ? 0 : fit(106 - p.mrtWalkingMinutes * 5),
           lifestyle: fit(
             lifestyleParts.reduce((a, b) => a + b, 0) /
               (lifestyleParts.length || 1),
@@ -255,9 +264,10 @@ export function rank_properties(input: z.infer<typeof RankInput>) {
         );
         const why = [
           `SGD ${p.price.toLocaleString("en-SG")} and ${p.bedrooms} bedrooms meet the numeric brief.`,
-          `${p.mrtWalkingMinutes}-minute walk to ${p.nearestMrt} MRT (fixture).`,
+          p.mrtWalkingMinutes === null ? "MRT walking time is unverified." :
+            `${p.mrtWalkingMinutes}-minute walk to ${p.nearestMrt} MRT (${p.isSynthetic ? "fixture" : "imported source snapshot"}).`,
           ...(b.lifestyle.parks && park
-            ? [`${park.name} is ${park.distanceMeters} m away (fixture).`]
+            ? [`${park.name} is ${park.distanceMeters} m away (${p.isSynthetic ? "fixture" : "source snapshot"}).`]
             : []),
           ...c.commutes.map(
             (x) =>
@@ -272,13 +282,15 @@ export function rank_properties(input: z.infer<typeof RankInput>) {
             : []),
           ...(b.lifestyle.quiet
             ? [
-                `Quietness uses a synthetic ${p.quietScore}/100 index; no measured noise data.`,
+                p.quietScore === null ? "Quietness is unverified; inspect in person." :
+                  `Quietness uses a synthetic ${p.quietScore}/100 index; no measured noise data.`,
               ]
             : []),
-          ...(p.mrtWalkingMinutes > 5
+          ...(p.mrtWalkingMinutes !== null && p.mrtWalkingMinutes > 5
             ? ["MRT access requires more than 5 minutes on foot."]
             : []),
           "Price, availability and routes require independent live verification.",
+          ...b.commuteDestinations.filter((d) => !c.commutes.some((x) => x.destination === d.place)).map((d) => `${d.place}: route evidence unavailable; commute score penalized.`),
         ];
         return {
           ...c,
@@ -295,6 +307,7 @@ export function rank_properties(input: z.infer<typeof RankInput>) {
           evidence: [
             `${p.source}:${p.id}`,
             `updatedAt:${p.updatedAt}`,
+            ...(p.sourceUrl ? [p.sourceUrl, `sourceListingId:${p.sourceListingId}`, `checkedAt:${p.checkedAt}`] : []),
             ...c.commutes.map((x) => `${x.source}:${x.destination}`),
             ...c.amenities.map((a) => `${a.source}:${a.name}`),
           ],
@@ -319,7 +332,7 @@ export const ComparisonSchema = z
   .object({
     properties: z.array(RankedSchema).min(2).max(4),
     lowestPriceId: z.string(),
-    fastestMrtId: z.string(),
+    fastestMrtId: z.string().nullable(),
     summary: z.string(),
   })
   .strict();
@@ -359,11 +372,11 @@ export function compare_properties(input: z.infer<typeof CompareInput>) {
     lowestPriceId: [...rows].sort(
       (a, b) => a.property.price - b.property.price,
     )[0].property.id,
-    fastestMrtId: [...rows].sort(
-      (a, b) => a.property.mrtWalkingMinutes - b.property.mrtWalkingMinutes,
-    )[0].property.id,
+    fastestMrtId: [...rows].filter((r) => r.property.mrtWalkingMinutes !== null).sort(
+      (a, b) => a.property.mrtWalkingMinutes! - b.property.mrtWalkingMinutes!,
+    )[0]?.property.id ?? null,
     summary:
-      "Compare deterministic scores and source-backed fixture facts. Human judgment determines the final shortlist.",
+      "Compare deterministic scores and recorded source evidence. Unknown facts remain unverified. Human judgment determines the final shortlist.",
   });
 }
 export const toolSchemas = {

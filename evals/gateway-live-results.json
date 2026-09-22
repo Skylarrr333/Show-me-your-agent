@@ -1,0 +1,413 @@
+{
+  "timestamp": "2026-09-22T01:59:58.411Z",
+  "mode": "gateway",
+  "status": "passed",
+  "passed": 6,
+  "total": 6,
+  "boundary": "Real model API, synthetic inventory, official public historical HDB evidence. Small authored regression set, not a model accuracy benchmark or real-world recommendation validation.",
+  "results": [
+    {
+      "name": "English buyer brief",
+      "passed": true,
+      "status": "waiting",
+      "durationMs": 33324,
+      "hardViolations": 0,
+      "profile": {
+        "budget": {
+          "min": null,
+          "max": 1600000
+        },
+        "property": {
+          "minBedrooms": 2,
+          "propertyTypes": [],
+          "minSize": null,
+          "maxSize": null
+        },
+        "locations": {
+          "preferredAreas": [],
+          "excludedAreas": []
+        },
+        "commuteDestinations": [
+          {
+            "place": "Raffles Place",
+            "priority": "high",
+            "maxTravelMinutes": null
+          },
+          {
+            "place": "NUS",
+            "priority": "high",
+            "maxTravelMinutes": null
+          }
+        ],
+        "transport": {
+          "hasCar": false,
+          "mrtPriority": "high",
+          "maxMrtWalkingMinutes": null
+        },
+        "lifestyle": {
+          "quiet": true,
+          "parks": true,
+          "food": false,
+          "shopping": false,
+          "schools": false,
+          "nightlife": false
+        },
+        "otherPreferences": [],
+        "hardConstraints": [
+          "Budget ≤ SGD 1,600,000",
+          "At least 2 bedrooms"
+        ],
+        "softPreferences": [
+          "quiet",
+          "parks",
+          "Commute: Raffles Place",
+          "Commute: NUS",
+          "Public transport (inferred from no car)"
+        ],
+        "unknownFields": []
+      },
+      "notice": "8 candidates pass the recorded hard constraints. Top 3 ready for your review. Synthetic demonstration data.",
+      "modelCalls": [
+        {
+          "operation": "parse",
+          "durationMs": 30541,
+          "model": "global.anthropic.claude-sonnet-4-5-20250929-v1:0",
+          "inputTokens": 18918,
+          "outputTokens": 395,
+          "discardedOutputChars": 210
+        },
+        {
+          "operation": "plan",
+          "durationMs": 2729,
+          "model": "global.anthropic.claude-sonnet-4-5-20250929-v1:0",
+          "inputTokens": 524,
+          "outputTokens": 95,
+          "discardedOutputChars": 0
+        }
+      ]
+    },
+    {
+      "name": "Follow-up retains preferences",
+      "passed": true,
+      "status": "waiting",
+      "durationMs": 30059,
+      "hardViolations": 0,
+      "profile": {
+        "budget": {
+          "min": null,
+          "max": 1700000
+        },
+        "property": {
+          "minBedrooms": 2,
+          "propertyTypes": [],
+          "minSize": null,
+          "maxSize": null
+        },
+        "locations": {
+          "preferredAreas": [],
+          "excludedAreas": []
+        },
+        "commuteDestinations": [
+          {
+            "place": "Raffles Place",
+            "priority": "high",
+            "maxTravelMinutes": null
+          },
+          {
+            "place": "NUS",
+            "priority": "high",
+            "maxTravelMinutes": null
+          }
+        ],
+        "transport": {
+          "hasCar": false,
+          "mrtPriority": "high",
+          "maxMrtWalkingMinutes": 5
+        },
+        "lifestyle": {
+          "quiet": true,
+          "parks": true,
+          "food": false,
+          "shopping": false,
+          "schools": false,
+          "nightlife": false
+        },
+        "otherPreferences": [],
+        "hardConstraints": [
+          "Budget ≤ SGD 1,700,000",
+          "At least 2 bedrooms",
+          "MRT walk ≤ 5 min"
+        ],
+        "softPreferences": [
+          "quiet",
+          "parks",
+          "Commute: Raffles Place",
+          "Commute: NUS",
+          "Public transport (inferred from no car)"
+        ],
+        "unknownFields": []
+      },
+      "notice": "8 candidates pass the recorded hard constraints. Top 3 ready for your review. Synthetic demonstration data.",
+      "modelCalls": [
+        {
+          "operation": "parse",
+          "durationMs": 27211,
+          "model": "global.anthropic.claude-sonnet-4-5-20250929-v1:0",
+          "inputTokens": 20201,
+          "outputTokens": 424,
+          "discardedOutputChars": 210
+        },
+        {
+          "operation": "plan",
+          "durationMs": 2799,
+          "model": "global.anthropic.claude-sonnet-4-5-20250929-v1:0",
+          "inputTokens": 536,
+          "outputTokens": 101,
+          "discardedOutputChars": 12
+        }
+      ]
+    },
+    {
+      "name": "Missing budget requires clarification",
+      "passed": true,
+      "status": "clarification",
+      "durationMs": 26637,
+      "hardViolations": 0,
+      "profile": {
+        "budget": {
+          "min": null,
+          "max": null
+        },
+        "property": {
+          "minBedrooms": 2,
+          "propertyTypes": [],
+          "minSize": null,
+          "maxSize": null
+        },
+        "locations": {
+          "preferredAreas": [],
+          "excludedAreas": []
+        },
+        "commuteDestinations": [],
+        "transport": {
+          "hasCar": null,
+          "mrtPriority": "medium",
+          "maxMrtWalkingMinutes": null
+        },
+        "lifestyle": {
+          "quiet": false,
+          "parks": true,
+          "food": false,
+          "shopping": false,
+          "schools": false,
+          "nightlife": false
+        },
+        "otherPreferences": [],
+        "hardConstraints": [
+          "At least 2 bedrooms"
+        ],
+        "softPreferences": [
+          "parks"
+        ],
+        "unknownFields": [
+          "budget.max"
+        ]
+      },
+      "notice": "What is your budget for purchasing the property?",
+      "modelCalls": [
+        {
+          "operation": "parse",
+          "durationMs": 26620,
+          "model": "global.anthropic.claude-sonnet-4-5-20250929-v1:0",
+          "inputTokens": 17177,
+          "outputTokens": 328,
+          "discardedOutputChars": 210
+        }
+      ]
+    },
+    {
+      "name": "Unsupported mandatory condition",
+      "passed": true,
+      "status": "clarification",
+      "durationMs": 27917,
+      "hardViolations": 0,
+      "profile": {
+        "budget": {
+          "min": null,
+          "max": null
+        },
+        "property": {
+          "minBedrooms": null,
+          "propertyTypes": [],
+          "minSize": null,
+          "maxSize": null
+        },
+        "locations": {
+          "preferredAreas": [],
+          "excludedAreas": []
+        },
+        "commuteDestinations": [],
+        "transport": {
+          "hasCar": null,
+          "mrtPriority": "medium",
+          "maxMrtWalkingMinutes": null
+        },
+        "lifestyle": {
+          "quiet": false,
+          "parks": false,
+          "food": false,
+          "shopping": false,
+          "schools": false,
+          "nightlife": false
+        },
+        "otherPreferences": [],
+        "hardConstraints": [],
+        "softPreferences": [],
+        "unknownFields": [
+          "budget.max",
+          "property.minBedrooms"
+        ]
+      },
+      "notice": "This mandatory area or lifestyle condition is not supported as a verifiable hard constraint. Please clarify a numeric limit, property type or excluded area, or explicitly make it a soft preference.",
+      "modelCalls": [
+        {
+          "operation": "parse",
+          "durationMs": 27915,
+          "model": "global.anthropic.claude-sonnet-4-5-20250929-v1:0",
+          "inputTokens": 17503,
+          "outputTokens": 338,
+          "discardedOutputChars": 210
+        }
+      ]
+    },
+    {
+      "name": "Impossible budget is preserved",
+      "passed": true,
+      "status": "no-match",
+      "durationMs": 29275,
+      "hardViolations": 0,
+      "profile": {
+        "budget": {
+          "min": null,
+          "max": 100000
+        },
+        "property": {
+          "minBedrooms": 4,
+          "propertyTypes": [],
+          "minSize": null,
+          "maxSize": null
+        },
+        "locations": {
+          "preferredAreas": [],
+          "excludedAreas": []
+        },
+        "commuteDestinations": [],
+        "transport": {
+          "hasCar": null,
+          "mrtPriority": "medium",
+          "maxMrtWalkingMinutes": null
+        },
+        "lifestyle": {
+          "quiet": false,
+          "parks": false,
+          "food": false,
+          "shopping": false,
+          "schools": false,
+          "nightlife": false
+        },
+        "otherPreferences": [],
+        "hardConstraints": [
+          "Budget ≤ SGD 100,000",
+          "At least 4 bedrooms"
+        ],
+        "softPreferences": [],
+        "unknownFields": []
+      },
+      "notice": "No listing currently satisfies all hard constraints. Would you allow a higher budget, longer MRT walk, different area or smaller size? No limits have been relaxed.",
+      "modelCalls": [
+        {
+          "operation": "parse",
+          "durationMs": 26615,
+          "model": "global.anthropic.claude-sonnet-4-5-20250929-v1:0",
+          "inputTokens": 17105,
+          "outputTokens": 320,
+          "discardedOutputChars": 210
+        },
+        {
+          "operation": "plan",
+          "durationMs": 2648,
+          "model": "global.anthropic.claude-sonnet-4-5-20250929-v1:0",
+          "inputTokens": 452,
+          "outputTokens": 72,
+          "discardedOutputChars": 0
+        }
+      ]
+    },
+    {
+      "name": "Injection never changes buyer state",
+      "passed": true,
+      "status": "clarification",
+      "durationMs": 0,
+      "hardViolations": 0,
+      "profile": {
+        "budget": {
+          "min": null,
+          "max": null
+        },
+        "property": {
+          "minBedrooms": null,
+          "propertyTypes": [],
+          "minSize": null,
+          "maxSize": null
+        },
+        "locations": {
+          "preferredAreas": [],
+          "excludedAreas": []
+        },
+        "commuteDestinations": [],
+        "transport": {
+          "hasCar": null,
+          "mrtPriority": "medium",
+          "maxMrtWalkingMinutes": null
+        },
+        "lifestyle": {
+          "quiet": false,
+          "parks": false,
+          "food": false,
+          "shopping": false,
+          "schools": false,
+          "nightlife": false
+        },
+        "otherPreferences": [],
+        "hardConstraints": [],
+        "softPreferences": [],
+        "unknownFields": [
+          "budget.max",
+          "property.minBedrooms"
+        ]
+      },
+      "notice": "Instruction override blocked. Existing buyer constraints remain unchanged. Please state only buyer requirements.",
+      "modelCalls": []
+    }
+  ],
+  "workflow": {
+    "passed": true,
+    "initialShortlist": [
+      "PM-069",
+      "PM-021",
+      "PM-009"
+    ],
+    "afterWithdrawal": [
+      "PM-021",
+      "PM-009",
+      "PM-015"
+    ],
+    "afterPriceChange": [
+      "PM-009",
+      "PM-015",
+      "PM-020"
+    ],
+    "approvalRevoked": true,
+    "refreshModelCalls": 0
+  }
+}

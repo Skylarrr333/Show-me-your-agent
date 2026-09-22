@@ -43,7 +43,7 @@ await evaluate("01 Golden: budget + MRT + bedrooms", async () => {
   const s = await run("SGD 1.5M, 2 bedrooms, MRT within 5 minutes.");
   assert.equal(s.status, "waiting");
   assert(s.recommendations.length);
-  assert(s.recommendations.every((r) => r.property.mrtWalkingMinutes <= 5));
+  assert(s.recommendations.every((r) => r.property.mrtWalkingMinutes !== null && r.property.mrtWalkingMinutes <= 5));
 });
 await evaluate("02 Golden: NUS + CBD dual commute", async () => {
   const s = await run(DEMO);

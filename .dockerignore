@@ -8,6 +8,8 @@ dist
 .wrangler
 .sites-runtime
 .propmatch-sessions
+.propmatch-data
+training/private
 *.zip
 *.tar.gz
 *.tsbuildinfo

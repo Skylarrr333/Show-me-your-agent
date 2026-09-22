@@ -1,0 +1,171 @@
+{
+  "timestamp": "2026-09-22T02:01:44.181Z",
+  "mode": "gateway",
+  "status": "passed",
+  "passed": 2,
+  "total": 2,
+  "boundary": "Real model API, synthetic inventory, official public historical HDB evidence. Small authored regression set, not a model accuracy benchmark or real-world recommendation validation.",
+  "results": [
+    {
+      "name": "Chinese buyer brief",
+      "passed": true,
+      "status": "waiting",
+      "durationMs": 32078,
+      "hardViolations": 0,
+      "profile": {
+        "budget": {
+          "min": null,
+          "max": 1600000
+        },
+        "property": {
+          "minBedrooms": 2,
+          "propertyTypes": [],
+          "minSize": null,
+          "maxSize": null
+        },
+        "locations": {
+          "preferredAreas": [],
+          "excludedAreas": []
+        },
+        "commuteDestinations": [
+          {
+            "place": "NUS",
+            "priority": "high",
+            "maxTravelMinutes": null
+          },
+          {
+            "place": "Raffles Place",
+            "priority": "high",
+            "maxTravelMinutes": null
+          }
+        ],
+        "transport": {
+          "hasCar": false,
+          "mrtPriority": "high",
+          "maxMrtWalkingMinutes": null
+        },
+        "lifestyle": {
+          "quiet": true,
+          "parks": true,
+          "food": false,
+          "shopping": false,
+          "schools": false,
+          "nightlife": false
+        },
+        "otherPreferences": [],
+        "hardConstraints": [
+          "Budget ≤ SGD 1,600,000",
+          "At least 2 bedrooms"
+        ],
+        "softPreferences": [
+          "quiet",
+          "parks",
+          "Commute: NUS",
+          "Commute: Raffles Place",
+          "Public transport (inferred from no car)"
+        ],
+        "unknownFields": []
+      },
+      "notice": "8 candidates pass the recorded hard constraints. Top 3 ready for your review. Synthetic demonstration data.",
+      "modelCalls": [
+        {
+          "operation": "parse",
+          "durationMs": 28955,
+          "model": "global.anthropic.claude-sonnet-4-5-20250929-v1:0",
+          "inputTokens": 18592,
+          "outputTokens": 385,
+          "discardedOutputChars": 210
+        },
+        {
+          "operation": "plan",
+          "durationMs": 3063,
+          "model": "global.anthropic.claude-sonnet-4-5-20250929-v1:0",
+          "inputTokens": 524,
+          "outputTokens": 94,
+          "discardedOutputChars": 0
+        }
+      ]
+    },
+    {
+      "name": "Chinese numeric update preserves memory",
+      "passed": true,
+      "status": "waiting",
+      "durationMs": 31681,
+      "hardViolations": 0,
+      "profile": {
+        "budget": {
+          "min": null,
+          "max": 1700000
+        },
+        "property": {
+          "minBedrooms": 2,
+          "propertyTypes": [],
+          "minSize": null,
+          "maxSize": null
+        },
+        "locations": {
+          "preferredAreas": [],
+          "excludedAreas": []
+        },
+        "commuteDestinations": [
+          {
+            "place": "NUS",
+            "priority": "high",
+            "maxTravelMinutes": null
+          },
+          {
+            "place": "Raffles Place",
+            "priority": "high",
+            "maxTravelMinutes": null
+          }
+        ],
+        "transport": {
+          "hasCar": false,
+          "mrtPriority": "high",
+          "maxMrtWalkingMinutes": 5
+        },
+        "lifestyle": {
+          "quiet": true,
+          "parks": true,
+          "food": false,
+          "shopping": false,
+          "schools": false,
+          "nightlife": false
+        },
+        "otherPreferences": [],
+        "hardConstraints": [
+          "Budget ≤ SGD 1,700,000",
+          "At least 2 bedrooms",
+          "MRT walk ≤ 5 min"
+        ],
+        "softPreferences": [
+          "quiet",
+          "parks",
+          "Commute: NUS",
+          "Commute: Raffles Place",
+          "Public transport (inferred from no car)"
+        ],
+        "unknownFields": []
+      },
+      "notice": "8 candidates pass the recorded hard constraints. Top 3 ready for your review. Synthetic demonstration data.",
+      "modelCalls": [
+        {
+          "operation": "parse",
+          "durationMs": 28571,
+          "model": "global.anthropic.claude-sonnet-4-5-20250929-v1:0",
+          "inputTokens": 20259,
+          "outputTokens": 430,
+          "discardedOutputChars": 210
+        },
+        {
+          "operation": "plan",
+          "durationMs": 3089,
+          "model": "global.anthropic.claude-sonnet-4-5-20250929-v1:0",
+          "inputTokens": 536,
+          "outputTokens": 107,
+          "discardedOutputChars": 12
+        }
+      ]
+    }
+  ]
+}

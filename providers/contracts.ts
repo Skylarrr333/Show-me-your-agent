@@ -33,10 +33,11 @@ export interface AmenitiesProvider {
   ): Promise<z.infer<typeof AmenitySchema>[]>;
 }
 export interface LLMProvider {
-  mode: "demo" | "bedrock";
+  mode: "demo" | "bedrock" | "deepseek" | "gateway";
   parse(
     message: string,
     current: BuyerProfile,
   ): Promise<z.infer<typeof ParseSchema>>;
   plan(profile: BuyerProfile): Promise<z.infer<typeof PlanSchema>>;
+  drainMetrics?(): { operation: string; durationMs: number; inputTokens: number | null; outputTokens: number | null; model: string; discardedOutputChars?: number }[];
 }

@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "kind": "nonnegative-pairwise-logistic",
+  "features": [
+    "budget",
+    "property",
+    "commute",
+    "transport",
+    "lifestyle",
+    "location",
+    "amenities",
+    "worstCommuteFit"
+  ],
+  "weights": [
+    2.068563710631758,
+    0,
+    15.172732290065897,
+    8.957345384905294,
+    5.230867534964243,
+    1.0212866049606226,
+    0,
+    13.282238108417381
+  ],
+  "trainedOn": "synthetic-policy",
+  "datasetSha256": "f6b20d2c3b157cfb9db1ed3626eb468e71dfe1c952cdb4ff0d5d70e85e99c7c4",
+  "epochs": 500,
+  "l2": 0.0001,
+  "limitation": "Synthetic-policy distillation only. Not a trained LLM; no demonstrated human preference or business benefit. Do not enable in production."
+}

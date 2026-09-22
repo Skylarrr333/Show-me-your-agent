@@ -1,0 +1,167 @@
+{
+  "timestamp": "2026-09-21T17:34:18.171Z",
+  "mode": "deepseek",
+  "status": "passed",
+  "passed": 2,
+  "total": 2,
+  "boundary": "Real model API, synthetic inventory, official public historical HDB evidence. Small authored regression set, not a model accuracy benchmark or real-world recommendation validation.",
+  "results": [
+    {
+      "name": "Chinese buyer brief",
+      "passed": true,
+      "status": "waiting",
+      "durationMs": 2269,
+      "hardViolations": 0,
+      "profile": {
+        "budget": {
+          "min": null,
+          "max": 1600000
+        },
+        "property": {
+          "minBedrooms": 2,
+          "propertyTypes": [],
+          "minSize": null,
+          "maxSize": null
+        },
+        "locations": {
+          "preferredAreas": [],
+          "excludedAreas": []
+        },
+        "commuteDestinations": [
+          {
+            "place": "NUS",
+            "priority": "high",
+            "maxTravelMinutes": null
+          },
+          {
+            "place": "Raffles Place",
+            "priority": "high",
+            "maxTravelMinutes": null
+          }
+        ],
+        "transport": {
+          "hasCar": false,
+          "mrtPriority": "high",
+          "maxMrtWalkingMinutes": null
+        },
+        "lifestyle": {
+          "quiet": true,
+          "parks": true,
+          "food": false,
+          "shopping": false,
+          "schools": false,
+          "nightlife": false
+        },
+        "otherPreferences": [],
+        "hardConstraints": [
+          "Budget ≤ SGD 1,600,000",
+          "At least 2 bedrooms"
+        ],
+        "softPreferences": [
+          "quiet",
+          "parks",
+          "Commute: NUS",
+          "Commute: Raffles Place",
+          "Public transport (inferred from no car)"
+        ],
+        "unknownFields": []
+      },
+      "notice": "8 candidates pass the recorded hard constraints. Top 3 ready for your review. Synthetic demonstration data.",
+      "modelCalls": [
+        {
+          "operation": "parse",
+          "durationMs": 1426,
+          "model": "deepseek-flash",
+          "inputTokens": 607,
+          "outputTokens": 320
+        },
+        {
+          "operation": "plan",
+          "durationMs": 790,
+          "model": "deepseek-flash",
+          "inputTokens": 348,
+          "outputTokens": 110
+        }
+      ]
+    },
+    {
+      "name": "Chinese numeric update preserves memory",
+      "passed": true,
+      "status": "waiting",
+      "durationMs": 2744,
+      "hardViolations": 0,
+      "profile": {
+        "budget": {
+          "min": null,
+          "max": 1700000
+        },
+        "property": {
+          "minBedrooms": 2,
+          "propertyTypes": [],
+          "minSize": null,
+          "maxSize": null
+        },
+        "locations": {
+          "preferredAreas": [],
+          "excludedAreas": []
+        },
+        "commuteDestinations": [
+          {
+            "place": "NUS",
+            "priority": "high",
+            "maxTravelMinutes": null
+          },
+          {
+            "place": "Raffles Place",
+            "priority": "high",
+            "maxTravelMinutes": null
+          }
+        ],
+        "transport": {
+          "hasCar": false,
+          "mrtPriority": "high",
+          "maxMrtWalkingMinutes": 5
+        },
+        "lifestyle": {
+          "quiet": true,
+          "parks": true,
+          "food": false,
+          "shopping": false,
+          "schools": false,
+          "nightlife": false
+        },
+        "otherPreferences": [],
+        "hardConstraints": [
+          "Budget ≤ SGD 1,700,000",
+          "At least 2 bedrooms",
+          "MRT walk ≤ 5 min"
+        ],
+        "softPreferences": [
+          "quiet",
+          "parks",
+          "Commute: NUS",
+          "Commute: Raffles Place",
+          "Public transport (inferred from no car)"
+        ],
+        "unknownFields": []
+      },
+      "notice": "8 candidates pass the recorded hard constraints. Top 3 ready for your review. Synthetic demonstration data.",
+      "modelCalls": [
+        {
+          "operation": "parse",
+          "durationMs": 1917,
+          "model": "deepseek-flash",
+          "inputTokens": 658,
+          "outputTokens": 377
+        },
+        {
+          "operation": "plan",
+          "durationMs": 808,
+          "model": "deepseek-flash",
+          "inputTokens": 356,
+          "outputTokens": 97
+        }
+      ]
+    }
+  ]
+}

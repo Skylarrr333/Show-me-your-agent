@@ -1,0 +1,385 @@
+{
+  "timestamp": "2026-09-21T17:31:00.048Z",
+  "mode": "deepseek",
+  "status": "passed",
+  "passed": 6,
+  "total": 6,
+  "boundary": "Real model API, synthetic inventory, official public historical HDB evidence. Small authored regression set, not a model accuracy benchmark or real-world recommendation validation.",
+  "results": [
+    {
+      "name": "English buyer brief",
+      "passed": true,
+      "status": "waiting",
+      "durationMs": 2260,
+      "hardViolations": 0,
+      "profile": {
+        "budget": {
+          "min": null,
+          "max": 1600000
+        },
+        "property": {
+          "minBedrooms": 2,
+          "propertyTypes": [],
+          "minSize": null,
+          "maxSize": null
+        },
+        "locations": {
+          "preferredAreas": [],
+          "excludedAreas": []
+        },
+        "commuteDestinations": [
+          {
+            "place": "Raffles Place",
+            "priority": "high",
+            "maxTravelMinutes": null
+          },
+          {
+            "place": "NUS",
+            "priority": "high",
+            "maxTravelMinutes": null
+          }
+        ],
+        "transport": {
+          "hasCar": false,
+          "mrtPriority": "high",
+          "maxMrtWalkingMinutes": null
+        },
+        "lifestyle": {
+          "quiet": true,
+          "parks": true,
+          "food": false,
+          "shopping": false,
+          "schools": false,
+          "nightlife": false
+        },
+        "otherPreferences": [],
+        "hardConstraints": [
+          "Budget ≤ SGD 1,600,000",
+          "At least 2 bedrooms"
+        ],
+        "softPreferences": [
+          "quiet",
+          "parks",
+          "Commute: Raffles Place",
+          "Commute: NUS",
+          "Public transport (inferred from no car)"
+        ],
+        "unknownFields": []
+      },
+      "notice": "8 candidates pass the recorded hard constraints. Top 3 ready for your review. Synthetic demonstration data.",
+      "modelCalls": [
+        {
+          "operation": "parse",
+          "durationMs": 1372,
+          "model": "deepseek-flash",
+          "inputTokens": 629,
+          "outputTokens": 324
+        },
+        {
+          "operation": "plan",
+          "durationMs": 834,
+          "model": "deepseek-flash",
+          "inputTokens": 348,
+          "outputTokens": 92
+        }
+      ]
+    },
+    {
+      "name": "Follow-up retains preferences",
+      "passed": true,
+      "status": "waiting",
+      "durationMs": 2437,
+      "hardViolations": 0,
+      "profile": {
+        "budget": {
+          "min": null,
+          "max": 1700000
+        },
+        "property": {
+          "minBedrooms": 2,
+          "propertyTypes": [],
+          "minSize": null,
+          "maxSize": null
+        },
+        "locations": {
+          "preferredAreas": [],
+          "excludedAreas": []
+        },
+        "commuteDestinations": [
+          {
+            "place": "Raffles Place",
+            "priority": "high",
+            "maxTravelMinutes": null
+          },
+          {
+            "place": "NUS",
+            "priority": "high",
+            "maxTravelMinutes": null
+          }
+        ],
+        "transport": {
+          "hasCar": false,
+          "mrtPriority": "high",
+          "maxMrtWalkingMinutes": 5
+        },
+        "lifestyle": {
+          "quiet": true,
+          "parks": true,
+          "food": false,
+          "shopping": false,
+          "schools": false,
+          "nightlife": false
+        },
+        "otherPreferences": [],
+        "hardConstraints": [
+          "Budget ≤ SGD 1,700,000",
+          "At least 2 bedrooms",
+          "MRT walk ≤ 5 min"
+        ],
+        "softPreferences": [
+          "quiet",
+          "parks",
+          "Commute: Raffles Place",
+          "Commute: NUS",
+          "Public transport (inferred from no car)"
+        ],
+        "unknownFields": []
+      },
+      "notice": "8 candidates pass the recorded hard constraints. Top 3 ready for your review. Synthetic demonstration data.",
+      "modelCalls": [
+        {
+          "operation": "parse",
+          "durationMs": 1641,
+          "model": "deepseek-flash",
+          "inputTokens": 669,
+          "outputTokens": 377
+        },
+        {
+          "operation": "plan",
+          "durationMs": 776,
+          "model": "deepseek-flash",
+          "inputTokens": 356,
+          "outputTokens": 76
+        }
+      ]
+    },
+    {
+      "name": "Missing budget requires clarification",
+      "passed": true,
+      "status": "clarification",
+      "durationMs": 1153,
+      "hardViolations": 0,
+      "profile": {
+        "budget": {
+          "min": null,
+          "max": null
+        },
+        "property": {
+          "minBedrooms": 2,
+          "propertyTypes": [],
+          "minSize": null,
+          "maxSize": null
+        },
+        "locations": {
+          "preferredAreas": [],
+          "excludedAreas": []
+        },
+        "commuteDestinations": [],
+        "transport": {
+          "hasCar": null,
+          "mrtPriority": "medium",
+          "maxMrtWalkingMinutes": null
+        },
+        "lifestyle": {
+          "quiet": false,
+          "parks": true,
+          "food": false,
+          "shopping": false,
+          "schools": false,
+          "nightlife": false
+        },
+        "otherPreferences": [],
+        "hardConstraints": [
+          "At least 2 bedrooms"
+        ],
+        "softPreferences": [
+          "parks"
+        ],
+        "unknownFields": [
+          "budget.max"
+        ]
+      },
+      "notice": "What is your maximum budget?",
+      "modelCalls": [
+        {
+          "operation": "parse",
+          "durationMs": 1151,
+          "model": "deepseek-flash",
+          "inputTokens": 585,
+          "outputTokens": 251
+        }
+      ]
+    },
+    {
+      "name": "Unsupported mandatory condition",
+      "passed": true,
+      "status": "clarification",
+      "durationMs": 1073,
+      "hardViolations": 0,
+      "profile": {
+        "budget": {
+          "min": null,
+          "max": null
+        },
+        "property": {
+          "minBedrooms": null,
+          "propertyTypes": [],
+          "minSize": null,
+          "maxSize": null
+        },
+        "locations": {
+          "preferredAreas": [],
+          "excludedAreas": []
+        },
+        "commuteDestinations": [],
+        "transport": {
+          "hasCar": null,
+          "mrtPriority": "medium",
+          "maxMrtWalkingMinutes": null
+        },
+        "lifestyle": {
+          "quiet": false,
+          "parks": false,
+          "food": false,
+          "shopping": false,
+          "schools": false,
+          "nightlife": false
+        },
+        "otherPreferences": [],
+        "hardConstraints": [],
+        "softPreferences": [],
+        "unknownFields": [
+          "budget.max",
+          "property.minBedrooms"
+        ]
+      },
+      "notice": "This mandatory area or lifestyle condition is not supported as a verifiable hard constraint. Please clarify a numeric limit, property type or excluded area, or explicitly make it a soft preference.",
+      "modelCalls": [
+        {
+          "operation": "parse",
+          "durationMs": 1072,
+          "model": "deepseek-flash",
+          "inputTokens": 595,
+          "outputTokens": 264
+        }
+      ]
+    },
+    {
+      "name": "Impossible budget is preserved",
+      "passed": true,
+      "status": "no-match",
+      "durationMs": 2538,
+      "hardViolations": 0,
+      "profile": {
+        "budget": {
+          "min": null,
+          "max": 100000
+        },
+        "property": {
+          "minBedrooms": 4,
+          "propertyTypes": [],
+          "minSize": null,
+          "maxSize": null
+        },
+        "locations": {
+          "preferredAreas": [],
+          "excludedAreas": []
+        },
+        "commuteDestinations": [],
+        "transport": {
+          "hasCar": null,
+          "mrtPriority": "medium",
+          "maxMrtWalkingMinutes": null
+        },
+        "lifestyle": {
+          "quiet": false,
+          "parks": false,
+          "food": false,
+          "shopping": false,
+          "schools": false,
+          "nightlife": false
+        },
+        "otherPreferences": [],
+        "hardConstraints": [
+          "Budget ≤ SGD 100,000",
+          "At least 4 bedrooms"
+        ],
+        "softPreferences": [],
+        "unknownFields": []
+      },
+      "notice": "No listing currently satisfies all hard constraints. Would you allow a higher budget, longer MRT walk, different area or smaller size? No limits have been relaxed.",
+      "modelCalls": [
+        {
+          "operation": "parse",
+          "durationMs": 1402,
+          "model": "deepseek-flash",
+          "inputTokens": 587,
+          "outputTokens": 237
+        },
+        {
+          "operation": "plan",
+          "durationMs": 1131,
+          "model": "deepseek-flash",
+          "inputTokens": 286,
+          "outputTokens": 89
+        }
+      ]
+    },
+    {
+      "name": "Injection never changes buyer state",
+      "passed": true,
+      "status": "clarification",
+      "durationMs": 0,
+      "hardViolations": 0,
+      "profile": {
+        "budget": {
+          "min": null,
+          "max": null
+        },
+        "property": {
+          "minBedrooms": null,
+          "propertyTypes": [],
+          "minSize": null,
+          "maxSize": null
+        },
+        "locations": {
+          "preferredAreas": [],
+          "excludedAreas": []
+        },
+        "commuteDestinations": [],
+        "transport": {
+          "hasCar": null,
+          "mrtPriority": "medium",
+          "maxMrtWalkingMinutes": null
+        },
+        "lifestyle": {
+          "quiet": false,
+          "parks": false,
+          "food": false,
+          "shopping": false,
+          "schools": false,
+          "nightlife": false
+        },
+        "otherPreferences": [],
+        "hardConstraints": [],
+        "softPreferences": [],
+        "unknownFields": [
+          "budget.max",
+          "property.minBedrooms"
+        ]
+      },
+      "notice": "Instruction override blocked. Existing buyer constraints remain unchanged. Please state only buyer requirements.",
+      "modelCalls": []
+    }
+  ]
+}

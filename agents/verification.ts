@@ -1,5 +1,5 @@
 import { PropertySchema, type Session } from "../schemas";
-import { SyntheticListingProvider } from "../providers/synthetic";
+import { getDataProviders, dataRevision } from "../providers/evidence";
 import type { ListingProvider } from "../providers/contracts";
 import { check_constraints } from "../tools";
 
@@ -7,11 +7,14 @@ import { check_constraints } from "../tools";
 export async function verifyCurrentListings(
   session: Session,
   ids: string[],
-  provider: ListingProvider = new SyntheticListingProvider(),
+  provider?: ListingProvider,
 ) {
+  if (!provider && session.dataRevision && session.dataRevision !== await dataRevision(session))
+    throw new Error("Source changed; refresh before review.");
+  const listings = provider ?? getDataProviders(session).listings;
   for (const id of ids) {
     const row = session.recommendations.find((r) => r.property.id === id);
-    const current = PropertySchema.safeParse(await provider.get(id));
+    const current = PropertySchema.safeParse(await listings.get(id));
     if (
       !row ||
       session.rejected.includes(id) ||

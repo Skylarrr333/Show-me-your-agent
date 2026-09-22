@@ -1,3 +1,11 @@
+# September 22 public evidence addition
+
+`data/hdb-transactions.json` contains 7,295 official HDB resale transactions covering June, July and August 2026. Its metadata records exact retrieval queries, normalized-record SHA-256, agency attribution, source URL and Singapore Open Data Licence link. Run `npm run data:public` to regenerate a complete three-month snapshot; truncated or failed API responses cannot replace the previous snapshot.
+
+This data is used solely for historical research context. No current availability, asking price, bedroom count, live route or condo valuation is inferred. The 72 original inventory fixtures remain synthetic. Any future imported real inventory requires source ID, HTTPS source link and a recent actual availability verification. See [setup and limitations](LIVE_SETUP_ZH.md).
+
+---
+
 # Data provenance
 
 **DEMO / SYNTHETIC PROPERTY DATASET**

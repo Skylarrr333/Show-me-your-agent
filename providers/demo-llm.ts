@@ -3,17 +3,20 @@ import { LLMProvider } from "./contracts";
 import { normalizeProfile, profileConflict, suspicious } from "../lib/profile";
 import { unsupportedHardRequirement } from "../lib/profile-update";
 import { destinations } from "./synthetic";
+import { normalizeBuyerText } from "../lib/buyer-language";
 export function requiredPlan(p: BuyerProfile) {
   const tools: (
     | "search_properties"
     | "calculate_commute"
     | "find_nearby_amenities"
+    | "lookup_market_comparables"
     | "check_constraints"
     | "rank_properties"
   )[] = ["search_properties"];
   if (p.commuteDestinations.length) tools.push("calculate_commute");
   if (Object.entries(p.lifestyle).some(([k, v]) => k !== "quiet" && v))
     tools.push("find_nearby_amenities");
+  if (!p.property.propertyTypes.length || p.property.propertyTypes.includes("HDB")) tools.push("lookup_market_comparables");
   tools.push("check_constraints", "rank_properties");
   return PlanSchema.parse({
     tools,
@@ -30,6 +33,7 @@ export class DemoLLMProvider implements LLMProvider {
           "Instruction override blocked. Please state only buyer requirements; existing hard constraints remain in force.",
         summary: "Guardrail blocked instruction-like input.",
       });
+    message = normalizeBuyerText(message);
     const p = structuredClone(current);
     const t = message
       .toLowerCase()

@@ -3,7 +3,7 @@ import Link from "next/link";
 import PropertyComparison from "./property-comparison";
 import { readRunStream } from "../lib/run-stream";
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   ArrowUpRight,
   ArrowUp,
@@ -59,6 +59,8 @@ async function api(path: string, data?: unknown) {
     session: Session;
     comparison: Comparison;
     error?: string;
+    changed?: boolean;
+    checkedAt?: string;
   };
   if (!r.ok) throw new Error(result.error ?? "Request failed");
   return result;
@@ -75,9 +77,13 @@ export default function Workspace() {
     [detail, setDetail] = useState<Ranked | null>(null),
     [tab, setTab] = useState("recommendations"),
     [profileOpen, setProfileOpen] = useState(false),
+    [autoRefresh, setAutoRefresh] = useState(false),
+    [lastChecked, setLastChecked] = useState(""),
+    [sourceStatus, setSourceStatus] = useState<{ data: { mode: string; count: number; ready: boolean; note: string }; model: { mode: string; configured: boolean } } | null>(null),
     [pending, setPending] = useState("");
   const end = useRef<HTMLDivElement>(null);
   useEffect(() => {
+    fetch("/api/status").then((r) => r.json()).then((data) => setSourceStatus(data as typeof sourceStatus)).catch(() => {});
     api("/api/session")
       .then((r) => (r.session ? r : api("/api/session", {})))
       .then((r) => {
@@ -89,6 +95,24 @@ export default function Workspace() {
         setReady(true);
       });
   }, []);
+  const refreshSources = useCallback(async (kind?: "withdraw" | "raise-price") => {
+    if (!session || busy || session.profile.unknownFields.length || ["empty", "clarification"].includes(session.status)) return;
+    setBusy(true);
+    setError("");
+    try {
+      const r = await api("/api/refresh", { version: session.version,
+        ...(kind ? { demoEvent: { kind, propertyId: session.shortlist[0] } } : {}),
+      });
+      if (r.changed) { setSession(r.session); setComparison(null); setDetail(null); setCompareIds([]); setLive([]); }
+      setLastChecked(r.checkedAt ?? new Date().toISOString());
+    } catch (e) { setError((e as Error).message); setAutoRefresh(false); }
+    finally { setBusy(false); }
+  }, [session, busy]);
+  useEffect(() => {
+    if (!autoRefresh) return;
+    const timer = window.setInterval(() => { if (!document.hidden) void refreshSources(); }, 30000);
+    return () => window.clearInterval(timer);
+  }, [autoRefresh, refreshSources]);
   useEffect(() => {
     end.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
   }, [session?.messages.length, busy]);
@@ -105,6 +129,8 @@ export default function Workspace() {
       setDetail(null);
       setProfileOpen(false);
       setText("");
+      setAutoRefresh(false);
+      setLastChecked("");
       setTab("recommendations");
     } catch (e) {
       setError((e as Error).message);
@@ -240,6 +266,8 @@ export default function Workspace() {
             ? "Clarification needed"
             : session?.status === "error"
               ? "Run stopped safely"
+              : session?.status === "waiting"
+                ? "Waiting for your review"
               : "Ready for a buyer brief";
   return (
     <div className="application">
@@ -257,7 +285,7 @@ export default function Workspace() {
         </div>
         <div className="topbar-right">
           <span className="demo-pill">
-            {session?.mode === "bedrock" ? "BEDROCK" : "DEMO MODE"}
+            {session?.mode === "gateway" ? "CLAUDE · AWS GATEWAY" : session?.mode === "deepseek" ? "DEEPSEEK" : session?.mode === "bedrock" ? "BEDROCK" : "DEMO MODE"}
           </span>
           <span className="team">303forward</span>
           <div className="avatar">03</div>
@@ -290,14 +318,46 @@ export default function Workspace() {
       <div className="dataset-banner">
         <ShieldCheck size={15} />
         <span>
-          <strong>Synthetic demo data</strong> · 72 fictional
-          Singapore listings. Images are illustrative; routes and amenities are
-          estimates.
+          <strong>{sourceStatus?.data.mode === "file" ? "Imported source snapshots" : "Simulated listing inventory"}</strong>
+          {" · "}{sourceStatus?.data.note ?? "72 fictional listings. Routes and amenities are illustrative."}
+          {" "}Official HDB transaction evidence is shown separately below. Images are illustrations.
         </span>
         <Link href="/debug">
           Data & trace <ArrowUpRight size={13} />
         </Link>
       </div>
+      {sourceStatus && sourceStatus.model.mode !== "demo" && !sourceStatus.model.configured && (
+        <div className="error-banner" role="status">Model access needs setup. Add your API key to the private local configuration before running a live buyer brief.</div>
+      )}
+      {session && !session.profile.unknownFields.length && !["empty", "clarification"].includes(session.status) && (
+        <div className="refresh-bar">
+          <button className="button" disabled={busy} onClick={() => refreshSources()}><RotateCcw size={14} /> Recheck sources</button>
+          <label><input type="checkbox" checked={autoRefresh} onChange={(e) => setAutoRefresh(e.target.checked)} /> Watch while this page is open · every 30s</label>
+          {session.dataMode !== "file" && session.shortlist.length > 0 && <>
+            <button className="button ghost" disabled={busy} onClick={() => refreshSources("withdraw")}>Simulate top listing withdrawn</button>
+            <button className="button ghost" disabled={busy} onClick={() => refreshSources("raise-price")}>Simulate price above budget</button>
+          </>}
+          <small>{lastChecked ? `Checked ${new Date(lastChecked).toLocaleTimeString("en-SG")}` : "Refresh preserves the buyer brief; changed evidence requires a new approval."}</small>
+        </div>
+      )}
+      {session?.marketEvidence && (
+        <section className="market-panel" aria-label="Official HDB historical evidence">
+          <div><span className="eyebrow">Official public data · historical transactions</span>
+            <h2>HDB market reference</h2>
+            <p>Historical HDB sales only. Current availability and condo / landed values are outside this dataset.</p>
+            <p>{session.marketEvidence.count.toLocaleString()} records match the stated budget, area and size filters · {session.marketEvidence.months.slice().sort().join(" / ")}</p>
+          </div>
+          <strong className="market-median">{session.marketEvidence.medianPrice === null ? "No matching records" : money(session.marketEvidence.medianPrice)}<small>Median of this filtered sample</small></strong>
+          <details><summary>Inspect source records and limitations</summary>
+            <p>{session.marketEvidence.filterSummary}</p><p>{session.marketEvidence.boundary}</p>
+            <div className="market-table-wrap"><table><thead><tr><th>Record</th><th>Month / town</th><th>Flat type / floor area</th><th>Historical price</th></tr></thead><tbody>
+              {session.marketEvidence.examples.map((r) => <tr key={r.id}><td>#{r.id}<br />{r.address}</td><td>{r.month}<br />{r.town}</td><td>{r.flatType} · {r.floorAreaSqm} m²</td><td>{money(r.resalePrice)}</td></tr>)}
+            </tbody></table></div>
+            <a href={session.marketEvidence.sourceUrl} target="_blank" rel="noreferrer">Open HDB dataset on data.gov.sg ↗</a>
+            <p className="micro">Snapshot retrieved {new Date(session.marketEvidence.retrievedAt).toLocaleString("en-SG")}. Source records are evidence for research, not homes confirmed for sale.</p>
+          </details>
+        </section>
+      )}
       {error && (
         <div className="error-banner" role="alert">
           <TriangleAlert size={17} />
@@ -490,7 +550,7 @@ export default function Workspace() {
               <h2>Property recommendations</h2>
               <p>
                 {hasResults
-                  ? `${all.length} verified candidates · ranked for this buyer`
+                  ? `${all.length} eligible candidates · ranked for this buyer`
                   : "Your buyer’s next chapter starts here."}
               </p>
             </div>
@@ -732,7 +792,7 @@ export default function Workspace() {
                         </button>
                       </div>
                       <span className="photo-caption">
-                        Illustrative image · synthetic listing
+                        Illustrative image · {r.property.isSynthetic ? "synthetic listing" : "source snapshot"}
                       </span>
                       <div className="match-score">
                         <strong>
@@ -762,8 +822,7 @@ export default function Workspace() {
                       <div className="fact-strip">
                         <span>
                           <TrainFront size={15} />
-                          {r.property.mrtWalkingMinutes} min to{" "}
-                          {r.property.nearestMrt}
+                          {r.property.mrtWalkingMinutes === null ? "MRT walk unverified" : `${r.property.mrtWalkingMinutes} min to ${r.property.nearestMrt}`}
                         </span>
                         {r.commutes.slice(0, 2).map((c) => (
                           <span key={c.destination}>
@@ -1000,7 +1059,7 @@ export default function Workspace() {
           <DialogHeader>
             <DialogTitle>{detail?.property.name}</DialogTitle>
             <DialogDescription>
-              Evidence, match components and trade-offs. Synthetic data only.
+              Evidence, match components and trade-offs. Check source type and verification times.
             </DialogDescription>
           </DialogHeader>
           {detail && (
@@ -1043,6 +1102,7 @@ export default function Workspace() {
                 ))}
               </ul>
               <h4>Source evidence</h4>
+              {detail.property.sourceUrl && <a href={detail.property.sourceUrl} target="_blank" rel="noreferrer">Open original listing source ↗</a>}
               <div className="evidence-list">
                 {detail.evidence.map((e) => (
                   <code key={e}>{e}</code>

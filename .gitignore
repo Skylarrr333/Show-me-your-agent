@@ -48,6 +48,8 @@ next-env.d.ts
 
 # PropMatch runtime and secrets
 .propmatch-sessions/
+.propmatch-data/
+training/private/
 .env
 .env.*
 !.env.example

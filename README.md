@@ -5,13 +5,23 @@ NUS-ISS Show Me Your Agents Hackathon · Property Recommendation
 
 An AI property recommendation copilot for property agents. Convert a messy buyer conversation into validated buyer state, retrieve evidence, enforce hard constraints, compare scored candidates and approve a shortlist. The desktop workspace shows conversation, property recommendations and an auditable action trace side by side.
 
-**Demo / synthetic property dataset.** All 72 listings, unit details, amenity facts, availability and quietness indexes are fictional. The image is AI-generated illustration. Routes are distance-based estimates. No live listing or real-world accuracy claim is made.
+**Hybrid evidence demo.** The 72 listing scenarios, availability changes, amenities and routes are fictional. A separate market tool uses 7,295 official HDB historical transactions from June–August 2026. Historical sales do not establish current availability or condo valuations. The organiser gateway and DeepSeek have separate providers and validation reports. See [中文参赛方案](docs/参赛方案.md) and [本机设置](docs/LIVE_SETUP_ZH.md).
+
+## September 22 implementation
+
+- Organiser Ollama-compatible gateway provider (`LLM_MODE=gateway`), alongside DeepSeek and direct Bedrock providers; structured state validation, token/latency trace and fail-closed errors.
+- Official public HDB snapshot, reproducible fetch script, source records and sample-scoped statistics.
+- Manual refresh, optional 30-second checks while the visible page is open, and session-local simulated withdrawal / over-budget events. Changed sources revoke approval and trigger re-ranking; unchanged sources use no model calls.
+- Sourced inventory JSON provider for future real listing access, with explicit unknown facts and freshness checks. It is not currently populated with real inventory.
+- Live API evaluation, bilingual numeric anchors, workflow regression tests and a separate optional CPU ranking experiment.
+
+To run locally: set private `.env.local` as documented, then `npm exec -- next dev --hostname 127.0.0.1`. `npm run check:setup` prints configuration status without keys. `npm run eval:live -- --full` and `-- --chinese` call the selected real provider and incur normal API usage. `npm run data:public` updates the government snapshot; rebuild production deployments afterward.
 
 ## What works
 
 - One-click couple / NUS / Raffles Place / S$1.6M demo, plus reset.
 - Multi-turn update to S$1.7M and MRT within 5 minutes; existing bedrooms, destinations, no-car and lifestyle requirements persist.
-- Validated inputs and outputs for all six tools; deterministic hard constraints and explainable weighted ranking.
+- Validated inputs and outputs for the original six tools plus a public market-evidence tool; deterministic hard constraints and explainable weighted ranking.
 - Adaptive tool selection: no route calls without destinations, no amenities calls without relevant preferences.
 - Details with component scores, why recommended, trade-offs, source IDs and timestamps.
 - Comparison of 2-4 verified listings; shortlist toggles, approval, rejection, alternative and recorded ranking override.
@@ -25,7 +35,7 @@ Agents repeatedly reconcile budgets, bedrooms, transport and lifestyle while lis
 
 ## Why an agent
 
-A buyer changes requirements conversationally and different briefs require different evidence. A stateful orchestrator interprets updates, selects the required tool set, rechecks current listings and knows when to stop for human input. A static search form alone would not demonstrate this update / planning / verification loop. Demo mode is a deterministic parser and planner; live mode uses Bedrock for structured interpretation and a bounded tool-plan proposal. The system does not pretend that demo mode is a live LLM.
+A buyer changes requirements conversationally and different briefs require different evidence. A stateful orchestrator interprets updates, selects the required tool set, rechecks current listings and knows when to stop for human input. A static search form alone would not demonstrate this update / planning / verification loop. Demo mode is a deterministic parser and planner; live mode uses the organiser gateway, DeepSeek or direct Bedrock for structured interpretation and a bounded tool-plan proposal. The system does not pretend that demo mode is a live LLM.
 
 ## Architecture and reasoning loop
 
@@ -52,6 +62,7 @@ The UI displays action summaries and tool facts, never private chain-of-thought.
 | `find_nearby_amenities` | Requested categories and bounded radius | `AmenitiesInput` → `Amenity[]` |
 | `check_constraints` | Numeric limits, availability, freshness, excluded areas, commute limits | `ConstraintInput` → passed, violations, warnings |
 | `rank_properties` | Weighted reproducible scoring of eligible candidates | `RankInput` → ranked evidence |
+| `lookup_market_comparables` | Query official historical HDB evidence by budget, town and size; never current inventory | BuyerProfile → MarketEvidence |
 | `compare_properties` | 2-4 distinct current verified property IDs | `CompareInput` → structured comparison |
 
 All contracts are exported in `tools/index.ts`. Providers implement `ListingProvider`, `RoutingProvider`, `AmenitiesProvider`, `LLMProvider` from `providers/contracts.ts`. There is no model-accessible SQL, shell, URL fetch or arbitrary code tool.
@@ -79,6 +90,10 @@ npm ci
 cp .env.example .env.local
 ```
 
+For the organiser gateway, set `LLM_MODE=gateway`, `LLM_GATEWAY_URL`, `LLM_GATEWAY_API_KEY`, and `LLM_MODEL` from the team email in `.env.local`. The adapter uses `/api/chat` and `X-API-Key`; it does not need an AWS access key or a local model.
+
+For real DeepSeek, set `LLM_MODE=deepseek`, `DEEPSEEK_API_KEY`, and `DEEPSEEK_MODEL=deepseek-flash` in `.env.local`. Never expose the key through `NEXT_PUBLIC_*`.
+
 Leave `SESSION_DIR` blank for project-local `.propmatch-sessions`, or set it to an existing writable absolute directory.
 
 ```bash
@@ -91,7 +106,15 @@ Open `http://localhost:3000`. Demo needs no credentials or network calls. `npm r
 
 | Variable | Default / use |
 |---|---|
-| `LLM_MODE` | `auto`; `.env.example` sets `demo`. `bedrock` fails closed if configuration is missing. |
+| `LLM_MODE` | `auto`; `.env.example` sets `demo`. Explicit `gateway` / `deepseek` / `bedrock` fail closed if configuration is missing. |
+| `LLM_GATEWAY_URL` | Organiser HTTPS origin; `/api/chat` is appended by the adapter |
+| `LLM_GATEWAY_API_KEY` | Server-only team key, sent only to the configured gateway |
+| `LLM_MODEL` | Model/profile ID from the organiser email |
+| `DEEPSEEK_API_KEY` | Server-only official DeepSeek key |
+| `DEEPSEEK_MODEL` | `deepseek-flash`, configurable |
+| `DEEPSEEK_BASE_URL` | `https://api.deepseek.com`; optional `/v1` path supported |
+| `DATA_MODE` | `synthetic` or `file` (sourced local inventory snapshots) |
+| `LISTING_DATA_FILE` | Absolute server path when `DATA_MODE=file`; Node deployment only |
 | `AWS_REGION` | `ap-southeast-1` |
 | `AWS_BEARER_TOKEN_BEDROCK` | Bedrock API bearer token; server only, never `NEXT_PUBLIC_*` |
 | `BEDROCK_MODEL_ID` | Enabled Claude Sonnet 4.5 model/inference-profile ID from your account; no invented default |
@@ -100,7 +123,7 @@ Open `http://localhost:3000`. Demo needs no credentials or network calls. `npm r
 | `NEXT_TELEMETRY_DISABLED` | `1` in Docker |
 | `DOMAIN` | Hostname used only by optional Caddy HTTPS compose profile |
 
-**Official hackathon gateway schema was not provided.** `BedrockProvider` implements AWS's documented Converse REST API using a Bedrock bearer API key. It does not claim compatibility with an undocumented organiser gateway. Standard IAM access-key/SigV4 credentials are not interchangeable with the bearer token. If organisers issue a custom gateway, implement that exact envelope as another `LLMProvider` after obtaining the specification. No fake successful call is returned on auth or model errors.
+**Organiser gateway and direct AWS are separate protocols.** `GatewayProvider` follows the [Starter Kit weather client](https://github.com/kenken64/ShowMeYourAgent-Starter-Kit/blob/main/weather_demo.py): Ollama `/api/chat`, `X-API-Key`, non-streaming messages. `BedrockProvider` separately implements the documented AWS Converse API with a bearer token. Never put the team gateway key in `AWS_BEARER_TOKEN_BEDROCK`. There are no silent provider switches or automatic paid retries. See [gateway validation](docs/GATEWAY_VALIDATION_2026-09-22.md) for actual checks and limits.
 
 The independent numeric-edit guard is deliberately conservative; unsupported phrasings for relaxing existing constraints require restating explicit numbers. Supported fixture destinations: NUS, Raffles Place, Jurong East, Changi Airport. Unknown routing destinations trigger clarification.
 
@@ -178,4 +201,4 @@ Submission materials are in `submission/`: write-up, video narration, shot list 
 - [Deployment status](docs/DEPLOYMENT.md)
 - [Submission checklist](submission/SUBMISSION_CHECKLIST.md)
 
-Technical references: [AWS Converse](https://docs.aws.amazon.com/bedrock/latest/APIReference/API_runtime_Converse.html), [Bedrock API keys](https://docs.aws.amazon.com/bedrock/latest/userguide/api-keys.html), [Next.js self-hosting](https://nextjs.org/docs/app/guides/self-hosting), [Lightsail containers documentation](https://docs.aws.amazon.com/lightsail/latest/userguide/amazon-lightsail-container-services.html). These describe platform contracts, not an organiser-specific gateway.
+Technical references: [AWS Converse](https://docs.aws.amazon.com/bedrock/latest/APIReference/API_runtime_Converse.html), [Bedrock API keys](https://docs.aws.amazon.com/bedrock/latest/userguide/api-keys.html), [Next.js self-hosting](https://nextjs.org/docs/app/guides/self-hosting), [Lightsail containers documentation](https://docs.aws.amazon.com/lightsail/latest/userguide/amazon-lightsail-container-services.html). Organiser-specific examples: [Starter Kit](https://github.com/kenken64/ShowMeYourAgent-Starter-Kit).

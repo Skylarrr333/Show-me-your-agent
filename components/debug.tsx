@@ -48,7 +48,7 @@ export default function Debug() {
       <h1 className="mt-7">The full audit trail</h1>
       <p>
         Structured actions, state changes, tool evidence and human decisions. No
-        private model reasoning. Demo data, not live market evidence.
+        private model reasoning. Synthetic inventory and official historical market evidence are labeled separately.
       </p>
       <div className="debug-actions">
         <button className="button" onClick={refresh}>

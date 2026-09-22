@@ -1,0 +1,64 @@
+{
+  "labelSource": "synthetic-policy",
+  "datasetSha256": "f6b20d2c3b157cfb9db1ed3626eb468e71dfe1c952cdb4ff0d5d70e85e99c7c4",
+  "sampleCounts": {
+    "train": {
+      "buyers": 120,
+      "candidateRows": 2121,
+      "uniqueListings": 45,
+      "pairs": 17616
+    },
+    "validation": {
+      "buyers": 40,
+      "candidateRows": 198,
+      "uniqueListings": 11,
+      "pairs": 421
+    },
+    "test": {
+      "buyers": 40,
+      "candidateRows": 211,
+      "uniqueListings": 11,
+      "pairs": 463
+    }
+  },
+  "splitPolicy": "Disjoint buyer IDs, profile hashes, listing IDs and building/area groups. Validate before fitting.",
+  "selectedL2": 0.0001,
+  "validationTrials": [
+    {
+      "l2": 0.0001,
+      "groups": 40,
+      "comparablePairs": 421,
+      "ndcgAt3": 0.9534826130857595,
+      "pairwiseAgreement": 0.9287410926365796
+    },
+    {
+      "l2": 0.001,
+      "groups": 40,
+      "comparablePairs": 421,
+      "ndcgAt3": 0.9451123425170987,
+      "pairwiseAgreement": 0.9216152019002375
+    },
+    {
+      "l2": 0.01,
+      "groups": 40,
+      "comparablePairs": 421,
+      "ndcgAt3": 0.9353825780990466,
+      "pairwiseAgreement": 0.8931116389548693
+    }
+  ],
+  "heldOutTest": {
+    "ruleBaseline": {
+      "groups": 40,
+      "comparablePairs": 463,
+      "ndcgAt3": 0.9162018515885253,
+      "pairwiseAgreement": 0.8660907127429806
+    },
+    "learned": {
+      "groups": 40,
+      "comparablePairs": 463,
+      "ndcgAt3": 0.9567991511659162,
+      "pairwiseAgreement": 0.9308855291576674
+    }
+  },
+  "limitation": "Synthetic-policy distillation only. Not a trained LLM; no demonstrated human preference or business benefit. Do not enable in production."
+}

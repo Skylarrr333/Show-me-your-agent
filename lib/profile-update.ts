@@ -75,6 +75,7 @@ export function validateProfileUpdate(
 
 export function unsupportedHardRequirement(message: string) {
   if (
+    /(?:必须|一定要|只考虑|只要|只能住).{0,20}(?:海景|阳台|永久地契|泳池|安静|公园|学校|Clementi|Queenstown|金文泰|女皇镇)/i.test(message) ||
     /\bonly in\b|\bmust (?:be|live) in\b|\b(?:must have|must be|require|mandatory|hard constraint)[^.!?;]{0,45}\b(quiet|park|school|balcon(?:y|ies)|freehold|pool|floor|sea view)\b/i.test(
       message,
     )

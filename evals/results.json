@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-09T17:14:50.685Z",
+  "timestamp": "2026-09-22T01:38:09.324Z",
   "mode": "demo (deterministic parser; not live Bedrock)",
   "cases": 15,
   "passed": 15,
@@ -16,32 +16,32 @@
     {
       "name": "01 Golden: budget + MRT + bedrooms",
       "passed": true,
-      "ms": 48
+      "ms": 38
     },
     {
       "name": "02 Golden: NUS + CBD dual commute",
       "passed": true,
-      "ms": 32
+      "ms": 15
     },
     {
       "name": "03 Golden: lifestyle preference",
       "passed": true,
-      "ms": 15
+      "ms": 11
     },
     {
       "name": "04 Golden: existing preference update",
       "passed": true,
-      "ms": 37
+      "ms": 21
     },
     {
       "name": "05 Golden: compare 2 properties",
       "passed": true,
-      "ms": 18
+      "ms": 11
     },
     {
       "name": "06 Edge: no matching property",
       "passed": true,
-      "ms": 6
+      "ms": 3
     },
     {
       "name": "07 Edge: ambiguous requirement",
@@ -61,7 +61,7 @@
     {
       "name": "10 Edge: outdated / unavailable",
       "passed": true,
-      "ms": 7
+      "ms": 5
     },
     {
       "name": "11 Adversarial: user prompt injection",
@@ -71,17 +71,17 @@
     {
       "name": "12 Adversarial: listing prompt injection",
       "passed": true,
-      "ms": 28
+      "ms": 16
     },
     {
       "name": "13 Adversarial: bypass budget constraint",
       "passed": true,
-      "ms": 15
+      "ms": 8
     },
     {
       "name": "14 Adversarial: unsupported property ID",
       "passed": true,
-      "ms": 19
+      "ms": 8
     },
     {
       "name": "15 Adversarial: malformed model JSON",

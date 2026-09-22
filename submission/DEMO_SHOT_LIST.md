@@ -1,15 +1,12 @@
-# Demo shot list
+# Recording checklist
 
-| Shot | Approx. time | Screen | Evidence |
-|---|---:|---|---|
-| 1 | 0:00-0:25 | Empty three-panel workspace | Product purpose, team, synthetic-data disclosure |
-| 2 | 0:25-0:50 | Load Demo Scenario | Real state update, tool calls and top recommendations |
-| 3 | 0:50-1:15 | Open buyer profile / details | Explicit vs inferred preferences; computed score |
-| 4 | 1:15-2:00 | S$1.7M / MRT five-minute update | Same session; before/after values, retained memory |
-| 5 | 2:00-2:25 | Compare dialog | Price, size, MRT and dual commutes |
-| 6 | 2:25-2:45 | Detail / move to first | Human override and unchanged original score |
-| 7 | 2:45-3:20 | Approve then /debug | Human decision stored as structured audit event |
-| 8 | 3:20-3:50 | S$100k no-match / injection | Escalation without relaxing constraints |
-| 9 | 3:50-4:10 | Evaluation report / deployment | Actual results; explicit live-service limits |
+1. Open the local app with the DEEPSEEK label and inventory disclosure visible. Hide unrelated tabs and private account material.
+2. Record Load Demo Scenario, buyer profile and model/tool trace.
+3. Expand the official HDB panel; show record IDs, dates and the source link, with the historical-data limitation visible.
+4. Record the S$1.7M and five-minute MRT update. Show changed fields and retained destinations.
+5. Approve, simulate withdrawal, then show the replacement and revoked approval. Expand the change event with before/after facts.
+6. Show the impossible-budget no-match behavior.
+7. Show the dated validation report and its small-sample / simulated-inventory limits.
+8. End on the project name, team, repository URL and the actual accessible demo URL if deployed.
 
-Record at 1440×900 or 1920×1080, readable browser zoom, with no credentials or personal browser tabs visible. Capture actual runs; do not substitute fake logs or animate invented scores. If demonstrating Bedrock, show the mode badge and use tested credentials. Keep the deterministic demo available for recovery and disclose its mode.
+Confirm video length, judge access, platform requirements, deadline and final upload URL. Mark recording complete only after the playable video exists. Do not include .env.local in any upload.

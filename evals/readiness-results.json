@@ -1,0 +1,73 @@
+{
+  "timestamp": "2026-09-21T17:39:11.596Z",
+  "mode": "demo",
+  "synthetic": true,
+  "checks": {
+    "initialRecommendation": {
+      "passed": true,
+      "shortlist": [
+        "PM-069",
+        "PM-021",
+        "PM-009"
+      ]
+    },
+    "multiTurnUpdate": {
+      "passed": true
+    },
+    "withdrawnApprovalBlocked": {
+      "passed": true
+    },
+    "changedSourceReplans": {
+      "passed": true
+    },
+    "publicHistoricalData": {
+      "passed": true,
+      "metadata": {
+        "sourceUrl": "https://data.gov.sg/datasets/d_8b84c4ee58e3cfc0ece0d773c8ca6abc/view",
+        "count": 7295,
+        "months": [
+          "2026-08",
+          "2026-07",
+          "2026-06"
+        ],
+        "retrievedAt": "2026-09-21T17:22:50.526Z",
+        "sha256": "e994b8bad03596c7c319bfda09105c3b0a026d9752112d7b87f23477f99023cb",
+        "boundary": "Historical completed resale transactions, not current listings, availability, asking prices, property valuations, bedrooms, or route data."
+      }
+    }
+  },
+  "discoveredLimitations": {
+    "chineseBrief": {
+      "expectedForReadiness": "waiting with budget=1600000 and minBedrooms=2",
+      "actual": {
+        "status": "waiting",
+        "budget": 1600000,
+        "bedrooms": 2
+      },
+      "ready": true
+    },
+    "llmPlanControlsExecution": {
+      "ready": false,
+      "note": "Code always uses requiredPlan(profile).tools. LLM proposal is recorded but does not choose the executed plan.",
+      "proposed": [
+        "search_properties"
+      ],
+      "policySelected": [
+        "search_properties",
+        "calculate_commute",
+        "find_nearby_amenities",
+        "lookup_market_comparables",
+        "check_constraints",
+        "rank_properties"
+      ]
+    },
+    "proactiveListingRefresh": {
+      "ready": true,
+      "note": "Manual refresh and optional 30-second checks while the page is open and visible. No always-on server scheduler or external listing subscription. Demo events are explicitly simulated."
+    },
+    "liveData": {
+      "ready": false,
+      "note": "Default listing, routing and amenities providers are synthetic."
+    }
+  }
+}

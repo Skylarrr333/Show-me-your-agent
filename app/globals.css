@@ -2070,3 +2070,18 @@ svg {
     transition-duration: 0.01ms !important;
   }
 }
+/* Evidence and source-change controls are part of the review workflow. */
+.refresh-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 14px 28px; background: #eef7f4; border-bottom: 1px solid #d7e5df; font-size: 12px; }
+.refresh-bar label { display: flex; align-items: center; gap: 7px; }
+.refresh-bar small { color: #526660; }
+.market-panel { margin: 18px 28px; padding: 20px 24px; background: #fff; border: 1px solid #d8e4df; border-radius: 14px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; }
+.market-panel h2 { margin: 6px 0; font-size: 21px; }
+.market-panel p { font-size: 13px; line-height: 1.7; color: #526660; }
+.market-panel details { flex-basis: 100%; font-size: 13px; }
+.market-panel summary { cursor: pointer; color: #246c56; }
+.market-panel a { color: #146448; text-decoration: underline; }
+.market-median { font-size: 24px; }
+.market-median small { display: block; font-size: 11px; font-weight: normal; color: #526660; }
+.market-table-wrap { overflow-x: auto; margin: 14px 0; }
+.market-panel table { border-collapse: collapse; width: 100%; min-width: 500px; }
+.market-panel th, .market-panel td { text-align: left; padding: 10px; border-bottom: 1px solid #e0e8e3; }

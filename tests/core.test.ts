@@ -69,7 +69,7 @@ test("multi-turn update preserves previous state and adds hard MRT limit", async
   );
   assert.deepEqual(b.profile.lifestyle, a.profile.lifestyle);
   assert.equal(b.profile.property.minBedrooms, 2);
-  assert(b.recommendations.every((r) => r.property.mrtWalkingMinutes <= 5));
+  assert(b.recommendations.every((r) => r.property.mrtWalkingMinutes !== null && r.property.mrtWalkingMinutes <= 5));
   assert(b.trace.length > a.trace.length);
 });
 test("tool selection omits routes and amenities without corresponding preferences", async () => {
