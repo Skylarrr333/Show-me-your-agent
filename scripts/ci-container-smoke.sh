@@ -23,7 +23,7 @@ export DEPLOY_CHECK_PASSWORD
 DEPLOY_CHECK_PASSWORD=$(node -e 'process.stdout.write(require("node:crypto").randomBytes(24).toString("hex"))')
 export DEMO_AUTH_USER="$DEPLOY_CHECK_USER"
 export DEMO_AUTH_HASH
-DEMO_AUTH_HASH=$(printf '%s' "$DEPLOY_CHECK_PASSWORD" | docker run --rm -i caddy:2-alpine caddy hash-password)
+DEMO_AUTH_HASH=$(printf '%s\n' "$DEPLOY_CHECK_PASSWORD" | docker run --rm -i caddy:2-alpine caddy hash-password)
 export DEPLOY_PROBE_STATE="$probe_dir/session.json"
 export NODE_EXTRA_CA_CERTS="$probe_dir/ca.crt"
 
