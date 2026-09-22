@@ -1,0 +1,25 @@
+{
+  "timestamp": "2026-09-22T05:52:45.472Z",
+  "status": "passed",
+  "url": "https://propmatch-18-142-198-52.sslip.io",
+  "commit": "6bbedf71d427c8406539115ec19bc36adb4d305a",
+  "modelMode": "gateway",
+  "checks": [
+    "HTTPS origin without embedded credentials",
+    "Private access credentials supplied",
+    "Expected Git commit supplied",
+    "Unauthenticated / blocked",
+    "Unauthenticated /api/status blocked",
+    "Unauthenticated /api/session blocked",
+    "Unauthenticated /debug blocked",
+    "Incorrect access password blocked",
+    "Authenticated app page available",
+    "Authenticated status endpoint available",
+    "Running release matches expected Git commit",
+    "Model configuration and data ready",
+    "Persistence probe belongs to this origin",
+    "Stored session endpoint available after restart",
+    "Buyer state survives container restart"
+  ],
+  "scope": "Session persistence after an operator-triggered restart"
+}

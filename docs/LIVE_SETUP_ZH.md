@@ -111,10 +111,10 @@ npm run build:next
 
 ## 7. 比赛交付待办
 
-1. 提供团队邮件附件 AWS Account Login Guide，并按主办方指南取得 Lightsail 账号访问。不要发密码或访问密钥。
+1. Lightsail 已部署并完成公网验证：[打开演示站](https://propmatch-18-142-198-52.sslip.io/)。网站访问密码由团队私下提供；见 [部署证据](DEPLOYMENT.md)。
 2. 团队按 9 月 27 日完成提交；投影片初赛截止为 9 月 28 日 09:00，以 Slack 最新公告为准。指定 Slack 频道提交团队代码、项目名、GitHub URL、视频 URL／MP4 下载地址、PDF write-up 和部署证据／URL。确认视频 30mins 是上限还是指定时长，以及 PDF 页数限制。
 3. 让至少两位队友用陌生需求试跑，记录用时、错误和是否接受推荐；正式录制有数据边界说明的演示视频。
 
-模型接入与云部署是不同步骤：尚未部署到公网，也未提交比赛材料。公开托管时必须在服务器设置密钥，并保护付费模型接口的访问；不能把开发服务器直接暴露给公网。
+真实模型接入和 Lightsail 公网部署都已完成验证。HTTPS、访问密码、房源变化后的重新推荐以及容器重启后的会话保留均已验证；比赛视频、最终 PDF 和 Slack 提交仍需完成。API 密钥仅在服务器私有配置中，未进入 GitHub。
 
 技术接口参考：[DeepSeek JSON Output](https://api-docs.deepseek.com/guides/json_mode/)、[data.gov.sg 查询 API](https://guide.data.gov.sg/developer-guide/dataset-apis/search-and-filter-within-dataset)、[Kiro 用途与额度](https://kiro.dev/pricing/)。

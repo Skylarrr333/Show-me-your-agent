@@ -37,7 +37,7 @@ The single TypeScript repository uses Next.js, React, Tailwind, Zod and explicit
 
 ## Data and demonstration boundary
 
-The application includes 7,295 official HDB historical transaction records, separate from 72 clearly marked fictional Singapore listings across 12 areas, synthetic amenities and illustrative low-confidence travel estimates. A generated condominium image is reused as an explicitly labeled illustration. HDB historical transactions provide auditable market context, not currently available inventory. An organiser-specific JSON API schema and live listing feed are not available. All actual property suitability, availability, eligibility and travel claims require real-provider verification.
+The application includes 7,295 official HDB historical transaction records, separate from 72 clearly marked fictional Singapore listings across 12 areas, synthetic amenities and illustrative low-confidence travel estimates. A generated condominium image is reused as an explicitly labeled illustration. HDB historical transactions provide auditable market context, not currently available inventory. The organiser gateway uses the integrated Ollama-compatible API. A real live listing feed is not available. All actual property suitability, availability, eligibility and travel claims require real-provider verification.
 
 ## Reproduction and deliverables
 
@@ -47,9 +47,9 @@ Run `npm ci`, configure server-only `.env.local`, then `npm run dev:next`. No ke
 
 - GitHub repository: https://github.com/Skylarrr333/Show-me-your-agent
 - Demo video: to be supplied after recording and uploading.
-- Private demo: deployment evidence is recorded in docs/DEPLOYMENT.md when published.
-- AWS Lightsail evidence: to be supplied after deployment in the team's AWS account.
+- Live demo: https://propmatch-18-142-198-52.sslip.io/ (team provides judge credentials privately).
+- AWS Lightsail evidence: [deployment record](../docs/DEPLOYMENT.md), with sanitized real-workflow and restart reports.
 
 ## Organiser gateway validation update
 
-The team-provided Claude Sonnet 4.5 gateway is now selected locally. The final authored regression run passed six English-path and two Chinese scenarios, plus approval/withdrawal/reprice checks. Invalid-key access was rejected with HTTP 403. The full unit/workflow suite passed 47 tests and the deterministic evaluation passed 15 cases. Gateway output framing isolates unsolicited continuations; incompatible or conflicting structured results stop safely. See docs/GATEWAY_VALIDATION_2026-09-22.md for early failures, changes and measured token counts. Local API integration does not establish Lightsail deployment or real live listing availability.
+The team-provided Claude Sonnet 4.5 gateway is now selected locally. The final authored regression run passed six English-path and two Chinese scenarios, plus approval/withdrawal/reprice checks. Invalid-key access was rejected with HTTP 403. The full unit/workflow suite passed 47 tests and the deterministic evaluation passed 15 cases. Gateway output framing isolates unsolicited continuations; incompatible or conflicting structured results stop safely. See docs/GATEWAY_VALIDATION_2026-09-22.md for early failures, changes and measured token counts. A separate public Lightsail verification subsequently passed the real gateway recommendation, approval, withdrawal and price-change workflow and session restoration after a container restart. See docs/DEPLOYMENT.md. This does not establish real live listing availability.

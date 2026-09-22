@@ -1,22 +1,66 @@
-# Deployment status
+# Verified Lightsail deployment
 
-## Supported targets
+**Live application:** <https://propmatch-18-142-198-52.sslip.io/>
 
-- **Amazon Lightsail VM:** the multi-stage Dockerfile builds Next.js standalone output, runs as UID 1001, persists sessions in `/app/storage`, and exposes an HTTP healthcheck. `docker-compose.yml` binds the app to host loopback and optionally adds Caddy HTTPS through the `https` profile.
-- **OpenAI Sites / Cloudflare Workers:** the Vinext build produces a Worker bundle, and the `DB` binding persists sessions through D1. `drizzle/0000_many_zzzax.sql` is the canonical schema migration.
+**Verified:** 22 September 2026, 13:52 Singapore time (05:52 UTC).
 
-## Verified locally
+**Access:** shared judge username/password, supplied privately by the team. These are website credentials, not AWS credentials. Unauthenticated requests receive HTTP 401.
 
-The September 10 baseline passed both production build commands and local HTTP/browser checks; that historical record is in [QA](QA.md). The September 22 gateway integration passed Next.js production compilation and a real-model browser rehearsal, documented in [Gateway validation](GATEWAY_VALIDATION_2026-09-22.md). A successful build is distinct from public hosting.
+## Running infrastructure
 
-The team organiser gateway credential was supplied privately and exercised successfully. This is an Ollama-compatible gateway backed by the organiser's model service, not direct AWS console access. No Lightsail instance, public URL or completed AWS deployment is claimed. Docker execution was not available on the authoring Mac and still requires verification on a Docker-enabled host.
+| Item | Observed configuration |
+|---|---|
+| Instance | `propmatch-303forward` |
+| Region / zone | Singapore, `ap-southeast-1a` |
+| OS / plan | Ubuntu 24.04 LTS; 4GB RAM, 2 vCPUs, 80GB SSD; approved US$24/month plan, billed by usage time |
+| Static IPv4 | `18.142.198.52`, attached resource `propmatch-static-ip` |
+| Runtime | Docker 29.8.1, Compose 5.5.1, Node 22.23.2, Next.js 16.3.5 |
+| Application | Next standalone container, UID 1001, healthy; port 3000 bound to host loopback |
+| HTTPS | Caddy with publicly trusted certificate, HTTP 308 redirect, bcrypt access gate |
+| Model | `LLM_MODE=gateway`; organiser Claude Sonnet 4.5 service, exercised through the deployed app |
+| Evidence data | 72 disclosed synthetic listings/routes/amenities, plus 7,295 official historical HDB transactions |
+| Storage | Persistent Docker `propmatch_sessions`, `propmatch_caddy_data`, `propmatch_caddy_config` volumes |
+| Private settings | `/opt/propmatch/shared/app.env`, mode 600; no API keys or SSH keys in GitHub or image build context |
 
-Compose explicitly sets `SESSION_DIR=/app/storage` so a blank `SESSION_DIR` in the example `.env` cannot override durable volume storage. Keep runtime secrets in the server's `.env`; do not bake them into the image. The optional Caddy profile now requires a shared judge-access password in addition to HTTPS. It is not a multi-user identity or rate-limiting system.
+SSH is restricted to the deployment operator's IP and the Lightsail browser SSH service. Web ports are 80/443; an external connection to port 3000 was blocked. No load balancer, paid automatic snapshots or extra database service was provisioned for this rollout. The static-IP-derived hostname uses sslip.io DNS; its availability is an external dependency.
 
-For Lightsail setup, follow the Docker and Amazon Lightsail sections in the [README](../README.md). Runtime secrets belong in `.env` or the deployment secret manager and must never be baked into the image.
+## Measured verification
 
-## AWS access preparation
+The live workflow ran on source commit `6bbedf71d427c8406539115ec19bc36adb4d305a`. The reports deliberately retain the commit actually tested; documentation added afterward does not retroactively change that measurement. Subsequent documentation releases are deployed from `main` and checked against the live `/api/status` → `release.commit` value.
 
-The organiser login guide has been received and inspected. It requires team-code sign-in, email/MFA/password setup and an approved Hackathon Lease. The account holder completed sign-in and the active team lease was verified. Instance provisioning and external verification are in progress; no live URL is recorded yet.
+| Check | Result / evidence |
+|---|---|
+| Public TLS | Certificate verification succeeded without a bypass; curl TLS result 0 |
+| HTTP redirect | 308 to the HTTPS origin |
+| Access protection | Home, status, session and debug blocked without credentials; incorrect credentials rejected |
+| Release identity | Authenticated status returned the expected 40-character Git commit |
+| Cookie | Secure, HttpOnly, SameSite=Strict |
+| Actual Claude call | Successful gateway model trace and reviewable shortlist; no demo fallback |
+| Recommendation constraints | All recommendations passed deterministic hard constraints |
+| Human review | Explicit approval persisted |
+| Simulated withdrawal / over-budget repricing | Old first candidate removed, buyer profile preserved, old approval revoked; refresh used no further model calls |
+| Container restart | The same session, version, status and buyer profile were restored afterward |
+| Automated regression | 47 tests and 15 deterministic evaluation cases passed |
+| Production dependencies | `npm audit --omit=dev` reported 0 known findings; development-tool findings remain documented in [Security](SECURITY.md) |
+| GitHub CI | [Successful full run for the tested release](https://github.com/Skylarrr333/Show-me-your-agent/actions/runs/35692131338), including both builds, Docker runtime HTTPS workflow and restart persistence |
 
-The [Lightsail runbook](../deployment/LIGHTSAIL_RUNBOOK.md) and `npm run verify:deployment` cover source-version checks, authenticated HTTPS, a real-model workflow when explicitly selected, and session persistence after restart. `/api/status` now reports only the non-secret deployed commit from `APP_COMMIT_SHA`. CI includes a disposable Docker/Caddy runtime check; it is separate from actual AWS evidence.
+Sanitized machine-readable evidence:
+
+- [Real gateway workflow](../evals/lightsail-live-2026-09-22.json)
+- [Session persistence after a real container restart](../evals/lightsail-restart-2026-09-22.json)
+
+These reports contain no passwords, API keys, SSH private keys, cookies or session IDs. The private verification probe remains local and is excluded from Git.
+
+## Reproduce, update and operate
+
+Follow the [Lightsail runbook](../deployment/LIGHTSAIL_RUNBOOK.md). Source is transferred as an exact Git archive over SSH with a verified host fingerprint; the server does not hold a personal GitHub token. Releases live under `/opt/propmatch/releases/FULL_COMMIT_SHA`, and `/opt/propmatch/current` identifies the active release. Keep Compose project name `propmatch` on every update to reuse volumes.
+
+`npm run verify:deployment` checks the public endpoint using private local verification settings. `--live` makes real model requests; `--resume` checks the existing probe after a controlled restart without more model requests. See the runbook for configuration. Read `/api/status` with the private website credentials and compare `release.commit` with `git ls-remote origin refs/heads/main` to check the deployed source version.
+
+The instance remains running for judging. Hosting and gateway calls share the team's competition allocation; monitor actual use. Removing the app's containers does not delete the VM, and stopping a VM is not a promise that all charges stop. Any eventual resource removal must preserve required evidence/session backups first.
+
+## Scope limits and other targets
+
+This is an access-controlled hackathon demo, not a production agency account system. The shared password is not per-user authorization or comprehensive rate limiting. No real current listing feed, automatic real-world listing alerts, email/WhatsApp delivery or property transaction operation is claimed. The documented change scenarios are session-local simulations; historical HDB sales are not current inventory.
+
+The repository also builds a Vinext/Cloudflare Workers target with D1 storage. This deployment record verifies the **Lightsail Next.js target only**. Video recording, final PDF export and submission to the competition Slack channel are separate deliverables.

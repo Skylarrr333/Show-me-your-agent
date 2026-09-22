@@ -7,6 +7,8 @@ NUS-ISS Show Me Your Agents Hackathon · Property Recommendation
 
 Submission repository: [Skylarrr333/Show-me-your-agent](https://github.com/Skylarrr333/Show-me-your-agent) · Branch: **main**
 
+**Live Lightsail demo:** [Open PropMatch](https://propmatch-18-142-198-52.sslip.io/) · HTTPS access credentials are supplied privately by the team. See [verified deployment evidence](docs/DEPLOYMENT.md).
+
 An AI property recommendation copilot for property agents. Convert a messy buyer conversation into validated buyer state, retrieve evidence, enforce hard constraints, compare scored candidates and approve a shortlist. The desktop workspace shows conversation, property recommendations and an auditable action trace side by side.
 
 **Hybrid evidence demo.** The 72 listing scenarios, availability changes, amenities and routes are fictional. A separate market tool uses 7,295 official HDB historical transactions from June–August 2026. Historical sales do not establish current availability or condo valuations. The organiser gateway and DeepSeek have separate providers and validation reports. See [中文参赛方案](docs/参赛方案.md) and [本机设置](docs/LIVE_SETUP_ZH.md).
@@ -25,8 +27,8 @@ This source release includes the complete application, dependency lockfile, publ
 | Change-triggered recommendations | Implemented with explicitly simulated events |
 | HDB historical evidence | 7,295 official records bundled |
 | Current inventory, routes and amenities | Synthetic fixtures; no live listing feed claimed |
-| Lightsail hosting | Configuration supplied; AWS deployment not yet completed |
-| Competition materials | Markdown write-up and scripts supplied; final PDF, recorded video and deployment evidence still require completion |
+| Lightsail hosting | Live in Singapore; authenticated HTTPS, real gateway workflow and restart persistence verified |
+| Competition materials | Write-up, scripts and verified deployment evidence supplied; final PDF export, recorded video and Slack submission remain |
 
 ### Implemented capabilities
 
@@ -255,7 +257,7 @@ npm run eval:live -- --chinese
 
 Live checks overwrite their provider-specific reports. Missing live configuration produces `not_run`, never a demo substitute. The workflow flag verifies changes without additional model calls. See [QA](docs/QA.md) for the dated build/browser record.
 
-[GitHub Actions](.github/workflows/ci.yml) defines lint, types, tests, deterministic evaluations, both build targets and Docker image construction. CI also runs a disposable Docker/Caddy HTTPS access and workflow test, including session persistence after an app restart. It uses demo mode and an isolated test CA. Workflow configuration alone is not a remote pass; inspect the repository's Actions tab for the actual run.
+[GitHub Actions](.github/workflows/ci.yml) defines a production-dependency security audit, lint, types, tests, deterministic evaluations, both build targets and Docker image construction. CI also runs a disposable Docker/Caddy HTTPS access and workflow test, including session persistence after an app restart. It uses demo mode and an isolated test CA. Workflow configuration alone is not a remote pass; inspect the repository's Actions tab for the actual run.
 
 ## Docker
 
@@ -268,13 +270,15 @@ docker compose ps
 curl http://127.0.0.1:3000/api/session
 ```
 
-The app binds to the host loopback by default. Compose explicitly sets `SESSION_DIR=/app/storage`; sessions persist in the named `sessions` volume. Do not delete that volume unless you intend to remove stored sessions. The image runs as UID 1001 with a healthcheck. Docker was not available in the authoring environment, so image execution must be checked on a Docker-enabled machine; CI includes a Docker build gate.
+The app binds to the host loopback by default. Compose explicitly sets `SESSION_DIR=/app/storage`; sessions persist in the named `sessions` volume. Do not delete that volume unless you intend to remove stored sessions. The image runs as UID 1001 with a healthcheck. Image startup and session persistence after restart have been verified both in CI and on the team Lightsail VM. See the [deployment record](docs/DEPLOYMENT.md).
 
 ## Amazon Lightsail deployment
 
 Follow the [Lightsail runbook](deployment/LIGHTSAIL_RUNBOOK.md) for account access, exact-commit transfer, private configuration, HTTPS, verification and rollback. The deployment verifier checks access control and session storage; `--live` deliberately exercises the configured paid model.
 
-**AWS deployment has not been completed.** Obtain the team account using the organiser's **AWS Account Login Guide**; the LLM gateway key cannot log in to Lightsail. Use a Linux VM with Docker Engine and Compose, a static IP and capacity sufficient to build Next, or deploy a prebuilt image. Clone this repository and set private runtime `.env` values, then use the Docker commands above. Back up the session volume, restrict SSH to your IP and keep port 3000 private. Stay within the team's shared hosting/inference allocation.
+**Deployed and verified on 22 September 2026:** [PropMatch live demo](https://propmatch-18-142-198-52.sslip.io/), instance `propmatch-303forward` in `ap-southeast-1a`, Ubuntu 24.04, 4GB / 2 vCPUs. The approved plan is US$24/month, billed by usage time. The website requires the team's private judge-access password and uses the real organiser gateway. The data boundaries above still apply.
+
+The team account was obtained using the organiser's **AWS Account Login Guide**. The release is transferred as an exact Git archive over verified SSH; no personal GitHub token is stored on the VM. Private configuration is outside the source release, and named volumes preserve sessions/certificates. Restrict SSH to the operator, keep port 3000 private, and stay within the shared hosting/inference allocation. The demo hostname uses [sslip.io](https://sslip.io/) DNS, so that service is an external availability dependency.
 
 For HTTPS, point your domain to the instance static IP, configure `DOMAIN`, `DEMO_AUTH_USER` and `DEMO_AUTH_HASH` in `.env` as described below, open Lightsail firewall ports 80/443, then:
 
