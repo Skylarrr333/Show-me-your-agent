@@ -2,7 +2,7 @@
 
 This file records the earlier DeepSeek baseline. The later organiser-gateway integration, 47-test suite and separate live results are recorded in [Gateway validation](GATEWAY_VALIDATION_2026-09-22.md).
 
-Base commit: `15e7ff99b7847bd7d729292b27d32f8912867d1e`. Local branch: `codex/hackathon-training-plan`.
+Base commit: `15e7ff99b7847bd7d729292b27d32f8912867d1e`. This is the historical development baseline; the source release is published on `main` in `Skylarrr333/Show-me-your-agent`.
 
 | Check | Actual result |
 |---|---|

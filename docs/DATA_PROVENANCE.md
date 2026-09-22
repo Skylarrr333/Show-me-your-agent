@@ -26,6 +26,6 @@ The generated image has no text, logo or real-development attribution. Source as
 
 Fixture updatedAt is 2026-09-09; one deliberately outdated record is 2025-01-01. Several records are unavailable for edge testing. Fixture freshness is measured relative to a documented fixed demo clock so the demo does not expire automatically. Live provider records use current time and must be independently refreshed.
 
-No official API schema is guessed. `providers/bedrock.ts` implements the documented AWS Converse REST contract, separately from any future organiser gateway. `providers/contracts.ts` defines provider boundaries for replacing all four backends.
+`providers/bedrock.ts` implements the direct AWS Converse contract. The separately implemented and tested organiser adapter in `providers/gateway.ts` uses the Starter Kit's Ollama-compatible `/api/chat` protocol. `providers/contracts.ts` defines the provider boundaries; neither model API is a source of current property inventory.
 
 Scoring weights are engineered demo choices, not learned or validated buyer-utility coefficients. No claim is made about actual commute accuracy, real listing coverage, market pricing or customer conversion.

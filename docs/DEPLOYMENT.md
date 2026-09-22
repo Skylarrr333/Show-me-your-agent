@@ -7,8 +7,10 @@
 
 ## Verified locally
 
-Both production build commands passed after a clean lockfile install. The Next standalone server, a compiled static asset and the session API returned HTTP 200, and the Sites / Vite development target also returned HTTP 200. Any published private Sites URL belongs in release records rather than source documentation.
+The September 10 baseline passed both production build commands and local HTTP/browser checks; that historical record is in [QA](QA.md). The September 22 gateway integration passed Next.js production compilation and a real-model browser rehearsal, documented in [Gateway validation](GATEWAY_VALIDATION_2026-09-22.md). A successful build is distinct from public hosting.
 
-No Amazon Lightsail instance or live Bedrock credentials were supplied, so this repository does not claim that those external services have been exercised.
+The team organiser gateway credential was supplied privately and exercised successfully. This is an Ollama-compatible gateway backed by the organiser's model service, not direct AWS console access. No Lightsail instance, public URL or completed AWS deployment is claimed. Docker execution was not available on the authoring Mac and still requires verification on a Docker-enabled host.
+
+Compose explicitly sets `SESSION_DIR=/app/storage` so a blank `SESSION_DIR` in the example `.env` cannot override durable volume storage. Keep runtime secrets in the server's `.env`; do not bake them into the image. The optional Caddy profile supplies HTTPS but not authentication or rate limiting.
 
 For Lightsail setup, follow the Docker and Amazon Lightsail sections in the [README](../README.md). Runtime secrets belong in `.env` or the deployment secret manager and must never be baked into the image.

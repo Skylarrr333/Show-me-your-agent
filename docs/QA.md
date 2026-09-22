@@ -1,6 +1,8 @@
 # Quality assurance
 
-This file records observed checks for the final repository state. Commands run against the npm lockfile in demo mode with no AWS credentials.
+The latest model integration record is [Gateway validation — September 22](GATEWAY_VALIDATION_2026-09-22.md): 47 unit/workflow tests, 15 deterministic cases, six English and two Chinese gateway scenarios, and the withdrawal/reprice workflow. Those live calls use the organiser gateway, not direct Bedrock credentials. See [Source release verification](RELEASE_2026-09-22.md) for publication checks.
+
+The sections below preserve the **September 10 baseline**. Their 32-test count and demo-only browser checks describe that earlier version, not the current total.
 
 ## Automated checks
 

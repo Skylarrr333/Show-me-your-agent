@@ -9,10 +9,11 @@ Buyer messages and listing descriptions are untrusted. Model output is untrusted
 - Strict Zod object schemas and bounds reject unexpected tool/model fields, malformed JSON, invalid coordinates, IDs, ranges and oversized input.
 - User instruction-override patterns trigger a clarification checkpoint before any LLM call. This heuristic is only one layer, not a comprehensive injection classifier.
 - Listing descriptions never enter LLM context, planning, ranking or executable code. Suspicious descriptions are audited. React escapes all displayed text.
-- Only six domain tools exist. No model-accessible shell, raw SQL, generic URL fetching, filesystem operation or external messaging tool exists.
+- Seven domain tools exist, including the read-only historical HDB evidence tool. No model-accessible shell, raw SQL, generic URL fetching, filesystem operation or external messaging tool exists.
 - Numeric constraints are enforced after retrieval, inside ranking, after provider re-read and at approval. Independent extraction anchors supported numeric edits. Excluded areas, property types and commute limits also cannot be removed or relaxed by valid-schema model output unless the buyer explicitly requests the change.
 - Source IDs are verified against the provider; duplicate IDs and unsupported compare/override IDs are rejected. Route and amenity outputs must match the requested destination, mode, category and radius.
 - The Bedrock endpoint is server configuration only, HTTPS-only, with credentials prohibited in the URL. Only documented Converse JSON is sent; auth headers and raw upstream errors are not logged.
+- The separate organiser gateway uses a server-configured HTTPS origin and X-API-Key; redirects are rejected. Framed responses must validate and agree on structured decisions; outside text is discarded. Explicit live modes do not silently fall back to demo or another provider.
 - Session IDs are random UUID capabilities stored in HttpOnly SameSite cookies. Mutating JSON is limited by bytes while streaming. Cross-site browser requests are rejected, including through a reverse proxy. Payloads cannot choose arbitrary session IDs. Version checks prevent stale writes.
 - Node files use private permissions and atomic writes; D1 statements are parameterized. Docker uses a non-root runtime user. `.env*`, session data and build caches are ignored by Git and Docker.
 - Approval is an explicit human endpoint. Any shortlist/ranking edit resets approval. There is no send-to-client or transaction operation.
@@ -25,7 +26,7 @@ Grant a Bedrock credential only the model invocation scope needed for the select
 
 This is a hackathon prototype, not a production multi-tenant CRM. It has no identity-based agent roles, cross-device accounts, retention automation, encryption-at-rest policy, tamper-evident audit ledger or external monitoring integration. Possession of a session capability grants access to that session, so do not share exported traces containing its ID. Node process termination in the tiny lock-held interval can leave a lock file requiring operator recovery; D1 avoids local filesystem locks. In-flight traces commit at run completion, not durably event-by-event.
 
-The independent numeric parser conservatively blocks existing-limit edits it cannot recognize. Other semantic prompt-injection variants and novel contradictory phrasings require broader live model evaluation. Synthetic scores and route estimates are not evidence of actual property suitability, eligibility or availability. HDB rows are fictional test records and no resale eligibility check is implemented. Agents must verify real records and domain requirements before real use.
+The independent numeric parser conservatively blocks existing-limit edits it cannot recognize. Other semantic prompt-injection variants and novel contradictory phrasings require broader live model evaluation. Synthetic scores and route estimates are not evidence of actual property suitability, eligibility or availability. HDB inventory fixtures are fictional; the separate official HDB transaction snapshot is historical evidence only. No resale eligibility check is implemented. Agents must verify real records and domain requirements before real use.
 
 ## Adversarial regression evidence
 

@@ -1,6 +1,6 @@
 # Optional offline ranking experiment
 
-This is separate from the competition's live DeepSeek agent. Production uses the original deterministic ranker. This package trains a small nonnegative pairwise logistic scorer on a CPU; it does not fine-tune an LLM.
+This is separate from the live recommendation agent, whose tested primary provider is the organiser Claude gateway. Production uses the original deterministic ranker. This package trains a small nonnegative pairwise logistic scorer on a CPU; it does not fine-tune an LLM and is not required to run the application.
 
 ```bash
 npm run train:ranker

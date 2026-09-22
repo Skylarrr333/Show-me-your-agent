@@ -3,6 +3,8 @@ services:
     build: .
     restart: unless-stopped
     env_file: .env
+    environment:
+      SESSION_DIR: /app/storage
     ports:
       - "127.0.0.1:3000:3000"
     volumes:

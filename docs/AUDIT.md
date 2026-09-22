@@ -1,10 +1,10 @@
 # Repository audit — 9 September 2026
 
-GitHub is the source of truth: https://github.com/Skylarrr333/iss-show-me-your-agent, branch `main`.
+GitHub is the source of truth: https://github.com/Skylarrr333/Show-me-your-agent, branch `main`.
 
 ## Preservation
 
-The supplied local directory initially contained only an unborn Git repository, no remote, and no source files. Fetching the requested origin restored the existing project at `1a2a7b418db6b52a619dd870e858b154cc1699a2`. The working tree was clean. `codex/prop-match-hardening` branches from that exact rollback point. No reset, clean, force push or discarded local work was used.
+The supplied local directory initially contained only an unborn Git repository, no remote, and no source files. Fetching the requested origin restored the existing project at `1a2a7b418db6b52a619dd870e858b154cc1699a2`. The working tree was clean. The initial hardening work branched from that rollback point; this record describes the earlier development baseline. No reset, clean, force push or discarded local work was used.
 
 ## Baseline
 

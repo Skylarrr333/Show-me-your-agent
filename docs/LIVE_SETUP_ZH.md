@@ -4,7 +4,7 @@
 
 ## 1. 你的密钥放在哪里
 
-项目根目录的 `.env.local` 已创建，权限为仅文件所有者可读写，并由 `.gitignore` 和 `.dockerignore` 排除。你已填入密钥，实际 API 调用已验证。不要把该文件上传、发截图或复制到聊天。
+新克隆的仓库不包含密钥。先在项目根目录运行 `cp .env.example .env.local` 和 `chmod 600 .env.local`，再自行填写团队凭据。`.gitignore` 和 `.dockerignore` 已排除环境文件。开发环境中的实际 API 调用已验证，但其他成员仍需配置自己的运行环境。不要上传密钥文件或把密钥发到截图、聊天中。
 
 ```env
 LLM_MODE=gateway
@@ -22,7 +22,16 @@ DATA_MODE=synthetic
 
 ## 2. 如何启动
 
-在项目目录打开终端：
+首次获取项目：
+
+```bash
+git clone https://github.com/Skylarrr333/Show-me-your-agent.git
+cd Show-me-your-agent
+cp .env.example .env.local
+chmod 600 .env.local
+```
+
+按上文配置模型后，在项目目录运行：
 
 ```bash
 npm ci
@@ -30,7 +39,7 @@ npm run check:setup
 npm exec -- next dev --hostname 127.0.0.1
 ```
 
-打开 <http://127.0.0.1:3000>。目前本机会话中已经启动。`check:setup` 只报告配置是否存在，绝不打印密钥，也不发送模型请求。
+打开 <http://127.0.0.1:3000>。`check:setup` 只报告配置是否存在，绝不打印密钥，也不发送模型请求。
 
 模型故障时如需离线排练，用以下命令启动，并向评委说明是确定性的演示模式：
 
@@ -100,7 +109,7 @@ npm run build:next
 
 `eval:live` 使用你配置的 API，会消耗 token。默认 smoke 约两次请求；完整英文集最多 8 次、中文集最多 4 次，没有自动重试循环。官方网关报告为 `evals/gateway-live-results.json` 和 `evals/gateway-live-chinese-results.json`；原 DeepSeek 报告保留在无 gateway- 前缀的文件中。`--workflow` 额外验证批准、模拟下架、模拟涨价和撤销批准，不额外调用模型。它们只使用编写好的虚构买家案例。没有 key 时报告 `not_run`，绝不以 demo 结果代替。
 
-## 7. 还需要你做的事
+## 7. 比赛交付待办
 
 1. 提供团队邮件附件 AWS Account Login Guide，并按主办方指南取得 Lightsail 账号访问。不要发密码或访问密钥。
 2. 团队按 9 月 27 日完成提交；投影片初赛截止为 9 月 28 日 09:00，以 Slack 最新公告为准。指定 Slack 频道提交团队代码、项目名、GitHub URL、视频 URL／MP4 下载地址、PDF write-up 和部署证据／URL。确认视频 30mins 是上限还是指定时长，以及 PDF 页数限制。

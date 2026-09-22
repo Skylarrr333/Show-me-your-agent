@@ -45,7 +45,7 @@ Run `npm ci`, configure server-only `.env.local`, then `npm run dev:next`. No ke
 
 ## Submission links
 
-- GitHub repository: https://github.com/Skylarrr333/iss-show-me-your-agent
+- GitHub repository: https://github.com/Skylarrr333/Show-me-your-agent
 - Demo video: to be supplied after recording and uploading.
 - Private demo: deployment evidence is recorded in docs/DEPLOYMENT.md when published.
 - AWS Lightsail evidence: to be supplied after deployment in the team's AWS account.

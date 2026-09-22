@@ -9,7 +9,7 @@
 - [x] Demo narration and shot list
 - [x] Deterministic demo data with provenance disclosure
 - [x] Evaluation harness and actual generated report
-- [x] GitHub repository configured: https://github.com/Skylarrr333/iss-show-me-your-agent
+- [x] GitHub repository configured: https://github.com/Skylarrr333/Show-me-your-agent
 - [x] Local real DeepSeek provider exercised; 6 English and 2 Chinese authored live cases passed (see evals reports)
 - [x] Official historical HDB snapshot connected separately from simulated inventory
 - [x] Browser rehearsal: approve → simulate withdrawal → revoke approval and regenerate shortlist

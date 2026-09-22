@@ -2,7 +2,7 @@
 
 ## Runtime boundary
 
-The repo contains one React / TypeScript App Router application and two deployment targets. Next standalone runs on a Lightsail VM in Docker. Vinext compiles the same routes to a Sites Worker, mapping `lib/store-runtime` to a D1 adapter. This separates deployment mechanics from domain behavior; neither ranking nor constraints depends on the host.
+The repo contains one React / TypeScript App Router application and two deployment targets. Next standalone is configured for a Lightsail VM in Docker; no AWS deployment has been completed. Vinext compiles the same routes to a Sites Worker, mapping `lib/store-runtime` to a D1 adapter. This separates deployment mechanics from domain behavior; neither ranking nor constraints depends on the host.
 
 ## Orchestrator
 
@@ -53,6 +53,10 @@ Every tool has strict Zod input and output schemas in `tools/index.ts`; the prov
 
 ## Modes and deliberate limits
 
-The dataset is fixed at 72 fictional rows. Fixture freshness uses 2026-09-09 as a reference clock to keep future rehearsals reproducible; live records use the actual clock. Replacing providers requires updating dependency composition, the approval provider, and adding contract tests. A real routing provider must supply verified durations. Local heuristic routes cannot establish real-world travel guarantees. Free-text preferences not representable in the schema are clarified or remain non-scoring notes; they must not be represented as satisfied constraints.
+The default inventory contains 72 fictional rows. A separate market tool reads 7,295 official historical HDB transactions, never treating them as current listings. Fixture freshness uses 2026-09-09 as a reference clock to keep rehearsals reproducible; imported records use the actual clock. `DATA_MODE=file` selects the source-linked Node file adapter for future permissioned inventory. No real current inventory has been supplied. Missing route facts remain unknown. Free-text preferences not representable in the schema are clarified or remain non-scoring notes; they must not be represented as satisfied constraints.
 
-The demo parser supports the documented English examples, shared-currency budget ranges, area exclusions and supported commute limits. Bedrock broadens language understanding, while independent extraction anchors numeric edits and deterministic checks protect nonnumeric hard constraints. Unsupported mandatory subjective requirements trigger clarification. Explanations remain deterministic and grounded in both modes. No external messaging or transactional tool exists.
+The demo parser supports documented English examples, shared-currency budget ranges, area exclusions and supported commute limits. Live providers support structured language interpretation, with limited independent Chinese numeric anchors also tested. The organiser gateway and DeepSeek have real authored-case reports; direct Converse is a separate adapter. Independent extraction anchors numeric edits and deterministic checks protect nonnumeric hard constraints. Unsupported mandatory subjective requirements trigger clarification. Explanations remain deterministic and grounded in all modes. No external messaging or transactional tool exists.
+
+## Source refresh
+
+Manual refresh and the opt-in visible-page 30-second timer compare source revisions. Unchanged evidence retains the current decision without model calls. Changed evidence reuses the saved buyer profile, recomputes eligible candidates, preserves rejections and revokes previous approval. Withdrawal/reprice controls mutate only session-local synthetic scenarios. The refresh path does not ask the LLM to replan and is not a server-side background job.

@@ -4,7 +4,7 @@ Team 303forward · D1IZFT7E · PropMatch Agent
 
 ## Preparation
 
-Open the workspace in a 1440px-or-wider browser window. Use demo mode for a network-independent rehearsal, or explicitly switch to tested Bedrock credentials. Check the mode badge; never describe deterministic demo mode as a live model call. Reset Demo before starting. Keep `/debug` available. Data is synthetic and images illustrative.
+Open the workspace in a 1440px-or-wider browser window. Use demo mode for a network-independent rehearsal, or explicitly select the tested organiser gateway provider. Check the mode badge; never describe deterministic demo mode as a live model call. Reset Demo before starting. Keep `/debug` available. Inventory, routes and images are synthetic/illustrative; the separate HDB panel uses official historical transactions.
 
 ## 0:00 - 0:25: The business problem
 
@@ -14,7 +14,7 @@ Open the workspace in a 1440px-or-wider browser window. Use demo mode for a netw
 
 Click Load Demo Scenario. Point to the buyer state: S$1.6M, two bedrooms, two destinations, no car, parks and quiet. Explain that no-car increases transport priority and jogging activates the amenities tool. Expand the memory/plan events. Show the synthetic-data banner.
 
-"The model interprets the brief in Bedrock mode. Code validates the state, enforces the limits and calculates scores. These percentages are weighted fit scores, not invented model confidence."
+"The model interprets the brief in gateway mode. Code validates the state, enforces the limits and calculates scores. These percentages are weighted fit scores, not invented model confidence."
 
 ## 1:15 - 2:00: Persistent update
 
@@ -36,6 +36,10 @@ Return to the workspace. Send `Budget SGD 100k, 4 bedrooms.` Show no-match with 
 
 Show docs/EVALUATION.md and the actual test results. State clearly: fixture-based regression, not live market accuracy. Close with the value: a faster, more defensible shortlist under the agent's control.
 
+## Listing-change extension
+
+After approval, click **Simulate top listing withdrawn**, then **Simulate price above budget**. Show replacement candidates, the revoked approval, preserved buyer state and source-change trace. These are session-local simulations. Refresh does not make additional model calls. This segment can be included in the full recording; the short script above is not a claim to meet the briefing's full video-duration requirement.
+
 ## Recovery
 
-If a model credential expires, show the explicit error, set demo mode and restart before resuming. Do not quietly claim a mock run was live Bedrock. If another tab causes a version conflict, click Reload session. Reset creates a new session and rerunning Load Demo Scenario restores the golden path.
+If a model credential expires, show the explicit error, set demo mode and restart before resuming. Do not quietly claim a mock run was a live gateway call. If another tab causes a version conflict, click Reload session. Reset creates a new session and rerunning Load Demo Scenario restores the golden path.
