@@ -23,7 +23,8 @@
     "eval:live": "node --env-file-if-exists=.env.local --import tsx evals/live.ts",
     "data:import": "node --env-file-if-exists=.env.local --import tsx scripts/import-listings.ts",
     "check:setup": "node --env-file-if-exists=.env.local --import tsx scripts/check-setup.ts",
-    "data:public": "node --import tsx scripts/fetch-public-data.ts"
+    "data:public": "node --import tsx scripts/fetch-public-data.ts",
+    "verify:deployment": "node --import tsx scripts/verify-deployment.ts"
   },
   "dependencies": {
     "class-variance-authority": "0.7.1",

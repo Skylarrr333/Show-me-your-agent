@@ -20,7 +20,7 @@ Buyer messages and listing descriptions are untrusted. Model output is untrusted
 
 ## Least privilege deployment
 
-Grant a Bedrock credential only the model invocation scope needed for the selected model/profile. Do not expose the token in NEXT_PUBLIC variables or commit it. Run the public website behind HTTPS and authentication, with edge rate limits before enabling paid inference. The shipped Caddy example provides HTTPS and request-size limits; it does not implement user login or rate limiting. The app's 50-turn session cap is not an account-level abuse prevention system.
+Grant a Bedrock credential only the model invocation scope needed for the selected model/profile. Do not expose the token in NEXT_PUBLIC variables or commit it. Run the public website behind HTTPS and authentication, with edge rate limits before enabling paid inference. The Caddy HTTPS profile requires a shared access username and bcrypt password hash in addition to HTTPS and request-size limits; missing hash configuration fails closed. This is a judge-access gate, not individual user identity or per-account rate limiting. The app's 50-turn session cap is not an account-level abuse prevention system.
 
 ## Known limits
 

@@ -19,3 +19,5 @@ jobs:
       - run: npm run build
       - run: npm run build:next
       - run: docker build -t propmatch-agent:ci .
+      - name: HTTPS access, workflow and persistent session smoke test
+        run: bash scripts/ci-container-smoke.sh

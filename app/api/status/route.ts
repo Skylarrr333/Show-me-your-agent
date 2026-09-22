@@ -14,6 +14,7 @@ export async function GET() {
   const mode = resolveLLMMode();
   return Response.json({ model: { mode,
     configured: isLLMConfigured(mode),
-    note: "Configuration presence is not proof of a successful model call. See live evaluation." }, data, publicData: marketMetadata },
+    note: "Configuration presence is not proof of a successful model call. See live evaluation." }, data, publicData: marketMetadata,
+    release: { commit: /^[a-f0-9]{40}$/.test(process.env.APP_COMMIT_SHA ?? "") ? process.env.APP_COMMIT_SHA : null } },
   { headers: { "Cache-Control": "no-store" } });
 }

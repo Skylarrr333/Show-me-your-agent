@@ -206,7 +206,9 @@ Loading `.env.local` explicitly supplies runtime configuration to the standalone
 | `BEDROCK_ENDPOINT` | Optional documented Converse-compatible HTTPS origin; blank uses regional AWS runtime |
 | `SESSION_DIR` | Private writable Node storage folder; Docker uses `/app/storage`; ignored for D1 |
 | `NEXT_TELEMETRY_DISABLED` | `1` in Docker |
-| `DOMAIN` | Hostname used only by optional Caddy HTTPS compose profile |
+| `DOMAIN` | Hostname used by the Caddy HTTPS compose profile |
+| `DEMO_AUTH_USER` / `DEMO_AUTH_HASH` | Private judge-access username and bcrypt password hash; required for HTTPS profile |
+| `APP_COMMIT_SHA` | Full deployed source commit, reported by `/api/status` for release verification |
 
 **Organiser gateway and direct AWS are separate protocols.** `GatewayProvider` follows the [Starter Kit weather client](https://github.com/kenken64/ShowMeYourAgent-Starter-Kit/blob/main/weather_demo.py): Ollama `/api/chat`, `X-API-Key`, non-streaming messages. `BedrockProvider` separately implements AWS Converse with a bearer token and has mocked contract tests; the organiser gateway is the connection tested with the team's real credential. Never put that key in `AWS_BEARER_TOKEN_BEDROCK`. `auto` selects a provider from configuration; it is not a fallback after a failed request. There are no silent provider switches or automatic paid retries.
 
@@ -253,7 +255,7 @@ npm run eval:live -- --chinese
 
 Live checks overwrite their provider-specific reports. Missing live configuration produces `not_run`, never a demo substitute. The workflow flag verifies changes without additional model calls. See [QA](docs/QA.md) for the dated build/browser record.
 
-[GitHub Actions](.github/workflows/ci.yml) defines lint, types, tests, deterministic evaluations, both build targets and Docker image construction. Workflow configuration alone is not a remote pass; inspect the repository's Actions tab for the actual run.
+[GitHub Actions](.github/workflows/ci.yml) defines lint, types, tests, deterministic evaluations, both build targets and Docker image construction. CI also runs a disposable Docker/Caddy HTTPS access and workflow test, including session persistence after an app restart. It uses demo mode and an isolated test CA. Workflow configuration alone is not a remote pass; inspect the repository's Actions tab for the actual run.
 
 ## Docker
 
@@ -270,15 +272,17 @@ The app binds to the host loopback by default. Compose explicitly sets `SESSION_
 
 ## Amazon Lightsail deployment
 
+Follow the [Lightsail runbook](deployment/LIGHTSAIL_RUNBOOK.md) for account access, exact-commit transfer, private configuration, HTTPS, verification and rollback. The deployment verifier checks access control and session storage; `--live` deliberately exercises the configured paid model.
+
 **AWS deployment has not been completed.** Obtain the team account using the organiser's **AWS Account Login Guide**; the LLM gateway key cannot log in to Lightsail. Use a Linux VM with Docker Engine and Compose, a static IP and capacity sufficient to build Next, or deploy a prebuilt image. Clone this repository and set private runtime `.env` values, then use the Docker commands above. Back up the session volume, restrict SSH to your IP and keep port 3000 private. Stay within the team's shared hosting/inference allocation.
 
-For HTTPS, point your domain to the instance static IP, set `DOMAIN=your-domain.example` in `.env`, open Lightsail firewall ports 80/443, then:
+For HTTPS, point your domain to the instance static IP, configure `DOMAIN`, `DEMO_AUTH_USER` and `DEMO_AUTH_HASH` in `.env` as described below, open Lightsail firewall ports 80/443, then:
 
 ```bash
 docker compose --profile https up -d --build
 ```
 
-Caddy obtains HTTPS certificates and proxies streaming responses; it does not add login or rate limiting. Before exposing any paid model mode, provide authentication and an edge rate limiter, or restrict access for the demo. The supplied app is a session-isolated hackathon prototype, not an authenticated agency tenant system. Hosting is complete only after image startup, persistent sessions and judge access have been verified.
+Caddy obtains HTTPS certificates, proxies streaming responses and requires a configured shared judge-access password. Generate its bcrypt hash with `docker run --rm -it caddy:2-alpine caddy hash-password`; set `DEMO_AUTH_USER` and single-quoted `DEMO_AUTH_HASH` in private `.env`. Missing credentials fail closed. This shared access gate is not per-user identity or full rate limiting. The supplied app is a session-isolated hackathon prototype, not an authenticated agency tenant system. Hosting is complete only after image startup, persistent sessions and judge access have been verified.
 
 For a private rehearsal without a domain, forward the loopback-bound port:
 

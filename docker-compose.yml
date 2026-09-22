@@ -5,12 +5,18 @@ services:
     env_file: .env
     environment:
       SESSION_DIR: /app/storage
+      APP_COMMIT_SHA: ${APP_COMMIT_SHA:-unknown}
     ports:
       - "127.0.0.1:3000:3000"
     volumes:
       - sessions:/app/storage
     security_opt:
       - no-new-privileges:true
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
   caddy:
     image: caddy:2-alpine
     profiles: [https]
@@ -20,12 +26,19 @@ services:
       - "443:443"
     environment:
       DOMAIN: ${DOMAIN:-localhost}
+      DEMO_AUTH_USER: ${DEMO_AUTH_USER:-judge}
+      DEMO_AUTH_HASH: ${DEMO_AUTH_HASH:-}
     volumes:
       - ./deployment/Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data
       - caddy_config:/config
     depends_on:
       - app
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 volumes:
   sessions:
   caddy_data:

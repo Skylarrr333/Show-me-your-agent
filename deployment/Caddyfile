@@ -1,4 +1,7 @@
 {$DOMAIN} {
+  basic_auth {
+    {$DEMO_AUTH_USER} {$DEMO_AUTH_HASH}
+  }
   encode zstd gzip
   request_body {
     max_size 12KB
