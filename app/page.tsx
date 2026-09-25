@@ -1,4 +1,4 @@
-import Workspace from "../components/workspace";
+import HousingWorkspace from "../components/housing-workspace";
 export default function Home() {
-  return <Workspace />;
+  return <HousingWorkspace />;
 }

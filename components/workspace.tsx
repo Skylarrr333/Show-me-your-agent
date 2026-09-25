@@ -1,27 +1,26 @@
 "use client";
 import Link from "next/link";
 import PropertyComparison from "./property-comparison";
+import BuyerBriefForm from "./buyer-brief-form";
+import BuyerMessage from "./buyer-message";
+import { briefMessage, hasConstraints, type BriefConstraints } from "../lib/brief-input";
 import { readRunStream } from "../lib/run-stream";
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   ArrowUpRight,
   ArrowUp,
-  ArrowRight,
   Activity,
   Building2,
   Check,
   CheckCheck,
-  ChevronRight,
   Clock3,
   Code2,
   GitCompareArrows,
   LoaderCircle,
   MapPin,
   MessageSquare,
-  Plus,
   RotateCcw,
-  Send,
   ShieldCheck,
   Sparkles,
   TrainFront,
@@ -40,7 +39,7 @@ import {
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "./ui/tabs";
 import { Checkbox } from "./ui/checkbox";
 import { Skeleton } from "./ui/skeleton";
-import { Session, Trace, Ranked, DEMO, UPDATE } from "../schemas";
+import { Session, Trace, Ranked, DEMO } from "../schemas";
 import type { z } from "zod";
 import type { ComparisonSchema } from "../tools";
 const money = (n: number) => "S$" + n.toLocaleString("en-SG");
@@ -78,11 +77,14 @@ export default function Workspace() {
     [detail, setDetail] = useState<Ranked | null>(null),
     [tab, setTab] = useState("recommendations"),
     [profileOpen, setProfileOpen] = useState(false),
+    [briefView, setBriefView] = useState("requirements"),
+    [activityOpen, setActivityOpen] = useState(false),
     [autoRefresh, setAutoRefresh] = useState(false),
     [lastChecked, setLastChecked] = useState(""),
     [sourceStatus, setSourceStatus] = useState<{ data: { mode: string; count: number; ready: boolean; note: string }; model: { mode: string; configured: boolean } } | null>(null),
     [pending, setPending] = useState("");
   const end = useRef<HTMLDivElement>(null);
+  const previousMessageCount = useRef<number | null>(null);
   useEffect(() => {
     fetch("/api/status").then((r) => r.json()).then((data) => setSourceStatus(data as typeof sourceStatus)).catch(() => {});
     api("/api/session")
@@ -115,8 +117,12 @@ export default function Workspace() {
     return () => window.clearInterval(timer);
   }, [autoRefresh, refreshSources]);
   useEffect(() => {
-    end.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-  }, [session?.messages.length, busy]);
+    const count = session?.messages.length;
+    if (count === undefined) return;
+    if (pending || (previousMessageCount.current !== null && count > previousMessageCount.current))
+      end.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    previousMessageCount.current = count;
+  }, [session?.messages.length, pending]);
   async function reset() {
     if (busy) return;
     setBusy(true);
@@ -129,6 +135,7 @@ export default function Workspace() {
       setComparison(null);
       setDetail(null);
       setProfileOpen(false);
+      setBriefView("requirements");
       setText("");
       setAutoRefresh(false);
       setLastChecked("");
@@ -139,11 +146,12 @@ export default function Workspace() {
       setBusy(false);
     }
   }
-  async function run(message: string, baseSession = session) {
-    if (!message.trim() || busy || !baseSession) return;
+  async function run(message: string, baseSession = session, constraints?: BriefConstraints) {
+    if ((!message.trim() && !hasConstraints(constraints)) || busy || !baseSession) return;
     setBusy(true);
     setError("");
-    setPending(message);
+    setBriefView("conversation");
+    setPending(briefMessage(message, constraints));
     setText("");
     setComparison(null);
     setDetail(null);
@@ -154,7 +162,7 @@ export default function Workspace() {
       const r = await fetch("/api/run", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message, version: baseSession.version }),
+        body: JSON.stringify({ message, version: baseSession.version, constraints }),
       });
       if (!r.ok) {
         const j = (await r.json()) as { error: string };
@@ -263,11 +271,6 @@ export default function Workspace() {
     return acc;
   }, []);
   const hasResults = all.length > 0;
-  const latestChanges = currentTrace.find(
-    (t) => t.stage === "STATE" && (t.data as { changes?: unknown })?.changes,
-  )?.data as
-    | { changes?: { field: string; before: unknown; after: unknown }[] }
-    | undefined;
   const activeStatus =
     session?.status === "approved"
       ? "Approved"
@@ -291,32 +294,22 @@ export default function Workspace() {
           </span>
           PropMatch<span className="brand-agent">AGENT</span>
         </Link>
-        <div className="topbar-middle">
-          <span>Casework</span>
-          <ChevronRight size={14} />
-          <strong>Buyer matching</strong>
-        </div>
         <div className="topbar-right">
           <span className="demo-pill">
             {session?.mode === "gateway" ? "CLAUDE · AWS GATEWAY" : session?.mode === "deepseek" ? "DEEPSEEK" : session?.mode === "bedrock" ? "BEDROCK" : "DEMO MODE"}
           </span>
-          <span className="team">303forward</span>
-          <div className="avatar">03</div>
+<button className="button ghost" onClick={() => setActivityOpen(true)}><Activity size={16} />Activity{busy && <span className="running-dot" />}</button>
         </div>
       </header>
       <div className="workspace-heading">
         <div>
-          <div className="eyebrow">Buyer matching workspace</div>
-          <h1>From buyer brief to trusted shortlist.</h1>
-          <p>
-            Understand the brief, verify the evidence, and keep the final call
-            with your agent.
-          </p>
+          <h1>Buyer workspace</h1>
+          <p>Find a home that fits.</p>
         </div>
         <div className="heading-actions">
           <button className="button ghost" onClick={reset} disabled={busy}>
             <RotateCcw size={15} />
-            Reset Demo
+            New buyer
           </button>
           <button
             className="button primary"
@@ -324,52 +317,15 @@ export default function Workspace() {
             disabled={busy || !ready || !session}
           >
             <Sparkles size={16} />
-            Load Demo Scenario
+            Try an example
           </button>
         </div>
       </div>
-      <div className="dataset-banner">
-        <ShieldCheck size={15} />
-        <span>
-          <strong>{sourceStatus?.data.mode === "file" ? "Imported source snapshots" : "Simulated listing inventory"}</strong>
-          {" · "}{sourceStatus?.data.note ?? "72 fictional listings. Routes and amenities are illustrative."}
-          {" "}Official HDB transaction evidence is shown separately below. Images are illustrations.
-        </span>
-        <Link href="/debug">
-          Data & trace <ArrowUpRight size={13} />
-        </Link>
+      <div className="data-caption"><span className="data-dot" />
+        {sourceStatus?.data.mode === "file" ? "Imported evidence snapshots" : "Demo inventory · fictional homes and routes"}
       </div>
       {sourceStatus && sourceStatus.model.mode !== "demo" && !sourceStatus.model.configured && (
         <div className="error-banner" role="status">Model access needs setup. Add your API key to the private local configuration before running a live buyer brief.</div>
-      )}
-      {session && !session.profile.unknownFields.length && !["empty", "clarification"].includes(session.status) && (
-        <div className="refresh-bar">
-          <button className="button" disabled={busy} onClick={() => refreshSources()}><RotateCcw size={14} /> Recheck sources</button>
-          <label><input type="checkbox" checked={autoRefresh} onChange={(e) => setAutoRefresh(e.target.checked)} /> Watch while this page is open · every 30s</label>
-          {session.dataMode !== "file" && session.shortlist.length > 0 && <>
-            <button className="button ghost" disabled={busy} onClick={() => refreshSources("withdraw")}>Simulate top listing withdrawn</button>
-            <button className="button ghost" disabled={busy} onClick={() => refreshSources("raise-price")}>Simulate price above budget</button>
-          </>}
-          <small>{lastChecked ? `Checked ${new Date(lastChecked).toLocaleTimeString("en-SG")}` : "Refresh preserves the buyer brief; changed evidence requires a new approval."}</small>
-        </div>
-      )}
-      {session?.marketEvidence && (
-        <section className="market-panel" aria-label="Official HDB historical evidence">
-          <div><span className="eyebrow">Official public data · historical transactions</span>
-            <h2>HDB market reference</h2>
-            <p>Historical HDB sales only. Current availability and condo / landed values are outside this dataset.</p>
-            <p>{session.marketEvidence.count.toLocaleString()} records match the stated budget, area and size filters · {session.marketEvidence.months.slice().sort().join(" / ")}</p>
-          </div>
-          <strong className="market-median">{session.marketEvidence.medianPrice === null ? "No matching records" : money(session.marketEvidence.medianPrice)}<small>Median of this filtered sample</small></strong>
-          <details><summary>Inspect source records and limitations</summary>
-            <p>{session.marketEvidence.filterSummary}</p><p>{session.marketEvidence.boundary}</p>
-            <div className="market-table-wrap"><table><thead><tr><th>Record</th><th>Month / town</th><th>Flat type / floor area</th><th>Historical price</th></tr></thead><tbody>
-              {session.marketEvidence.examples.map((r) => <tr key={r.id}><td>#{r.id}<br />{r.address}</td><td>{r.month}<br />{r.town}</td><td>{r.flatType} · {r.floorAreaSqm} m²</td><td>{money(r.resalePrice)}</td></tr>)}
-            </tbody></table></div>
-            <a href={session.marketEvidence.sourceUrl} target="_blank" rel="noreferrer">Open HDB dataset on data.gov.sg ↗</a>
-            <p className="micro">Snapshot retrieved {new Date(session.marketEvidence.retrievedAt).toLocaleString("en-SG")}. Source records are evidence for research, not homes confirmed for sale.</p>
-          </details>
-        </section>
       )}
       {error && (
         <div className="error-banner" role="alert">
@@ -390,181 +346,48 @@ export default function Workspace() {
         </div>
       )}
       <main className="workspace-grid">
-        <section className="conversation panel">
-          <div className="panel-title">
-            <div>
-              <MessageSquare size={17} />
-              <h2>Buyer conversation</h2>
-            </div>
-            <span className="small-label">
-              {session?.messages.filter((m) => m.role === "user").length ?? 0}{" "}
-              turns
-            </span>
+        <section className="conversation panel" aria-label="Buyer conversation">
+          <div className="conversation-header">
+            <span className="section-step">01</span>
+            <div><h2>Buyer conversation</h2><p>Your requirements, in one place.</p></div>
+            {p?.budget.max != null && <button className="icon-button" onClick={() => setProfileOpen(true)} aria-label="View saved buyer profile"><SlidersHorizontal size={18} /></button>}
           </div>
-          <div className="buyer-label">
-            <div className="buyer-icon">
-              <Users size={19} />
-            </div>
-            <div>
-              <strong>
-                {hasResults || p?.budget.max
-                  ? "Buyer brief"
-                  : "New buyer brief"}
-              </strong>
-              <span>
-                {p?.commuteDestinations.length === 2
-                  ? "Two commutes, one considered shortlist."
-                  : "Start with what matters to them."}
-              </span>
-            </div>
-          </div>
-          <div className="chat-scroll">
-            <div className="assistant-message">
-              <span className="mini-agent">
-                <Sparkles size={13} />
-                PropMatch
-              </span>
-              <p>
-                Share what matters to your buyers. I’ll turn the conversation
-                into a brief, verify the options and prepare a shortlist for
-                your review.
-              </p>
-            </div>
-            {session?.messages.map((m, i) => (
-              <div
-                key={i}
-                className={
-                  m.role === "user" ? "user-message" : "assistant-message"
-                }
-              >
-                {m.role === "assistant" && (
-                  <span className="mini-agent">
-                    <Sparkles size={13} />
-                    PropMatch
-                  </span>
-                )}
-                <p>{m.content}</p>
-                <time>
-                  {new Date(m.timestamp).toLocaleTimeString("en-SG", {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-                </time>
+          <Tabs value={briefView} onValueChange={setBriefView} className="buyer-view-tabs">
+            <TabsList className="buyer-view-switch">
+              <TabsTrigger value="requirements">Requirements</TabsTrigger>
+              <TabsTrigger value="conversation">Conversation{session?.messages.length ? <span>{session.messages.filter(m => m.role === "user").length}</span> : null}</TabsTrigger>
+            </TabsList>
+            <TabsContent value="requirements" className="brief-tab-intro"><p>Set the essentials. Add anything else in your message.</p></TabsContent>
+            <TabsContent value="conversation">
+              <div className="chat-scroll" role="log" aria-label="Buyer messages" aria-live="polite">
+                {!session?.messages.length && <div className="chat-welcome"><MessageSquare size={26} /><h3>Let’s find the right fit.</h3><p>Tell me about your budget, commute or what matters at home.</p></div>}
+                {session?.messages.map((m, i) => <div key={i} className={m.role === "user" ? "user-message" : "assistant-message"}>
+                  <span className="message-author">{m.role === "user" ? "You" : "PropMatch"}</span>
+                  <BuyerMessage content={m.content} />
+                </div>)}
+                {pending && <div className="user-message"><span className="message-author">You</span><BuyerMessage content={pending} /></div>}
+                {busy && pending && <div className="thinking"><LoaderCircle size={14} className="spin" />Finding your matches…</div>}
+                <div ref={end} />
               </div>
-            ))}
-            {pending && (
-              <div className="user-message">
-                <p>{pending}</p>
-              </div>
-            )}
-            {busy && pending && (
-              <div className="thinking">
-                <LoaderCircle size={14} className="spin" />
-                Checking the brief and evidence…
-              </div>
-            )}
-            {!session?.messages.length && (
-              <div className="example-block">
-                <span className="eyebrow">Example brief</span>
-                <button
-                  onClick={loadDemo}
-                  disabled={busy || !ready || !session}
-                >
-                  <div className="example-icon">
-                    <TrainFront size={17} />
-                  </div>
-                  <strong>City work, campus life</strong>
-                  <span>
-                    A couple, NUS + Raffles Place, S$1.6M, room to unwind.
-                  </span>
-                  <ArrowUpRight size={17} />
-                </button>
-                <button
-                  className="simple-example"
-                  onClick={() =>
-                    run(
-                      "Maximum budget SGD 1.4M, at least 2 bedrooms, MRT within 5 minutes.",
-                    )
-                  }
-                  disabled={busy || !ready || !session}
-                >
-                  MRT-first buyer <ArrowRight size={14} />
-                </button>
-              </div>
-            )}
-            <div ref={end} />
-          </div>
-          {p?.budget.max !== null && p && (
-            <div className="brief-snapshot">
-              <div>
-                <span className="eyebrow">
-                  Buyer state · v{session?.version}
-                </span>
-                <button
-                  onClick={() => setProfileOpen(true)}
-                  aria-label="View buyer profile"
-                >
-                  <SlidersHorizontal size={15} />
-                </button>
-              </div>
-              <div className="brief-chips">
-                <span>{money(p.budget.max!)} max</span>
-                <span>{p.property.minBedrooms ?? "?"}+ beds</span>
-                {p.transport.maxMrtWalkingMinutes !== null && (
-                  <span>MRT ≤ {p.transport.maxMrtWalkingMinutes}m</span>
-                )}
-                {p.transport.hasCar === false && <span>No car</span>}
-                {p.lifestyle.parks && <span>Green space</span>}
-              </div>
-            </div>
-          )}
-          <div className="composer">
-            <label htmlFor="buyer-message" className="sr-only">
-              Buyer requirements
-            </label>
-            <textarea
-              id="buyer-message"
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              maxLength={4000}
-              placeholder="Add a requirement or refine this brief…"
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  run(text);
-                }
-              }}
-            />
-            <div>
-              <span>Enter to send · Shift + Enter for a new line</span>
-              <button
-                aria-label="Send buyer requirements"
-                onClick={() => run(text)}
-                disabled={busy || !text.trim() || !ready || !session}
-              >
-                <Send size={16} />
-              </button>
-            </div>
-          </div>
-          {hasResults && (
-            <button
-              className="follow-up"
-              disabled={busy}
-              onClick={() => run(UPDATE)}
-            >
-              <Plus size={14} />
-              Try: S$1.7M, MRT within 5 minutes
-            </button>
-          )}
+            </TabsContent>
+          </Tabs>
+          <BuyerBriefForm
+            key={`${session?.id ?? "loading"}:${JSON.stringify(session?.profile)}`}
+            profile={session?.profile} message={text} onMessage={setText}
+            onSubmit={(message, constraints) => run(message, session, constraints)}
+            disabled={busy || !ready || !session} busy={busy}
+            showConstraints={briefView === "requirements"}
+            onShowConstraints={() => setBriefView("requirements")}
+          />
         </section>
         <section className="recommendations">
           <div className="results-top">
             <div>
-              <h2>Property recommendations</h2>
+              <h2><span className="section-step">02</span> Matching homes</h2>
               <p>
                 {hasResults
-                  ? `${all.length} eligible candidates · ranked for this buyer`
-                  : "Your buyer’s next chapter starts here."}
+                  ? `${all.length} homes match your requirements`
+                  : "Your results will appear here."}
               </p>
             </div>
             <div className="result-tools">
@@ -576,22 +399,15 @@ export default function Workspace() {
                     alternativeCount === 0 ||
                     !["waiting", "approved"].includes(session?.status ?? "")
                   }
-                  aria-describedby="alternative-help"
+                  title="Choose a different shortlist from current matches"
                   onClick={() => action("alternative")}
                 >
                   {pendingAction === "alternative" && <LoaderCircle size={14} className="spin" />}
-                  {pendingAction === "alternative" ? "Choosing alternatives…" : "Choose alternative shortlist"}
+                  {pendingAction === "alternative" ? "Choosing alternatives…" : "Other options"}
                 </button>
               )}
             </div>
           </div>
-          {hasResults && (
-            <p className="alternative-help" id="alternative-help">
-              {alternativeCount
-                ? `Choose up to 3 of the ${alternativeCount} other matches for your shortlist. Previously selected homes may appear again; reject a home to exclude it.`
-                : "No other matches in this result set. Edit the buyer brief to search again."}
-            </p>
-          )}
           <Tabs value={tab} onValueChange={setTab}>
             <div className="results-toolbar">
               <TabsList className="result-tabs">
@@ -614,51 +430,6 @@ export default function Workspace() {
             <TabsContent value="recommendations" />
             <TabsContent value="shortlist" />
           </Tabs>
-          {hasResults && session?.notice && (
-            <div className="state-update" role="status" aria-atomic="true">
-              <CheckCheck size={15} />
-              <div>{session.notice}</div>
-            </div>
-          )}
-          {hasResults && error && (
-            <div className="error-banner result-error" role="alert">
-              <TriangleAlert size={17} />{error}
-            </div>
-          )}
-          {(session?.messages.filter((m) => m.role === "user").length ?? 0) >
-            1 &&
-            latestChanges?.changes?.some(
-              (c) =>
-                c.field === "budget.max" ||
-                c.field === "transport.maxMrtWalkingMinutes",
-            ) && (
-              <div className="state-update">
-                <CheckCheck size={15} />
-                <div>
-                  <strong>Buyer brief updated · memory retained</strong>
-                  {latestChanges.changes
-                    .filter(
-                      (c) =>
-                        c.field === "budget.max" ||
-                        c.field === "transport.maxMrtWalkingMinutes",
-                    )
-                    .map((c) => (
-                      <span key={c.field}>
-                        {c.field === "budget.max" ? "Budget" : "MRT walk"}:{" "}
-                        {c.before === null
-                          ? "unspecified"
-                          : c.field === "budget.max"
-                            ? money(Number(c.before))
-                            : String(c.before) + " min"}{" "}
-                        →{" "}
-                        {c.field === "budget.max"
-                          ? money(Number(c.after))
-                          : String(c.after) + " min (hard limit)"}
-                      </span>
-                    ))}
-                </div>
-              </div>
-            )}
           <div className="cards-scroll">
             {!ready || (busy && pending) ? (
               <div
@@ -703,16 +474,16 @@ export default function Workspace() {
                 <button
                   className="button primary"
                   onClick={() =>
-                    setText("I can increase the budget to SGD 1.7M.")
+                    setBriefView("requirements")
                   }
                 >
-                  Discuss a higher budget
+                  Edit budget
                 </button>
                 <button
                   className="button"
-                  onClick={() => setText("MRT must be within 10 minutes.")}
+                  onClick={() => setBriefView("requirements")}
                 >
-                  Discuss MRT distance
+                  Edit MRT distance
                 </button>
               </div>
             ) : !hasResults ? (
@@ -728,43 +499,19 @@ export default function Workspace() {
                   <span>Illustrative property image</span>
                 </div>
                 <div className="empty-content">
-                  <span className="eyebrow">
-                    Built for accountable recommendations
-                  </span>
                   <h3>
                     {session?.status === "clarification"
                       ? "Let’s make the brief a little clearer."
                       : session?.status === "error"
                         ? "The run stopped safely."
-                        : "Start with the buyer, not the filters."}
+                        : "A place that fits your life."}
                   </h3>
                   <p>
                     {session?.status === "clarification" ||
                     session?.status === "error"
                       ? session.notice
-                      : "Share a buyer brief to see verified constraints, balanced commutes and honest trade-offs — together in one place."}
+                      : "Start with your requirements on the left. We’ll handle the matching."}
                   </p>
-                  <div className="empty-features">
-                    <span>
-                      <ShieldCheck size={16} />
-                      Constraints checked
-                    </span>
-                    <span>
-                      <Activity size={16} />
-                      Every action traced
-                    </span>
-                    <span>
-                      <Users size={16} />
-                      You make the call
-                    </span>
-                  </div>
-                  <button
-                    className="button primary"
-                    disabled={busy}
-                    onClick={loadDemo}
-                  >
-                    Explore the demo brief <ArrowRight size={15} />
-                  </button>
                 </div>
               </div>
             ) : rows.length === 0 ? (
@@ -867,36 +614,7 @@ export default function Workspace() {
                           </span>
                         ))}
                       </div>
-                      <p className="amenity-summary">
-                        Amenities ·{" "}
-                        {(r.amenities.length
-                          ? r.amenities
-                          : r.property.amenities
-                        )
-                          .slice(0, 2)
-                          .map((a) => `${a.name} · ${a.distanceMeters} m`)
-                          .join("; ") || "None recorded"}
-                      </p>
-                      <div className="constraint-pass">
-                        <ShieldCheck size={14} />
-                        All hard constraints passed<span>{r.property.id}</span>
-                      </div>
-                      <div className="reason-columns">
-                        <div>
-                          <h4>
-                            <Sparkles size={13} />
-                            Why this works
-                          </h4>
-                          <p>{r.why.slice(1, 3).join(" ")}</p>
-                        </div>
-                        <div>
-                          <h4>
-                            <SlidersHorizontal size={13} />
-                            The trade-off
-                          </h4>
-                          <p>{r.tradeoffs.slice(0, 1).join(" ")}</p>
-                        </div>
-                      </div>
+                      <div className="constraint-pass"><ShieldCheck size={14} />Meets your requirements</div>
                       <div className="card-footer">
                         <label className="compare-check">
                           <Checkbox
@@ -950,7 +668,7 @@ export default function Workspace() {
                   <strong>
                     {session?.status === "approved"
                       ? "Approved by property agent"
-                      : "Waiting for Agent Approval"}
+                      : "Ready for review"}
                   </strong>
                   <span>{session?.shortlist.length} selected</span>
                 </div>
@@ -967,7 +685,43 @@ export default function Workspace() {
               </div>
             )}
         </section>
-        <aside className="activity panel">
+      </main>
+      <details className="workspace-tools">
+        <summary><ShieldCheck size={15} /> Data sources & tools <span>Source checks, market context and demo controls</span></summary>
+      {session && !session.profile.unknownFields.length && !["empty", "clarification"].includes(session.status) && (
+        <div className="refresh-bar">
+          <button className="button" disabled={busy} onClick={() => refreshSources()}><RotateCcw size={14} /> Recheck sources</button>
+          <label><input type="checkbox" checked={autoRefresh} onChange={(e) => setAutoRefresh(e.target.checked)} /> Watch while this page is open · every 30s</label>
+          {session.dataMode !== "file" && session.shortlist.length > 0 && <>
+            <button className="button ghost" disabled={busy} onClick={() => refreshSources("withdraw")}>Simulate top listing withdrawn</button>
+            <button className="button ghost" disabled={busy} onClick={() => refreshSources("raise-price")}>Simulate price above budget</button>
+          </>}
+          <small>{lastChecked ? `Checked ${new Date(lastChecked).toLocaleTimeString("en-SG")}` : "Refresh preserves the buyer brief; changed evidence requires a new approval."}</small>
+        </div>
+      )}
+      {session?.marketEvidence && (
+        <section className="market-panel" aria-label="Official HDB historical evidence">
+          <div><span className="eyebrow">Official public data · historical transactions</span>
+            <h2>HDB market reference</h2>
+            <p>Historical HDB sales only. Current availability and condo / landed values are outside this dataset.</p>
+            <p>{session.marketEvidence.count.toLocaleString()} records match the stated budget, area and size filters · {session.marketEvidence.months.slice().sort().join(" / ")}</p>
+          </div>
+          <strong className="market-median">{session.marketEvidence.medianPrice === null ? "No matching records" : money(session.marketEvidence.medianPrice)}<small>Median of this filtered sample</small></strong>
+          <details><summary>Inspect source records and limitations</summary>
+            <p>{session.marketEvidence.filterSummary}</p><p>{session.marketEvidence.boundary}</p>
+            <div className="market-table-wrap"><table><thead><tr><th>Record</th><th>Month / town</th><th>Flat type / floor area</th><th>Historical price</th></tr></thead><tbody>
+              {session.marketEvidence.examples.map((r) => <tr key={r.id}><td>#{r.id}<br />{r.address}</td><td>{r.month}<br />{r.town}</td><td>{r.flatType} · {r.floorAreaSqm} m²</td><td>{money(r.resalePrice)}</td></tr>)}
+            </tbody></table></div>
+            <a href={session.marketEvidence.sourceUrl} target="_blank" rel="noreferrer">Open HDB dataset on data.gov.sg ↗</a>
+            <p className="micro">Snapshot retrieved {new Date(session.marketEvidence.retrievedAt).toLocaleString("en-SG")}. Source records are evidence for research, not homes confirmed for sale.</p>
+          </details>
+        </section>
+      )}
+        <Link href="/debug">Open full audit trail <ArrowUpRight size={14} /></Link>
+      </details>
+      <Dialog open={activityOpen} onOpenChange={setActivityOpen}>
+        <DialogContent className="activity-dialog"><DialogHeader><DialogTitle>Activity</DialogTitle><DialogDescription>Evidence checks and recommendation history.</DialogDescription></DialogHeader>
+        <div className="activity activity-dialog-body">
           <div className="panel-title">
             <div>
               <Activity size={17} />
@@ -1079,17 +833,9 @@ export default function Workspace() {
               <ArrowUpRight size={17} />
             </Link>
           </div>
-        </aside>
-      </main>
-      <footer className="app-footer">
-        <span>
-          PropMatch Agent <span>by 303forward</span>
-        </span>
-        <span>NUS-ISS Show Me Your Agents · D1IZFT7E</span>
-        <Link href="/debug">
-          Full audit trail <ArrowUpRight size={12} />
-        </Link>
-      </footer>
+        </div>
+        </DialogContent>
+      </Dialog>
       <Dialog open={!!detail} onOpenChange={(open) => !open && setDetail(null)}>
         <DialogContent className="detail-dialog">
           <DialogHeader>

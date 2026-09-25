@@ -1,17 +1,11 @@
-import { z } from "zod";
+import { RunInputSchema } from "../../../lib/brief-input";
 import { body, session, errorResponse } from "../../../lib/http";
 import { save } from "../../../lib/store";
 import { runAgent } from "../../../agents/orchestrator";
 export const dynamic = "force-dynamic";
 export async function POST(request: Request) {
   try {
-    const input = z
-      .object({
-        message: z.string().trim().min(1).max(4000),
-        version: z.number().int().nonnegative(),
-      })
-      .strict()
-      .parse(await body(request));
+    const input = RunInputSchema.parse(await body(request));
     const s = await session();
     if (!s)
       return Response.json(
@@ -40,8 +34,7 @@ export async function POST(request: Request) {
         }
         try {
           const updated = await runAgent(s, input.message, (t) =>
-            send({ type: "trace", trace: t }),
-          );
+            send({ type: "trace", trace: t }), {}, { constraints: input.constraints });
           const persisted = await save(updated, s.version);
           send({ type: "done", session: persisted });
         } catch {

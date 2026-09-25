@@ -29,6 +29,7 @@ import {
 import { requiredPlan } from "../providers/demo-llm";
 import * as tools from "../tools";
 import { lookup_market_comparables } from "../tools/market";
+import { applyBriefConstraints, briefMessage, hasConstraints, type BriefConstraints } from "../lib/brief-input";
 export function newSession(id = crypto.randomUUID()): Session {
   return {
     id,
@@ -76,12 +77,12 @@ export async function runAgent(
   message: string,
   emit: (t: Trace) => void = () => {},
   deps: Dependencies = {},
-  options: { refresh?: boolean } = {},
+  options: { refresh?: boolean; constraints?: BriefConstraints } = {},
 ): Promise<Session> {
   const s = SessionSchema.parse(structuredClone(old));
   s.lastRunId = crypto.randomUUID();
   s.updatedAt = new Date().toISOString();
-  if (!options.refresh) s.messages.push({ role: "user", content: message, timestamp: s.updatedAt });
+  if (!options.refresh) s.messages.push({ role: "user", content: briefMessage(message, options.constraints), timestamp: s.updatedAt });
   const add = (stage: Trace["stage"], summary: string, data?: unknown) =>
     emit(event(s, stage, summary, data));
   const llm = deps.llm ?? getLLM();
@@ -109,15 +110,24 @@ export async function runAgent(
       add("GUARDRAIL", s.notice);
       return finish();
     }
-    const parsed = ParseSchema.parse(options.refresh
-      ? { profile: s.profile, clarification: null, summary: "Rechecking saved buyer brief after source changes" }
-      : await llm.parse(message, s.profile));
-    const next = normalizeProfile(parsed.profile);
+    const base = applyBriefConstraints(s.profile, options.constraints);
+    const formConflict = profileConflict(base);
+    if (formConflict) {
+      s.status = "clarification";
+      s.notice = formConflict;
+      add("HUMAN", formConflict);
+      return finish();
+    }
+    const structuredOnly = !message.trim() && hasConstraints(options.constraints);
+    const parsed = ParseSchema.parse(options.refresh || structuredOnly
+      ? { profile: base, clarification: null, summary: "Using structured buyer profile" }
+      : await llm.parse(message, base));
+    const next = applyBriefConstraints(normalizeProfile(parsed.profile), options.constraints);
     const diff = changes(s.profile, next);
     // Independent numeric extraction anchors explicit limits even if a model tries to relax them.
     const { DemoLLMProvider } = await import("../providers/demo-llm");
-    const anchor = await new DemoLLMProvider().parse(message, s.profile);
-    if (!options.refresh) validateProfileUpdate(s.profile, next, anchor.profile);
+    const anchor = await new DemoLLMProvider().parse(message, base);
+    if (!options.refresh) validateProfileUpdate(base, next, applyBriefConstraints(anchor.profile, options.constraints));
     const unsupportedHard = unsupportedHardRequirement(message);
     if (unsupportedHard) {
       s.status = "clarification";
@@ -145,12 +155,15 @@ export async function runAgent(
     const unsupported = s.profile.commuteDestinations.find(
       (d) => !destinations[d.place],
     );
-    if (parsed.clarification || next.unknownFields.length || unsupported) {
+    // A conflicting numeric suggestion in text cannot invalidate explicit form limits.
+    const clarification = hasConstraints(options.constraints) && parsed.clarification === profileConflict(parsed.profile)
+      ? null : parsed.clarification;
+    if (clarification || next.unknownFields.length || unsupported) {
       s.status = "clarification";
       s.recommendations = [];
       s.shortlist = [];
       s.notice =
-        parsed.clarification ??
+        clarification ??
         (unsupported
           ? `Please clarify ${unsupported.place}; supported demo destinations are NUS, Raffles Place, Jurong East and Changi Airport.`
           : "Please provide a maximum SGD budget and minimum bedrooms.");
@@ -159,7 +172,7 @@ export async function runAgent(
     }
     s.recommendations = [];
     s.shortlist = [];
-    const proposed = PlanSchema.parse(options.refresh ? requiredPlan(s.profile) : await llm.plan(s.profile));
+    const proposed = PlanSchema.parse(options.refresh || structuredOnly ? requiredPlan(s.profile) : await llm.plan(s.profile));
     const required = requiredPlan(s.profile);
     const selected = required.tools;
     add("PLAN", required.summary, {

@@ -54,6 +54,7 @@ export default defineConfig(async () => {
   return {
     resolve: {
       alias: [
+        { find: "./resale-store-runtime", replacement: fileURLToPath(new URL("./lib/resale-store-cloudflare.ts", import.meta.url)) },
         {
           find: "./store-runtime",
           replacement: fileURLToPath(
