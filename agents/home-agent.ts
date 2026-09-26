@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { SessionSchema, emptyProfile, type Session } from "../schemas";
 import { HomeActionInput, HomeSearchInput, HomeInterpretationSchema, HomeStateSchema, CommutePreferenceSchema, homeKey, routeIsCurrent, type HomeState, type HomeCandidate } from "../lib/home-schema";
-import { ResaleFilterSchema, type ResaleRow } from "../lib/resale-schema";
+import { ResaleFilterSchema, type ResaleFilters, type ResaleRow } from "../lib/resale-schema";
 import { resaleMetadata, searchResales } from "../lib/resale-store";
 import { DemoLLMProvider } from "../providers/demo-llm";
 import { getLLM } from "../providers/bedrock";
@@ -10,7 +10,8 @@ import { interpretResaleFilters } from "../lib/resale-language";
 import { commuteForHome } from "../lib/maps";
 import { event } from "./orchestrator";
 import type { LLMProvider } from "../providers/contracts";
-export type HomeDependencies = { metadata?:typeof resaleMetadata; search?:typeof searchResales; llm?:LLMProvider; route?:typeof commuteForHome };
+type HomeSearchResult = Omit<Awaited<ReturnType<typeof searchResales>>, "demoCount"> & { demoCount?: number };
+export type HomeDependencies = { metadata?:typeof resaleMetadata; search?:(input:ResaleFilters,simulated?:boolean,includeDemoListings?:boolean)=>Promise<HomeSearchResult>; llm?:LLMProvider; route?:typeof commuteForHome };
 const defaults=()=>HomeStateSchema.parse({filters:ResaleFilterSchema.parse({}),commute:CommutePreferenceSchema.parse({}),categories:["mrt","bus"],candidates:[],total:0,rejected:[],shortlist:[],saved:[],feedback:[],changes:[],sourceRevision:"",warnings:[],checkedAt:new Date().toISOString()});
 export function eligible(c:HomeCandidate,h:HomeState) {
  const f=h.filters,r=c.row;
@@ -27,7 +28,8 @@ export function rankHome(row:ResaleRow,h:HomeState):HomeCandidate {
  const r={...row,...(changed?.price?{resale_price:changed.price}:{})};
  const budget=h.filters.maxPrice,headroom=budget?Math.max(0,(budget-r.resale_price)/budget):0;
  const score=Math.round(60+Math.min(25,headroom*100)+Math.min(15,r.floor_area_sqm/10));
- return {row:r,key,score,why:[budget?`S$${Math.max(0,budget-r.resale_price).toLocaleString("en-SG")} within your budget`:"Matches your selected price range",`${r.floor_area_sqm} m² · ${r.flat_type}`,`Historical reference: ${r.month}`]};
+ const listing=r.listing;
+ return {row:r,key,score,why:[budget?`S$${Math.max(0,budget-r.resale_price).toLocaleString("en-SG")} within your budget`:"Matches your selected price range",listing?`${listing.bedrooms} bedrooms · ${listing.bathrooms} bathrooms · demo listing`:`${r.floor_area_sqm} m² · ${r.flat_type}`,listing?`Demo availability: ${listing.status} · checked ${listing.checkedAt.slice(0,10)}`:`Historical reference: ${r.month}`]};
 }
 function finish(s:Session) { s.updatedAt=new Date().toISOString();s.messages.push({role:"assistant",content:s.notice,timestamp:s.updatedAt});s.messages=s.messages.slice(-100);s.trace=s.trace.slice(-400);return SessionSchema.parse(s); }
 function select(h:HomeState,exclude:string[]=[]) {
@@ -40,19 +42,19 @@ function select(h:HomeState,exclude:string[]=[]) {
 }
 async function search(s:Session,deps:HomeDependencies,append=false) {
  const h=s.homeSearch!;
- const result=await (deps.search??searchResales)({...h.filters,page:h.page},true);
+ const result=await (deps.search??searchResales)({...h.filters,page:h.page},true,true);
  const prior=new Map(h.candidates.map(c=>[c.key,c]));
  const rows=result.rows.map(r=>{const next=rankHome(r,h),old=prior.get(next.key);if(old?.route && routeMatches(old,h))next.route=old.route;return next;});
  h.candidates=append ? [...h.candidates,...rows.filter(r=>!prior.has(r.key))].slice(-60) : rows;
  h.total=result.count;h.page=result.page;h.filters.page=1;h.checkedAt=new Date().toISOString();
- event(s,"TOOL","search_properties: parameterized SQLite query",{filters:{...h.filters,page:h.page},matchingGroups:result.count,batch:result.rows.length,priceBasis:"latest historical comparable per group"});
+ event(s,"TOOL","search_properties: parameterized SQLite query",{filters:{...h.filters,page:h.page},matchingGroups:result.count,batch:result.rows.length,demoListings:result.demoCount??0,priceBasis:"latest historical comparable per group; complete demo listings are separately labelled"});
  h.candidates=h.candidates.filter(c=>eligible(c,h));
  h.shortlist=select(h);
  h.saved=h.saved.map(c=>h.candidates.find(r=>r.key===c.key)??c);
  event(s,"VERIFY","Checked budget, floor area, feedback and simulation changes",{rejected:h.rejected.length,simulationChanges:h.changes.length,commuteLimit:h.commute.maxMinutes,uncheckedCommutes:h.candidates.filter(c=>!routeMatches(c,h)).length});
  event(s,"RANK","Ranked the loaded candidate batch",{formula:"60 + min(25, budget headroom percent) + min(15, area sqm / 10); verified hard commutes take priority",considered:h.candidates.length,availableInDatabase:h.total});
  s.status=h.candidates.length ? "waiting" : "no-match";
- s.notice=h.candidates.length ? `Found ${h.total.toLocaleString()} matching historical home groups. ${h.shortlist.length} shortlisted from this batch.${h.commute.maxMinutes!==null?" Check travel times before approving.":" Review the homes, then approve your shortlist."}` : "No eligible homes in this batch. Try another batch or adjust your requirements.";
+ s.notice=h.candidates.length ? `Found ${h.total.toLocaleString()} matching home records. ${h.shortlist.length} shortlisted from this batch.${(result.demoCount??0)>0?` Includes ${result.demoCount} complete fictional demo listing${result.demoCount===1?"":"s"}.`:""}${h.commute.maxMinutes!==null?" Check travel times before approving.":" Review the homes, then approve your shortlist."}` : "No eligible homes in this batch. Try another batch or adjust your requirements.";
  event(s,"RECOMMEND",s.notice,{shortlist:h.shortlist});
 }
 export async function runHomeAgent(old:Session,raw:z.infer<typeof HomeSearchInput>,deps:HomeDependencies={}):Promise<Session> {

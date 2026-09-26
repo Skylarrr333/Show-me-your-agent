@@ -16,7 +16,7 @@ The main page starts with a single request box. Filters and commute preferences 
 | Capability | Implemented behavior |
 |---|---|
 | Language model | Organiser Claude gateway, DeepSeek or direct Bedrock; structured extraction validated with Zod. Form-only queries make no model call. No local LLM training needed. |
-| Housing dataset | Pinned Kaggle v1 archive, **228,225 historical HDB transactions**, 26 towns, Jan 2017–Apr 2026. Reproducible checksum-verified SQLite import. |
+| Housing dataset | Pinned Kaggle v1 archive, **228,225 historical HDB transactions**, 26 towns, Jan 2017–Apr 2026. Reproducible checksum-verified SQLite import, plus three separately labelled complete fictional listing demos for product walkthroughs. |
 | Retrieval | Parameterized SQL for price, area in m², town, flat type, street and reference month. Latest comparable selected before buyer filtering. No vector retrieval or embeddings. |
 | Stateful agent | Shared server session, typed tool execution, constraint checks, transparent batch ranking, feedback memory, human approval and source-change redecision. |
 | Feedback | Reject with a reason, replace a shortlist and save homes. Alternatives advance to unseen groups and another database page when needed. |
@@ -26,7 +26,7 @@ The main page starts with a single request box. Filters and commute preferences 
 | Changes | Session-local simulated withdrawal / price rise recomputes the shortlist and revokes approval. New imported dataset versions trigger redecision; no real listing withdrawal detector. |
 | Hosting | Next standalone Docker on AWS Lightsail; Caddy HTTPS + Basic access; persistent sessions. Database is generated in the image build and checked by health probes. |
 
-**Evidence boundaries:** the homes are representative groups of historical transactions, not identified available units. Reference prices are not asking prices or valuations. Availability events are simulations. Bedroom counts, sellers and photos are absent. Map evidence is retrieved separately. A short route does not establish housing eligibility, and approval sends no message or booking.
+**Evidence boundaries:** historical homes are representative groups of transactions, not identified available units. Reference prices are not asking prices or valuations. The three records in `lib/demo-listings.ts` are explicitly fictional complete-listing demonstrations: their unit numbers, availability, seller/agent details and prices are not real, and their Unsplash images are illustrative. Map evidence is retrieved separately at block level. A short route does not establish housing eligibility, and approval sends no message or booking.
 
 ## Run locally
 
