@@ -29,7 +29,7 @@ test("simulated price increase cannot leave an over-budget recommendation approv
 test("unknown and over-limit commutes fail approval; verified in-limit routes pass",async()=>{
  let s=await runHomeAgent(newSession(),{version:0,message:"",filters:{maxPrice:600000},commute:{destination:"NUS",mode:"walk",maxMinutes:30}},deps);
  await assert.rejects(()=>homeAction(s,{version:0,action:"approve",reason:""},deps),/Check/);
- const route:NonNullable<HomeDependencies["route"]>=async(row,destination,mode)=>({destination,mode,minutes:row.id===1?45:20,distanceKm:1,coordinates:[[103.76,1.31],[103.77,1.30]],start:{lat:1.31,lon:103.76,label:"block",source:"test",exact:true},end:{lat:1.30,lon:103.77,label:"NUS",source:"test",exact:true},checkedAt:new Date().toISOString(),source:"test route",note:"no traffic"});
+ const route:NonNullable<HomeDependencies["route"]>=async(row,destination,mode)=>({destination,mode,minutes:row.id===1?45:20,distanceKm:1,coordinates:[[103.76,1.31],[103.77,1.30]],start:{lat:1.31,lon:103.76,label:"block",source:"test",exact:true},end:{lat:1.30,lon:103.77,label:"NUS",source:"test",exact:true},checkedAt:new Date().toISOString(),source:"OneMap test fixture",note:"no traffic"});
  s=await homeAction(s,{version:0,action:"check-commutes",reason:""},{...deps,route});assert(s.homeSearch!.shortlist.every(k=>approvable(s.homeSearch!.candidates.find(c=>c.key===k)!,s.homeSearch!)));
  s=await homeAction(s,{version:0,action:"approve",reason:""},deps);assert.equal(s.status,"approved");
 });
@@ -45,10 +45,10 @@ test("source changes revoke approval and stable grouping keys survive row reorde
  assert.equal(fresh.changed,true);assert.notEqual(fresh.session.status,"approved");
  const failed=await refreshHomes(s,{...deps,metadata:async()=>{throw new Error("missing db");}});assert.equal(failed.session.status,"error");assert.equal(failed.session.homeSearch!.shortlist.length,0);
 });
-test("version conflicts, unsupported transit limits and unknown keys fail closed",async()=>{
+test("version conflicts and unknown keys fail closed",async()=>{
  const s=await create();await assert.rejects(()=>homeAction(s,{version:999,action:"approve",reason:""},deps),/CONFLICT/);
  await assert.rejects(()=>homeAction(s,{version:0,action:"reject",key:"not-a-home",reason:""},deps));
- await assert.rejects(()=>runHomeAgent(s,{version:0,message:"",commute:{destination:"NUS",mode:"transit",maxMinutes:30}},deps),/Transit/);
+
 });
 test("a clarification clears the old shortlist and cannot keep its approval",async()=>{
  let s=await create();s=await homeAction(s,{version:0,action:"approve",reason:""},deps);
@@ -62,4 +62,14 @@ test("model cannot relax an existing budget when the user only asks about parks"
 test("alternatives advance through unseen homes rather than toggling the same two trios",async()=>{
  let s=await create();const first=s.homeSearch!.shortlist;s=await homeAction(s,{version:0,action:"alternative",reason:""},deps);const second=s.homeSearch!.shortlist;
  s=await homeAction(s,{version:0,action:"alternative",reason:""},deps);assert(s.homeSearch!.shortlist.every(k=>!first.includes(k)&&!second.includes(k)));
+});
+
+test("transit hard limits require current scheduled OneMap evidence and stale approval fails",async()=>{
+ let s=await runHomeAgent(newSession(),{version:0,message:"",commute:{destination:"NUS",mode:"transit",maxMinutes:30}},deps);
+ await assert.rejects(()=>homeAction(s,{version:0,action:"approve",reason:""},deps));
+ s=await homeAction(s,{version:0,action:"check-commutes",reason:""},{...deps,route:async(_row,destination,mode)=>({destination,mode,minutes:20,distanceKm:2,coordinates:[[103.76,1.31],[103.77,1.3]],start:{lat:1.31,lon:103.76,label:"home",source:"test",exact:true},end:{lat:1.3,lon:103.77,label:"NUS",source:"test",exact:true},checkedAt:new Date().toISOString(),departureAt:new Date().toISOString(),source:"OneMap test fixture",note:"scheduled"})});
+ s=await homeAction(s,{version:0,action:"approve",reason:""},deps);assert.equal(s.status,"approved");
+ for(const c of s.homeSearch!.candidates)if(c.route)c.route.departureAt=new Date(Date.now()-360000).toISOString();
+ const refreshed=await refreshHomes(s,deps);assert.equal(refreshed.changed,true);assert.equal(refreshed.session.status,"waiting");
+ await assert.rejects(()=>homeAction(refreshed.session,{version:0,action:"approve",reason:""},deps));
 });

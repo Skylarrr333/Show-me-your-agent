@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { SessionSchema, emptyProfile, type Session } from "../schemas";
-import { HomeActionInput, HomeSearchInput, HomeInterpretationSchema, HomeStateSchema, CommutePreferenceSchema, homeKey, type HomeState, type HomeCandidate } from "../lib/home-schema";
+import { HomeActionInput, HomeSearchInput, HomeInterpretationSchema, HomeStateSchema, CommutePreferenceSchema, homeKey, routeIsCurrent, type HomeState, type HomeCandidate } from "../lib/home-schema";
 import { ResaleFilterSchema, type ResaleRow } from "../lib/resale-schema";
 import { resaleMetadata, searchResales } from "../lib/resale-store";
 import { DemoLLMProvider } from "../providers/demo-llm";
@@ -18,7 +18,7 @@ export function eligible(c:HomeCandidate,h:HomeState) {
  (f.maxPrice===null || r.resale_price<=f.maxPrice) && (f.minPrice===null || r.resale_price>=f.minPrice) &&
  (f.minArea===null || r.floor_area_sqm>=f.minArea) && (f.maxArea===null || r.floor_area_sqm<=f.maxArea);
 }
-export function routeMatches(c:HomeCandidate,h:HomeState) { return !!c.route && c.route.destination===h.commute.destination && c.route.mode===h.commute.mode && Date.now()-Date.parse(c.route.checkedAt)<86400000; }
+export function routeMatches(c:HomeCandidate,h:HomeState) { return !!c.route && c.route.destination===h.commute.destination && c.route.mode===h.commute.mode && routeIsCurrent(c.route); }
 export function approvable(c:HomeCandidate,h:HomeState) {
  return eligible(c,h) && (h.commute.maxMinutes===null || (routeMatches(c,h) && c.route!.minutes<=h.commute.maxMinutes));
 }
@@ -88,7 +88,6 @@ export async function runHomeAgent(old:Session,raw:z.infer<typeof HomeSearchInpu
  commute=input.commute??commute;categories=input.categories??categories;
  if(filters.town && !towns.includes(filters.town.toUpperCase())) throw new Error("Choose a town from the available HDB towns.");
  if(commute.maxMinutes!==null && !commute.destination)throw new Error("Enter a destination for your commute limit.");
- if(commute.maxMinutes!==null && commute.mode==="transit")throw new Error("Transit minutes cannot be verified in-app. Remove the limit or select walking/driving.");
  if(JSON.stringify(h.commute)!==JSON.stringify(commute))h.candidates=h.candidates.map(c=>({...c,route:undefined}));
  h.filters=filters;h.commute=commute;h.categories=categories;h.page=1;h.sourceRevision=dataset.sha256;
  h.warnings=["Historical HDB records create representative homes, not live listings. Availability changes are simulations.","Rankings cover the loaded batch, not every matching home. Bedroom counts are not recorded."];
@@ -103,7 +102,11 @@ export async function refreshHomes(old:Session,deps:HomeDependencies={}):Promise
  const s=SessionSchema.parse(structuredClone(old));
  try {
   const {dataset}=await (deps.metadata??resaleMetadata)();
-  if(dataset.sha256===s.homeSearch!.sourceRevision)return {session:old,changed:false};
+  if(dataset.sha256===s.homeSearch!.sourceRevision){
+   const h=s.homeSearch!;
+   if(s.status==="approved" && h.commute.maxMinutes!==null && !h.shortlist.every(key=>{const c=h.candidates.find(c=>c.key===key);return c && approvable(c,h);})){s.status="waiting";s.notice="Commute evidence expired or no longer meets your limit. Previous approval revoked; check travel times again.";event(s,"VERIFY",s.notice);return {session:finish(s),changed:true};}
+   return {session:old,changed:false};
+  }
   s.lastRunId=crypto.randomUUID();s.homeSearch!.sourceRevision=dataset.sha256;
   // Group keys survive reordered rows. Recheck saved values before they can be shortlisted.
   s.homeSearch!.saved=[];s.homeSearch!.candidates=[];s.homeSearch!.page=1;
@@ -150,16 +153,17 @@ export async function homeAction(old:Session,raw:z.infer<typeof HomeActionInput>
    event(s,"VERIFY",s.notice,{trigger:`simulation:${input.action}`,before,after:h.shortlist,approvalRevoked:wasApproved});
   }
   if(input.action==="check-commutes") {
-   if(!h.commute.destination || h.commute.mode==="transit")throw new Error("Choose a destination and walking/driving to check travel times.");
+   if(!h.commute.destination)throw new Error("Choose a destination to check travel times.");
    const chosen=h.candidates.filter(c=>h.shortlist.includes(c.key));
    const extras=h.candidates.filter(c=>!h.shortlist.includes(c.key) && eligible(c,h)).slice(0,Math.max(0,6-chosen.length));
    for(const row of [...chosen,...extras].slice(0,12)) {
     try { if(!routeMatches(row,h))row.route=await (deps.route??commuteForHome)(row.row,h.commute.destination,h.commute.mode);row.mapError=undefined; }
     catch {row.route=undefined;row.mapError="Route unavailable; this home's commute remains unverified.";}
    }
+   h.saved=h.saved.map(saved=>h.candidates.find(c=>c.key===saved.key)??saved);
    h.checkedRoutes=h.candidates.filter(c=>routeMatches(c,h)).length;h.shortlist=select(h);
    s.notice=`Checked routes for ${chosen.length+extras.length} candidates. ${h.checkedRoutes} have travel evidence. Shortlist updated; unknown or over-limit commutes cannot be approved.`;
-   event(s,"TOOL","calculate_commute: verified road routes for a bounded candidate batch",{checked:h.checkedRoutes,mode:h.commute.mode,destination:h.commute.destination});
+   event(s,"TOOL","calculate_commute: verified OneMap routes for a bounded candidate batch",{checked:h.checkedRoutes,mode:h.commute.mode,destination:h.commute.destination});
   }
   if(wasApproved && !s.notice.includes("approval revoked"))s.notice+=" Previous approval revoked.";
  }

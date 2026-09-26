@@ -31,7 +31,7 @@ git archive --format=tar.gz --output=/private/tmp/propmatch-source.tar.gz HEAD
 
 Transfer this archive over verified SSH/SCP to the team instance. Do not put a personal GitHub token on the VM to clone a private repository. Verify the SSH host key through the authenticated AWS console before trusting the connection. Extract into a release-specific directory, for example `/opt/propmatch/releases/FULL_COMMIT_SHA`.
 
-Keep runtime `.env` in a private shared directory such as `/opt/propmatch/shared/app.env` (permissions 600). Link it as `.env` in the release directory. It must contain only the needed model configuration, `DATA_MODE=synthetic`, `DOMAIN`, the access gate settings below, and `APP_COMMIT_SHA` set to the exact 40-character source commit. Keep optional provider keys out of a deployment that does not use them.
+Keep runtime `.env` in a private shared directory such as `/opt/propmatch/shared/app.env` (permissions 600). Link it as `.env` in the release directory. It must contain only the needed model configuration, `DATA_MODE=synthetic`, `DOMAIN`, the access gate settings below, and `APP_COMMIT_SHA` set to the exact 40-character source commit. Keep optional provider keys out of a deployment that does not use them. To enable OneMap, preserve server-only `ONEMAP_EMAIL` and `ONEMAP_PASSWORD` in this protected runtime file across releases. See `docs/ONEMAP_SETUP_ZH.md`. The public GreyLite tiles and external Google Maps links need no key.
 
 ## 4. Protect the paid demo
 
@@ -106,6 +106,6 @@ The main app now uses the Kaggle-backed HDB agent, not the legacy synthetic work
 
 The health probe is `/api/homes`. Also verify `/api/status` → `homes.ready=true`, `homes.count=228225`, and the expected release SHA. Run `scripts/verify-deployment.ts --homes` with the existing private verification environment to exercise SQL search, rejection, approval, withdrawal and session persistence without any paid LLM call. `--resume` checks the same session after an operator restart. The normal CI `--exercise` covers both legacy and current homepage workflows.
 
-Outbound HTTPS is needed for organiser model calls, OneMap address search, Overpass POIs and FOSSGIS routes. Public map services are used on demand, cached and rate-limited in a single process. No new AWS resources, account permissions, exposed ports or paid mapping subscription are needed. `ONEMAP_ACCESS_TOKEN` is optional for search at the time of validation; in-app transit routing is not provided.
+Outbound HTTPS is needed for organiser model calls and official OneMap authentication, address search, routes and facilities. The browser loads GreyLite tiles directly from OneMap. Public API requests are cached and rate-limited in one process. No new AWS resources, permissions, ports or paid mapping subscription are needed. Verify at least one real address, route and nearby lookup after deployment; missing credentials must remain a visible error. See `docs/ONEMAP_SETUP_ZH.md` for credential renewal and coverage limits.
 
 Rollback: start the prior release's Compose build with the same project name and durable session volume, then restore `/opt/propmatch/current`. New optional home-search session fields do not affect old sessions. Rollback does not delete the current data archive or session volume.

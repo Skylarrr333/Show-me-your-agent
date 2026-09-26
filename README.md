@@ -20,8 +20,8 @@ The main page starts with a single request box. Filters and commute preferences 
 | Retrieval | Parameterized SQL for price, area in m², town, flat type, street and reference month. Latest comparable selected before buyer filtering. No vector retrieval or embeddings. |
 | Stateful agent | Shared server session, typed tool execution, constraint checks, transparent batch ranking, feedback memory, human approval and source-change redecision. |
 | Feedback | Reject with a reason, replace a shortlist and save homes. Alternatives advance to unseen groups and another database page when needed. |
-| Maps | Verified OneMap block coordinates; Leaflet/OSM map; selectable MRT, bus stops, parks, schools, food, shops and healthcare markers within 1 km. |
-| Routes | Real road-network walking/driving routes and estimated minutes from FOSSGIS OSRM, drawn on the map. **No live traffic.** Transit opens Google Maps; no in-app transit duration claimed. |
+| Maps | OneMap GreyLite basemap; exact block lookup, nearby MRT/LRT and bus stops, selected official facility layers within 1 km. Home / Nearby / Journey views; keyless Open Google Maps links. |
+| Routes | OneMap walking/driving estimates and scheduled MRT/bus itineraries, with map paths and transit steps. Current route evidence supports Agent commute limits. **No live traffic or guaranteed arrival times claimed.** |
 | Hard commute limits | Optional bounded route check for a shortlist and a few alternatives. Unknown, failed or over-limit routes cannot be approved. Not an exhaustive commute search over the full database. |
 | Changes | Session-local simulated withdrawal / price rise recomputes the shortlist and revokes approval. New imported dataset versions trigger redecision; no real listing withdrawal detector. |
 | Hosting | Next standalone Docker on AWS Lightsail; Caddy HTTPS + Basic access; persistent sessions. Database is generated in the image build and checked by health probes. |
@@ -96,11 +96,12 @@ Ranking is transparent and limited to the **loaded batch**, usually 20 groups: `
 
 ## Maps and service limits
 
-- [OneMap API](https://www.onemap.gov.sg/apidocs/) resolves exact matching block/road addresses. Unmatched blocks remain unknown. OneMap search was verified without authentication; optional `ONEMAP_ACCESS_TOKEN` can be supplied if access requirements change.
-- [OpenStreetMap](https://www.openstreetmap.org/copyright) supplies map tiles and POIs via [Overpass](https://wiki.openstreetmap.org/wiki/Overpass_API). Attribution stays visible. Browser tile caching is preserved; no prefetch/offline tile download.
-- [FOSSGIS routing](https://routing.openstreetmap.de/about.html) supplies walking/driving road routes. Requests per provider are serialized at less than one per second across a **single app process**, cached in memory, limited to user-triggered lookups and bounded candidate checks. Do not horizontally scale this public-service configuration without a shared quota/cache or your own provider.
-- [OSM tile usage policy](https://operations.osmfoundation.org/policies/tiles/) applies. No availability SLA is claimed. Provider URLs are configurable on the server; `NEXT_PUBLIC_MAP_TILE_URL` is a build-time browser setting.
-- Nearby distances are **straight-line distances**, not walk times. Route geometry/minutes are from OSRM, not a straight-line estimate. Driving has no live traffic; transit schedules and MRT/bus duration are only available on the linked external map.
+- [OneMap GreyLite](https://www.onemap.gov.sg/docs/maps/greylite.html) renders a clean, attributed Singapore basemap. Address matching requires the requested block and road. No approximate home coordinate is substituted.
+- Configure server-only `ONEMAP_EMAIL` and `ONEMAP_PASSWORD` after verifying your OneMap account. The server manages access-token renewal; no credentials appear in the browser or Git. [Setup and deployment guide](docs/ONEMAP_SETUP_ZH.md).
+- [OneMap routing](https://www.onemap.gov.sg/apidocs/routing) supplies walking, driving and scheduled public transport. Transit queries depart now in Singapore time, selecting the earliest arrival among up to three returned itineraries and including initial waiting. Displayed resolved destinations need user review. Road estimates expire after one hour; transit after five minutes. Unknown, stale or over-limit evidence cannot pass a hard commute limit.
+- [Nearby Transport](https://www.onemap.gov.sg/apidocs/nearbytransport) supplies MRT/LRT and bus stops. [Themes](https://www.onemap.gov.sg/apidocs/themes) supply supported park, education, hawker, shopping and healthcare point layers where available in the current catalog. Coverage is not complete. Distances are straight-line, not walk times; partial failures and missing layers remain visible. No inferred polygon entrances or invented points.
+- Requests are serialized at under one per second in a single process, with bounded retries, typed validation and memory caching. HTTP 200 error envelopes are rejected. Cached evidence retains its actual retrieval time. API quota and network failures remain possible.
+- [Google Maps links](https://developers.google.com/maps/documentation/urls/get-started) open the selected location/category/journey externally without a key. This version calls no Google Embed, Places, Routes or JavaScript API and no OSRM/Overpass services.
 
 ## Quality checks
 
@@ -117,7 +118,7 @@ Tests include source freshness and failures, approvals, rejection persistence, a
 
 The release and map-resilience verification passed **81 unit tests** (including two temporary-provider-failure cases), **15 legacy evaluation cases**, lint, type checking and production builds. One organiser-gateway request and actual OneMap/Overpass/OSRM interactions were also checked separately. See [the dated verification record](docs/HOME_RELEASE_VALIDATION_2026-09-26.md) for scope and limitations.
 
-Map HTTP 502/503/504 responses get one bounded automatic retry. If a lookup still fails, the UI identifies the affected service and retains the verified block and previously loaded evidence, with an explicit warning that the failed lookup did not refresh it. **Show map only**, **Retry lookup** and Google Maps links provide separate recovery paths. These measures do not guarantee upstream service availability.
+The dated 81-test record above describes the preceding release. OneMap migration validation is recorded separately in `docs/ONEMAP_VALIDATION_2026-09-26.md`; unit-test fixtures are distinguished from actual provider checks. External Google Maps links remain available when OneMap is unavailable.
 
 ## Deployment
 
@@ -143,7 +144,7 @@ The `deployment-check.env` file is private and is not part of the handoff.
 | Homepage / UI | `components/home-finder.tsx`, `app/globals.css` |
 | Agent and feedback | `agents/home-agent.ts`, `lib/home-schema.ts`, `schemas/index.ts` |
 | Database / retrieval | `lib/resale-store-runtime.ts`, `lib/resale-query.ts`, `scripts/prepare-hdb.py`, `scripts/import-kaggle-hdb.py` |
-| Maps / commute | `lib/maps.ts`, `components/home-map-panel.tsx`, `components/home-map.tsx`, `app/api/homes/map/route.ts` |
+| Maps / commute | `lib/maps.ts`, `lib/onemap-client.ts`, `lib/google-maps.ts`, `components/home-map-panel.tsx`, `components/home-map.tsx`, `app/api/homes/map/route.ts` |
 | Model integration | `providers/home-prompt.ts`, `providers/gateway.ts`, `providers/deepseek.ts`, `providers/bedrock.ts` |
 | Server persistence | `lib/http.ts`, `lib/store-runtime.ts`, `app/api/session/route.ts` |
 | Validation / operations | `tests/home-agent.test.ts`, `scripts/verify-deployment.ts`, `Dockerfile`, `docker-compose.yml`, `.github/workflows/ci.yml` |

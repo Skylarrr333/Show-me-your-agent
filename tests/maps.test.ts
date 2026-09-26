@@ -1,35 +1,39 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {locateHome,roadRoute,distanceMeters,nearbyPlaces} from "../lib/maps";
+import {locateHome,roadRoute,decodePolyline,singaporeDeparture,distanceMeters,nearbyPlaces} from "../lib/maps";
+import {OneMapClient} from "../lib/onemap-client";
+import {routeIsCurrent} from "../lib/home-schema";
 import type {ResaleRow} from "../lib/resale-schema";
-const start={lat:1.31,lon:103.76,label:"home",source:"test",exact:true};
-const end={lat:1.30,lon:103.77,label:"destination",source:"test",exact:true};
-test("MRT/bus never silently uses a walking/driving duration",async()=>{await assert.rejects(()=>roadRoute(start,end,"transit","NUS"),/Public transport/);});
-test("map evidence requires the requested exact block rather than a nearby address",async()=>{
- const fetchBefore=globalThis.fetch;
- globalThis.fetch=async()=>Response.json({results:[{BLK_NO:"999",ROAD_NAME:"CLEMENTI AVENUE 3",ADDRESS:"999 CLEMENTI",LATITUDE:"1.31",LONGITUDE:"103.76"}]});
- try {await assert.rejects(()=>locateHome({block:"777",street_name:"CLEMENTI AVE 3"} as ResaleRow),/exact block/);}finally{globalThis.fetch=fetchBefore;}
+const now=Date.parse("2026-09-26T01:12:00Z"),start={lat:1.31,lon:103.76,label:"home",source:"test",exact:true},end={lat:1.30,lon:103.77,label:"destination",source:"test",exact:true};
+function client(fetcher:typeof fetch){return new OneMapClient({credentials:()=>({token:"test_token"}),fetch:fetcher,now:()=>now,wait:async()=>{}});}
+function polyline(points:[number,number][]){let lat=0,lon=0;function enc(n:number){n=n<0?~(n<<1):n<<1;let s="";while(n>=32){s+=String.fromCharCode((32|(n&31))+63);n>>=5;}return s+String.fromCharCode(n+63);}return points.map(([y,x])=>{const a=Math.round(y*1e5),b=Math.round(x*1e5),s=enc(a-lat)+enc(b-lon);lat=a;lon=b;return s;}).join("");}
+const geometry=polyline([[start.lat,start.lon],[end.lat,end.lon]]);
+test("exact home block required, with normalized road abbreviations",async()=>{
+ const c=client(async()=>Response.json({results:[{BLK_NO:"999",ROAD_NAME:"CLEMENTI AVENUE 3",ADDRESS:"999 CLEMENTI",LATITUDE:"1.31",LONGITUDE:"103.76"}]}));
+ await assert.rejects(()=>locateHome({block:"777",street_name:"CLEMENTI AVE 3"} as ResaleRow,c),/exact block/);
+ assert.equal((await locateHome({block:"999",street_name:"CLEMENTI AVE 3"} as ResaleRow,c)).exact,true);
 });
-test("route minutes and geometry come from the routing response; long snapping fails",async()=>{
- const fetchBefore=globalThis.fetch;
- globalThis.fetch=async()=>Response.json({code:"Ok",routes:[{duration:601,distance:950,geometry:{coordinates:[[103.76,1.31],[103.77,1.3]]}}],waypoints:[{distance:2},{distance:3}]});
- try {const route=await roadRoute(start,end,"walk","NUS");assert.equal(route.minutes,11);assert.equal(route.distanceKm,.95);assert.equal(route.coordinates.length,2);
- globalThis.fetch=async()=>Response.json({code:"Ok",routes:[{duration:1,distance:1,geometry:{coordinates:[]}}],waypoints:[{distance:400}]});
- await assert.rejects(()=>roadRoute({...start,lon:103.761},end,"car","NUS"),/reliable road route/);
- }finally{globalThis.fetch=fetchBefore;}
+test("OneMap seconds/metres and encoded path determine driving evidence, never a straight-line estimate",async()=>{
+ let url="";const c=client(async input=>{url=String(input);return Response.json({status:0,route_geometry:geometry,route_summary:{total_time:601,total_distance:1950}});});
+ const route=await roadRoute(start,end,"car","NUS",c,new Date(now));assert.equal(route.minutes,11);assert.equal(route.distanceKm,1.95);assert.deepEqual(route.coordinates,[[103.76,1.31],[103.77,1.3]]);assert.equal(new URL(url).searchParams.get("routeType"),"drive");assert(route.source.startsWith("OneMap"));
+ assert.throws(()=>decodePolyline("???"));assert.throws(()=>decodePolyline(polyline([[40,-70],[40,-71]])));
+ await assert.rejects(()=>roadRoute({...start,lat:1.4},end,"car","NUS",c,new Date(now)),/incomplete/);
 });
-test("POIs preserve source category, safe OSM links and straight-line distance",async()=>{
- const fetchBefore=globalThis.fetch;
- globalThis.fetch=async()=>Response.json({elements:[{type:"node",id:1,lat:1.311,lon:103.76,tags:{highway:"bus_stop",name:"Test bus"}}]});
- try {const places=await nearbyPlaces(start,["bus"]);assert.equal(places[0].category,"bus");assert.equal(places[0].url,"https://www.openstreetmap.org/node/1");assert(places[0].distanceMeters>=110&&places[0].distanceMeters<=112);assert.equal(distanceMeters(start,start),0);}finally{globalThis.fetch=fetchBefore;}
+test("MRT/bus uses scheduled itinerary, Singapore departure, geometry and initial waiting",async()=>{
+ let params=new URLSearchParams();const c=client(async input=>{params=new URL(String(input)).searchParams;return Response.json({plan:{itineraries:[{duration:1200,startTime:now+120000,endTime:now+1320000,legs:[{mode:"BUS",route:"96",duration:1200,distance:5300,from:{name:"Stop A"},to:{name:"NUS"},legGeometry:{points:geometry}}]}]}});});
+ const r=await roadRoute(start,end,"transit","NUS",c,new Date(now));assert.equal(r.minutes,22);assert.equal(r.legs?.[0].label,"96");assert.equal(r.departureAt,new Date(now).toISOString());assert.equal(params.get("routeType"),"pt");assert.equal(params.get("date"),"09-26-2026");assert.equal(params.get("time"),"09:12:00");assert.equal(params.get("mode"),"TRANSIT");
+ assert(routeIsCurrent(r,now+1000));assert(!routeIsCurrent(r,now+300000));assert(!routeIsCurrent({...r,checkedAt:"invalid"},now));assert(!routeIsCurrent({...r,source:"old OSRM"},now));
+ assert.equal(singaporeDeparture(new Date("2026-09-26T17:00:20Z")).date,"09-27-2026");
 });
-test("a temporary Overpass gateway failure is retried once and recovers",async()=>{
- const fetchBefore=globalThis.fetch;let calls=0;
- globalThis.fetch=async()=>++calls===1?new Response("upstream timeout",{status:504}):Response.json({elements:[]});
- try {assert.deepEqual(await nearbyPlaces({...start,lat:1.315},["parks"]),[]);assert.equal(calls,2);}finally{globalThis.fetch=fetchBefore;}
+test("missing or malformed public transport response cannot fall back to a walking duration",async()=>{
+ const c=client(async()=>Response.json({status:0,route_geometry:geometry,route_summary:{total_time:2,total_distance:1}}));
+ await assert.rejects(()=>roadRoute(start,end,"transit","NUS",c,new Date(now)),/incomplete/);
 });
-test("repeated routing failure stops after one retry and identifies the service",async()=>{
- const fetchBefore=globalThis.fetch;let calls=0;
- globalThis.fetch=async()=>{calls++;return new Response("upstream timeout",{status:504});};
- try {await assert.rejects(()=>roadRoute({...start,lat:1.316},end,"walk","NUS"),/Walking\/driving routes \(OSRM\) timed out/);assert.equal(calls,2);}finally{globalThis.fetch=fetchBefore;}
+test("official nearby transport uses returned IDs and coordinates and filters the radius",async()=>{
+ const c=client(async input=>{assert(String(input).includes("getNearestBusStops"));return Response.json([{id:10,name:"Test bus",lat:1.311,lon:103.76},{id:11,name:"Far away",lat:1.4,lon:103.9}]);});
+ const result=await nearbyPlaces(start,["bus"],1000,c),p=result.places[0];assert.equal(result.places.length,1);assert.equal(p.category,"bus");assert(p.source.startsWith("OneMap"));assert.equal(new URL(p.url).hostname,"www.google.com");assert(p.distanceMeters>=110 && p.distanceMeters<=112);assert.equal(distanceMeters(start,start),0);
+});
+test("facility catalog lookup preserves partial failures and cannot invent park points from polygons",async()=>{
+ const urls:string[]=[];const c=client(async input=>{const u=new URL(String(input));urls.push(u.pathname);if(u.pathname.endsWith("getAllThemesInfo"))return Response.json({Theme_Names:[{THEMENAME:"Parks",QUERYNAME:"parks"},{THEMENAME:"Schools",QUERYNAME:"schools"},{THEMENAME:"Kindergartens",QUERYNAME:"kindergartens"}]});if(u.searchParams.get("queryName")==="kindergartens")return new Response("unavailable",{status:503});return Response.json({SrchResults:[{FeatCount:2},{NAME:"Point",LatLng:"1.311,103.76",Type:"Point"},{NAME:"Area",LatLng:"[[103.76,1.31]]",Type:"Polygon"}]});});
+ const result=await nearbyPlaces(start,["parks","schools","shopping"],1000,c);assert.equal(result.places.length,2);assert(result.warnings.some(w=>w.includes("area")));assert(result.warnings.some(w=>w.includes("Kindergartens")&&w.includes("unavailable")));assert(result.warnings.some(w=>w.includes("shopping")));assert.equal(urls.filter(u=>u.endsWith("getAllThemesInfo")).length,1);
 });
