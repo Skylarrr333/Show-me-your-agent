@@ -42,6 +42,10 @@ const child = spawn(process.execPath, ["server.js"], {
   env: {
     ...process.env,
     HOSTNAME: process.env.HOSTNAME || "0.0.0.0",
+    HDB_RESALE_DB: path.resolve(
+      projectRoot,
+      process.env.HDB_RESALE_DB || ".propmatch-data/hdb-resales.sqlite",
+    ),
     SESSION_DIR:
       process.env.SESSION_DIR || path.join(projectRoot, ".propmatch-sessions"),
   },
