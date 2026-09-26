@@ -115,7 +115,9 @@ npm run build
 
 Tests include source freshness and failures, approvals, rejection persistence, alternative replacement, SQL injection, budget anchors, unsupported requirements, hard commute failures and simulated withdrawal/price changes. CI imports the pinned database, runs checks and both builds, builds the production container and exercises authenticated HTTPS workflows plus restart persistence. External model/map calls are opt-in; unit tests use controlled test evidence.
 
-The local release verification passed **79 unit tests**, **15 legacy evaluation cases**, lint, type checking and both production builds. One organiser-gateway request and actual OneMap/Overpass/OSRM browser interactions were also checked separately. See [the dated verification record](docs/HOME_RELEASE_VALIDATION_2026-09-26.md) for scope and limitations.
+The release and map-resilience verification passed **81 unit tests** (including two temporary-provider-failure cases), **15 legacy evaluation cases**, lint, type checking and production builds. One organiser-gateway request and actual OneMap/Overpass/OSRM interactions were also checked separately. See [the dated verification record](docs/HOME_RELEASE_VALIDATION_2026-09-26.md) for scope and limitations.
+
+Map HTTP 502/503/504 responses get one bounded automatic retry. If a lookup still fails, the UI identifies the affected service and retains the verified block and previously loaded evidence, with an explicit warning that the failed lookup did not refresh it. **Show map only**, **Retry lookup** and Google Maps links provide separate recovery paths. These measures do not guarantee upstream service availability.
 
 ## Deployment
 

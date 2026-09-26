@@ -10,7 +10,7 @@
 
 The integrated desktop homepage is deployed on Lightsail. The current workflow uses the pinned Kaggle HDB dataset and parameterized SQL, persistent rejection feedback, alternative shortlists, human approval and redecision after a source revision or a disclosed simulated availability event. The new map panels retrieve real OneMap locations, OpenStreetMap amenities and OSRM walking/driving routes.
 
-Measured source commit: `a613365b932077e314cc64b210cd80080c4603bc`. The subsequent documentation-only commit adds these reports without changing the measured application code; final rollout identity is checked against `/api/status` and GitHub `main`.
+Measured source commit for the live model/map sample: `a613365b932077e314cc64b210cd80080c4603bc`. Reports retain the exact commit tested. A subsequent map-recovery patch adds a single bounded upstream retry, service-specific errors and preservation of verified locations when nearby services fail. Final rollout identity and persisted buyer state are checked against `/api/status` and GitHub `main`; later commits do not retroactively change the recorded sample measurement.
 
 | Production check | Observed result |
 |---|---|

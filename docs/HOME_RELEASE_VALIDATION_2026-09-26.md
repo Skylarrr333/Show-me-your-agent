@@ -4,7 +4,7 @@ This record concerns the desktop homepage, historical HDB retrieval and its shar
 
 ## Automated local checks
 
-- 79/79 unit tests passed, including HDB feedback, alternatives, numeric constraint protection, dataset-change approval revocation, stale/failed commute evidence, exact block geocoding and route snapping.
+- 81/81 unit tests passed after the map-recovery update, including HDB feedback, alternatives, numeric constraint protection, dataset-change approval revocation, stale/failed commute evidence, exact block geocoding, route snapping and two temporary-provider-failure cases.
 - 15/15 legacy fixture-based evaluation cases passed. Those cases use the original synthetic inventory; they are separate from the new HDB homepage and do not measure live listing accuracy.
 - Type checking, ESLint, Next.js production build and Vinext build passed.
 - Production dependency audit reported zero vulnerabilities.
@@ -32,5 +32,7 @@ The [CI run for a613365](https://github.com/Skylarrr333/Show-me-your-agent/actio
 Lightsail was then verified directly: `scripts/verify-deployment.ts --homes` passed, a separate live organiser-model request and real map lookups passed, and `--resume` confirmed the same HDB state after an actual container restart. The deployed Chinese request took approximately 35 seconds and returned 521 matching groups. The sample map route remained 39 minutes / 2.88 km to NUS, with 52 surrounding transport/park items. See [deployment evidence](DEPLOYMENT.md) and its sanitized machine-readable reports. These live checks used the measured application code at `a613365`; later documentation commits do not retroactively change that measurement.
 
 ## Scope boundaries
+
+A subsequently reported `Map provider unavailable (504)` exposed an unhelpful generic error. The follow-up recovery patch identifies OneMap/Overpass/OSRM errors, retries temporary HTTP 502/503/504 responses once, keeps a verified block visible when nearby-place lookup fails and retains previous successful evidence with a warning. The two added tests verify recovery and that repeated failures stop after one retry. No fabricated route or place result substitutes for a failed provider.
 
 The inventory is a historical simulation. Withdrawal and price-rise actions are explicitly simulated and scoped to a buyer session. Imported source-revision changes are detected and trigger redecision, but there is no automatic live listing feed or real delisting detector. Ranking covers a bounded loaded batch. Public route services have no application-level SLA, and driving estimates exclude live traffic. No local LLM training or claim of measured business time savings is involved.

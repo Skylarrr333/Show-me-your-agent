@@ -23,3 +23,13 @@ test("POIs preserve source category, safe OSM links and straight-line distance",
  globalThis.fetch=async()=>Response.json({elements:[{type:"node",id:1,lat:1.311,lon:103.76,tags:{highway:"bus_stop",name:"Test bus"}}]});
  try {const places=await nearbyPlaces(start,["bus"]);assert.equal(places[0].category,"bus");assert.equal(places[0].url,"https://www.openstreetmap.org/node/1");assert(places[0].distanceMeters>=110&&places[0].distanceMeters<=112);assert.equal(distanceMeters(start,start),0);}finally{globalThis.fetch=fetchBefore;}
 });
+test("a temporary Overpass gateway failure is retried once and recovers",async()=>{
+ const fetchBefore=globalThis.fetch;let calls=0;
+ globalThis.fetch=async()=>++calls===1?new Response("upstream timeout",{status:504}):Response.json({elements:[]});
+ try {assert.deepEqual(await nearbyPlaces({...start,lat:1.315},["parks"]),[]);assert.equal(calls,2);}finally{globalThis.fetch=fetchBefore;}
+});
+test("repeated routing failure stops after one retry and identifies the service",async()=>{
+ const fetchBefore=globalThis.fetch;let calls=0;
+ globalThis.fetch=async()=>{calls++;return new Response("upstream timeout",{status:504});};
+ try {await assert.rejects(()=>roadRoute({...start,lat:1.316},end,"walk","NUS"),/Walking\/driving routes \(OSRM\) timed out/);assert.equal(calls,2);}finally{globalThis.fetch=fetchBefore;}
+});

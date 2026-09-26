@@ -6,6 +6,12 @@ const cache = new Map<string,{ expires:number; value:unknown }>();
 const pending = new Map<string,Promise<unknown>>();
 const queues = new Map<string,Promise<unknown>>();
 const nextAt = new Map<string,number>();
+export class MapProviderError extends Error {
+ constructor(readonly provider:string,readonly status:number|null) {
+  super(`${provider} ${status===504 || status===null?"timed out":`is unavailable (HTTP ${status})`}. Your home search is unaffected. Retry this map lookup or open Google Maps.`);
+ }
+}
+function providerName(url:string) { const u=new URL(url);return u.pathname.includes("interpreter")?"Nearby places (Overpass)":u.pathname.includes("route/v1")?"Walking/driving routes (OSRM)":"Address lookup (OneMap)"; }
 function endpoint(name:string,fallback:string) { const u=new URL(process.env[name] || fallback); if(u.protocol!=="https:" || u.username || u.password || u.search || u.hash) throw new Error("Invalid map provider configuration"); return u.toString().replace(/\/$/,""); }
 async function request(url:string, init:RequestInit={}, ttl=86400000):Promise<unknown> {
   const key=url+String(init.body??""), hit=cache.get(key);
@@ -17,8 +23,18 @@ async function request(url:string, init:RequestInit={}, ttl=86400000):Promise<un
     const pause=Math.max(0,(nextAt.get(host)??0)-Date.now());
     if(pause) await new Promise(r=>setTimeout(r,pause));
     nextAt.set(host,Date.now()+1100);
-    const response=await fetch(url,{...init,headers:{"User-Agent":userAgent,...init.headers},redirect:"error",signal:AbortSignal.timeout(18000)});
-    if(!response.ok) throw new Error(`Map provider unavailable (${response.status}). Please retry later or open external maps.`);
+    const provider=providerName(url);
+    let response:Response;
+    try {
+      response=await fetch(url,{...init,headers:{"User-Agent":userAgent,...init.headers},redirect:"error",signal:AbortSignal.timeout(18000)});
+      // One bounded retry for a temporary upstream gateway failure, never a retry storm.
+      if([502,503,504].includes(response.status)) {
+        await response.body?.cancel();await new Promise(r=>setTimeout(r,1500));
+        nextAt.set(host,Date.now()+1100);
+        response=await fetch(url,{...init,headers:{"User-Agent":userAgent,...init.headers},redirect:"error",signal:AbortSignal.timeout(18000)});
+      }
+    } catch { throw new MapProviderError(provider,null); }
+    if(!response.ok) {await response.body?.cancel();throw new MapProviderError(provider,response.status);}
     const bytes=await response.text(); if(bytes.length>5000000) throw new Error("Map response too large");
     const value=JSON.parse(bytes);
     if(cache.size>=1000) cache.delete(cache.keys().next().value!);
