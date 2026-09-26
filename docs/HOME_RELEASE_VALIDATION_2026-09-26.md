@@ -27,7 +27,9 @@ Map labels and route evidence come from external services, not the Kaggle CSV. P
 
 ## Deployment checks
 
-The CI workflow imports the dataset, builds the production Docker image and tests HTTPS authentication, release identity, the legacy and homepage workflows, and session persistence after a container restart. The same `scripts/verify-deployment.ts --homes` probe can validate Lightsail without a paid model call. Actual run results belong in the release/deployment evidence, not inferred from the workflow definition.
+The [CI run for a613365](https://github.com/Skylarrr333/Show-me-your-agent/actions/runs/36247565548) passed the dataset import, production Docker build, HTTPS authentication, release identity, legacy and homepage workflows, and restart persistence.
+
+Lightsail was then verified directly: `scripts/verify-deployment.ts --homes` passed, a separate live organiser-model request and real map lookups passed, and `--resume` confirmed the same HDB state after an actual container restart. The deployed Chinese request took approximately 35 seconds and returned 521 matching groups. The sample map route remained 39 minutes / 2.88 km to NUS, with 52 surrounding transport/park items. See [deployment evidence](DEPLOYMENT.md) and its sanitized machine-readable reports. These live checks used the measured application code at `a613365`; later documentation commits do not retroactively change that measurement.
 
 ## Scope boundaries
 

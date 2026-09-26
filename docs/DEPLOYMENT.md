@@ -2,9 +2,28 @@
 
 **Live application:** <https://propmatch-18-142-198-52.sslip.io/>
 
-**Verified:** 22 September 2026, 13:52 Singapore time (05:52 UTC).
+**Latest homepage rollout verified:** 26 September 2026, 23:00 Singapore time (15:00 UTC).
 
 **Access:** shared judge username/password, supplied privately by the team. These are website credentials, not AWS credentials. Unauthenticated requests receive HTTP 401.
+
+## 26 September homepage release
+
+The integrated desktop homepage is deployed on Lightsail. The current workflow uses the pinned Kaggle HDB dataset and parameterized SQL, persistent rejection feedback, alternative shortlists, human approval and redecision after a source revision or a disclosed simulated availability event. The new map panels retrieve real OneMap locations, OpenStreetMap amenities and OSRM walking/driving routes.
+
+Measured source commit: `a613365b932077e314cc64b210cd80080c4603bc`. The subsequent documentation-only commit adds these reports without changing the measured application code; final rollout identity is checked against `/api/status` and GitHub `main`.
+
+| Production check | Observed result |
+|---|---|
+| HDB import | All 228,225 historical transactions present; pinned checksum verified in the image build |
+| Homepage workflow | SQL search → three-home shortlist → rejection remembered and replaced → approval → simulated withdrawal → approval revoked |
+| Real organiser model | One Chinese request correctly extracted Clementi, 4 ROOM, maximum S$800,000 and minimum 90 m²; 521 matching historical groups; approximately 35 seconds |
+| Real map evidence | 705 CLEMENTI WEST ST 2 resolved with OneMap; 52 MRT/bus/park items returned in the sample |
+| Real walking route | NUS destination: 39 minutes, 2.88 km, 224 geometry points in the sample; no live traffic or in-app transit duration |
+| Restart persistence | Same session, version, status, buyer profile and HDB state restored after an actual application-container restart |
+| Access controls | Public HTTPS certificate accepted normally; unauthenticated and incorrect-password requests blocked; Secure/HttpOnly/SameSite=Strict session cookie |
+| GitHub validation | [Successful full CI](https://github.com/Skylarrr333/Show-me-your-agent/actions/runs/36247565548): 79 tests, 15 legacy eval cases, both production builds, Docker and HTTPS/restart checks |
+
+Sanitized reports: [homepage workflow](../evals/lightsail-homes-2026-09-26.json), [live model and maps](../evals/lightsail-home-live-2026-09-26.json), [restart persistence](../evals/lightsail-home-restart-2026-09-26.json). These are bounded integration checks, not an accuracy benchmark or a claim of live property availability. Credentials and session identifiers are excluded.
 
 ## Running infrastructure
 
@@ -18,13 +37,14 @@
 | Application | Next standalone container, UID 1001, healthy; port 3000 bound to host loopback |
 | HTTPS | Caddy with publicly trusted certificate, HTTP 308 redirect, bcrypt access gate |
 | Model | `LLM_MODE=gateway`; organiser Claude Sonnet 4.5 service, exercised through the deployed app |
-| Evidence data | 72 disclosed synthetic listings/routes/amenities, plus 7,295 official historical HDB transactions |
+| Homepage data | 228,225 pinned historical HDB transactions; representative home groups, real map lookups, explicitly simulated availability changes |
+| Legacy evidence | 72 synthetic fixtures and 7,295 official historical HDB transactions retained for the original tools and regression tests |
 | Storage | Persistent Docker `propmatch_sessions`, `propmatch_caddy_data`, `propmatch_caddy_config` volumes |
 | Private settings | `/opt/propmatch/shared/app.env`, mode 600; no API keys or SSH keys in GitHub or image build context |
 
 SSH is restricted to the deployment operator's IP and the Lightsail browser SSH service. Web ports are 80/443; an external connection to port 3000 was blocked. No load balancer, paid automatic snapshots or extra database service was provisioned for this rollout. The static-IP-derived hostname uses sslip.io DNS; its availability is an external dependency.
 
-## Measured verification
+## Previous release verification — 22 September
 
 The live workflow ran on source commit `6bbedf71d427c8406539115ec19bc36adb4d305a`. The reports deliberately retain the commit actually tested; documentation added afterward does not retroactively change that measurement. Subsequent documentation releases are deployed from `main` and checked against the live `/api/status` → `release.commit` value.
 
