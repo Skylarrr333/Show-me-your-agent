@@ -13,3 +13,5 @@ training/private
 *.zip
 *.tar.gz
 *.tsbuildinfo
+
+!data/hdb/kaggle-v1.zip

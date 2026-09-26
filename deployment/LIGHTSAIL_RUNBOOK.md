@@ -99,3 +99,13 @@ Record the URL, region/instance plan, source commit, verification time, access m
 Commit the final deployment code/docs to `main`, deploy that commit, and verify `/api/status` reports the same `release.commit` as GitHub. A build-only CI success is separate from this real AWS deployment proof. Preserve the previous release and volume for rollback; do not delete live sessions during rollback.
 
 CI runs a disposable Docker/Caddy HTTPS test with a process-local test CA, no OS trust-store changes, no real model key, and no changes to any deployed instance. It checks the same access gate, workflow and restart persistence before release.
+
+## 26 September homepage / HDB release
+
+The main app now uses the Kaggle-backed HDB agent, not the legacy synthetic workspace. Build the image from the full Git archive including `data/hdb/kaggle-v1.zip`. The Docker `hdb-data` stage verifies the source hash and imports all 228,225 records; the runner includes `/app/data/hdb-resales.sqlite` and sets `HDB_RESALE_DB`. Do not override it with a developer's local path. Session volumes and credentials are unchanged.
+
+The health probe is `/api/homes`. Also verify `/api/status` → `homes.ready=true`, `homes.count=228225`, and the expected release SHA. Run `scripts/verify-deployment.ts --homes` with the existing private verification environment to exercise SQL search, rejection, approval, withdrawal and session persistence without any paid LLM call. `--resume` checks the same session after an operator restart. The normal CI `--exercise` covers both legacy and current homepage workflows.
+
+Outbound HTTPS is needed for organiser model calls, OneMap address search, Overpass POIs and FOSSGIS routes. Public map services are used on demand, cached and rate-limited in a single process. No new AWS resources, account permissions, exposed ports or paid mapping subscription are needed. `ONEMAP_ACCESS_TOKEN` is optional for search at the time of validation; in-app transit routing is not provided.
+
+Rollback: start the prior release's Compose build with the same project name and durable session volume, then restore `/opt/propmatch/current`. New optional home-search session fields do not affect old sessions. Rollback does not delete the current data archive or session volume.

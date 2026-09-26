@@ -33,6 +33,7 @@ export interface AmenitiesProvider {
   ): Promise<z.infer<typeof AmenitySchema>[]>;
 }
 export interface LLMProvider {
+  home?(input: unknown): Promise<unknown>;
   mode: "demo" | "bedrock" | "deepseek" | "gateway";
   parse(
     message: string,

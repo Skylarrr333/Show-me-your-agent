@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { HomeStateSchema } from "../lib/home-schema";
 import { MarketEvidenceSchema } from "../tools/market-schema";
 export const Priority = z.enum(["low", "medium", "high"]);
 export const PropertyType = z.enum(["Condo", "HDB", "Landed"]);
@@ -235,6 +236,7 @@ export const SessionSchema = z.object({
   dataRevision: z.string().optional(),
   dataMode: z.enum(["synthetic", "file"]).optional(),
   marketEvidence: MarketEvidenceSchema.optional(),
+  homeSearch: HomeStateSchema.optional(),
   demoChanges: z.array(z.object({
     id: PropertySchema.shape.id,
     availability: PropertySchema.shape.availability.optional(),

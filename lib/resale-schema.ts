@@ -1,7 +1,7 @@
 import { z } from "zod";
 const amount = z.number().finite().nonnegative().nullable().default(null);
 const month = z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/).nullable().default(null);
-export const ResaleFilterSchema = z.object({
+export const ResaleFilterFields = z.object({
   minPrice: amount, maxPrice: amount, minArea: amount, maxArea: amount,
   town: z.string().trim().max(80).default(""),
   flatType: z.enum(["", "1 ROOM", "2 ROOM", "3 ROOM", "4 ROOM", "5 ROOM", "EXECUTIVE", "MULTI-GENERATION"]).default(""),
@@ -9,7 +9,8 @@ export const ResaleFilterSchema = z.object({
   street: z.string().trim().max(100).default(""),
   sort: z.enum(["newest", "price-asc", "price-desc", "area-desc"]).default("newest"),
   page: z.number().int().min(1).max(20000).default(1),
-}).strict().superRefine((v, ctx) => {
+}).strict();
+export const ResaleFilterSchema = ResaleFilterFields.superRefine((v, ctx) => {
   for (const [lo, hi, message] of [[v.minPrice,v.maxPrice,"Minimum price exceeds maximum"], [v.minArea,v.maxArea,"Minimum area exceeds maximum"], [v.fromMonth,v.toMonth,"Start month exceeds end month"]] as const) {
     if (lo !== null && hi !== null && lo > hi) ctx.addIssue({ code: "custom", message });
   }

@@ -1,3 +1,4 @@
+import { HOME_PROMPT } from "./home-prompt";
 import { z } from "zod";
 import { ParseSchema, PlanSchema, type BuyerProfile } from "../schemas";
 import type { LLMProvider } from "./contracts";
@@ -123,6 +124,7 @@ export class GatewayProvider implements LLMProvider {
     return extracted.value;
   }
 
+  async home(input: unknown) { return this.json(HOME_PROMPT, input, "parse"); }
   async parse(message: string, current: BuyerProfile) {
     if (suspicious(message)) return new DemoLLMProvider().parse(message, current);
     const parsed = ParseSchema.safeParse(await this.json(PARSE_PROMPT + PURCHASE_SCOPE, { current, message }, "parse"));

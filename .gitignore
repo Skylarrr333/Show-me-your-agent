@@ -56,3 +56,5 @@ training/private/
 *.tar.gz
 *.zip
 !submission/*.pdf
+
+!data/hdb/kaggle-v1.zip

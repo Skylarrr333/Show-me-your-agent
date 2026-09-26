@@ -14,6 +14,7 @@ function check(ok: unknown, label: string): asserts ok {
 }
 const StatusSchema = z.object({
   model: z.object({ mode: z.enum(["demo", "gateway", "deepseek", "bedrock"]), configured: z.boolean() }),
+  homes:z.object({ready:z.boolean(),count:z.number(),mode:z.string()}),
   data: z.object({ mode: z.enum(["synthetic", "file"]), ready: z.boolean() }),
   release: z.object({ commit: z.string().nullable() }),
 });
@@ -23,7 +24,7 @@ const StateSchema = z.object({
   origin: z.string().url(), cookie: z.string().regex(/^propmatch_session=[a-f0-9-]+$/),
   id: z.string().uuid(), version: z.number().int(), profileHash: z.string(), status: z.string(),
 }).strict();
-const hashProfile = (s: Session) => createHash("sha256").update(JSON.stringify(s.profile)).digest("hex");
+const hashProfile = (s: Session) => createHash("sha256").update(JSON.stringify({profile:s.profile,homes:s.homeSearch})).digest("hex");
 
 async function main() {
   const url = new URL(process.env.DEPLOY_CHECK_URL ?? "");
@@ -61,6 +62,7 @@ async function main() {
   const status = StatusSchema.parse(await health.json());
   check(status.release?.commit === expectedCommit, "Running release matches expected Git commit");
   check(status.model?.configured === true && status.data?.ready === true, "Model configuration and data ready");
+  check(status.homes.ready && status.homes.count === 228225, "Pinned HDB database ready with all 228225 source records");
   const statePath = process.env.DEPLOY_PROBE_STATE ?? ".propmatch-data/deployment-probe.json";
   if (process.argv.includes("--resume")) {
     const saved = StateSchema.parse(JSON.parse(await readFile(statePath, "utf8")));
@@ -105,6 +107,23 @@ async function main() {
         check(!s.trace.some(t => t.runId === s.lastRunId && t.summary.endsWith("_model_call()")), `${kind} refresh uses no model call`);
       }
     }
+    if(process.argv.includes("--exercise") || process.argv.includes("--homes")) {
+      const run=await request("/api/homes",{version:s.version,message:"",filters:{maxPrice:800000,town:"CLEMENTI",flatType:"4 ROOM",minArea:90}});
+      check(run.ok,"Homepage SQL agent starts with structured filters and no model call");
+      s=SessionEnvelope.parse(await run.json()).session;
+      check(s.homeSearch && s.homeSearch.total>0 && s.homeSearch.shortlist.length===3,"Homepage produces a persistent three-home shortlist");
+      check(s.homeSearch.candidates.every(c=>c.row.resale_price<=800000 && c.row.floor_area_sqm>=90),"Homepage results respect budget and area limits");
+      const refused=s.homeSearch.shortlist[0];
+      const rejected=await request("/api/homes/action",{version:s.version,action:"reject",key:refused,reason:"Deployment regression test"});
+      check(rejected.ok,"Homepage rejection succeeds");s=SessionEnvelope.parse(await rejected.json()).session;
+      check(s.homeSearch!.rejected.includes(refused)&&!s.homeSearch!.shortlist.includes(refused),"Rejected home remembered and replaced");
+      const approved=await request("/api/homes/action",{version:s.version,action:"approve"});
+      check(approved.ok,"Homepage approval succeeds");s=SessionEnvelope.parse(await approved.json()).session;
+      const prior=s.homeSearch!.shortlist[0];
+      const change=await request("/api/homes/action",{version:s.version,action:"withdraw",key:prior});
+      check(change.ok,"Homepage simulated withdrawal succeeds");s=SessionEnvelope.parse(await change.json()).session;
+      check(s.status==="waiting"&&!s.homeSearch!.shortlist.includes(prior),"Homepage change revokes approval and recomputes shortlist");
+    }
     const restored = await request("/api/session");
     check(restored.ok, "Session reload succeeds");
     const persisted = SessionEnvelope.parse(await restored.json()).session;
@@ -117,7 +136,8 @@ async function main() {
     commit: expectedCommit, modelMode: status.model.mode, checks,
     scope: process.argv.includes("--resume") ? "Session persistence after an operator-triggered restart" :
       process.argv.includes("--live") ? "Real model, synthetic inventory, approval and listing-change workflow" :
-      process.argv.includes("--exercise") ? "Deterministic demo workflow through HTTPS proxy" : "Access, release identity and session smoke test; no model call" };
+      process.argv.includes("--exercise") ? "Legacy and HDB deterministic workflows through HTTPS proxy" :
+      process.argv.includes("--homes") ? "Historical HDB SQL search, feedback, approval and simulated withdrawal through HTTPS; no model call" : "Access, release identity and session smoke test; no model call" };
   if (process.env.DEPLOY_REPORT_FILE) {
     await mkdir(path.dirname(process.env.DEPLOY_REPORT_FILE), { recursive: true });
     await writeFile(process.env.DEPLOY_REPORT_FILE, JSON.stringify(report, null, 2) + "\n");

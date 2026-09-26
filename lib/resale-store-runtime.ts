@@ -17,8 +17,9 @@ export async function resaleMetadata() {
 }
 export async function searchResales(input: ResaleFilters, simulated = false) {
   const q = resaleQuery(input), db = await open();
-  const prefix = simulated ? SIMULATED_HOMES_CTE : "";
-  const table = simulated ? "simulated_homes" : "resales";
+  const materialized = simulated && !!db.prepare("SELECT 1 FROM sqlite_master WHERE type='table' AND name='homes'").get();
+  const prefix = simulated && !materialized ? SIMULATED_HOMES_CTE : "";
+  const table = materialized ? "homes" : simulated ? "simulated_homes" : "resales";
   try {
     const stats = db.prepare(`${prefix} SELECT COUNT(*) AS count, MIN(resale_price) AS minPrice, MAX(resale_price) AS maxPrice FROM ${table} ${q.where}`).get(...q.values) as { count: number; minPrice: number | null; maxPrice: number | null };
     const pages = Math.max(1,Math.ceil(stats.count / RESALE_PAGE_SIZE));

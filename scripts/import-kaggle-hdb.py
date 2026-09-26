@@ -43,6 +43,13 @@ try:
         CREATE INDEX resales_area ON resales(floor_area_sqm,id);
         CREATE INDEX resales_type ON resales(flat_type,month DESC,id DESC);
         CREATE TABLE resale_metadata (key TEXT PRIMARY KEY,value TEXT NOT NULL);''')
+    db.executescript('''CREATE TABLE homes AS SELECT id,month,town,flat_type,block,street_name,storey_range,
+        floor_area_sqm,flat_model,lease_commence_date,remaining_lease,resale_price FROM (
+        SELECT *,ROW_NUMBER() OVER (PARTITION BY town,block,street_name,flat_type,storey_range,
+        floor_area_sqm,flat_model,lease_commence_date ORDER BY month DESC,id DESC) AS rn FROM resales) WHERE rn=1;
+        CREATE INDEX homes_filter ON homes(town,flat_type,resale_price);
+        CREATE INDEX homes_price ON homes(resale_price,id);
+        CREATE INDEX homes_month ON homes(month DESC,id DESC);''')
     start,end=db.execute('SELECT MIN(month),MAX(month) FROM resales').fetchone()
     metadata = dict(sourceUrl='https://www.kaggle.com/datasets/yingghui233/hdb-resale-pricing-singapore',
         title='HDB resale pricing (Singapore)', version=1, license='Unknown', count=count, firstMonth=start,lastMonth=end,

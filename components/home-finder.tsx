@@ -1,107 +1,99 @@
 "use client";
 import Link from "next/link";
-import { useEffect, useRef, useState, type FormEvent } from "react";
-import { Building2, Search, LoaderCircle, Heart, ChevronLeft, ChevronRight } from "lucide-react";
-import { ResaleFilterSchema, type ResaleFilters, type ResaleMetadata, type ResaleResult, type ResaleRow } from "../lib/resale-schema";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "./ui/dialog";
-const defaults = ResaleFilterSchema.parse({});
-const money = (n: number) => `S$${n.toLocaleString("en-SG")}`;
-type Info = { dataset: ResaleMetadata; towns: string[]; model: { mode: string; configured: boolean } };
+import { useEffect,useRef,useState,type FormEvent } from "react";
+import { Building2,Search,LoaderCircle,Heart,MapPin,ArrowUpRight,Check,RefreshCw,SlidersHorizontal,ChevronDown,ArrowRight,X,Plus } from "lucide-react";
+import { ResaleFilterSchema,type ResaleFilters,type ResaleMetadata } from "../lib/resale-schema";
+import { CommutePreferenceSchema,type HomeCandidate,type HomeActionInput } from "../lib/home-schema";
+import type { z } from "zod";
+import type { Session } from "../schemas";
+import { Dialog,DialogContent,DialogHeader,DialogTitle,DialogDescription } from "./ui/dialog";
+import HomeMapPanel from "./home-map-panel";
+const defaults=ResaleFilterSchema.parse({});
+const defaultCommute=CommutePreferenceSchema.parse({});
+const money=(n:number)=>`S$${n.toLocaleString("en-SG")}`;
+type Reply={session:Session;error?:string;changed?:boolean};
+type Info={dataset:ResaleMetadata;towns:string[];model:{mode:string;configured:boolean}};
 export default function HomeFinder() {
-  const [info,setInfo] = useState<Info | null>(null), [filters,setFilters] = useState<ResaleFilters>(defaults);
-  const [result,setResult] = useState<ResaleResult | null>(null), [message,setMessage] = useState("");
-  const [busy,setBusy] = useState(false), [error,setError] = useState(""), [selected,setSelected] = useState<ResaleRow | null>(null);
-  const [conversation,setConversation] = useState<{ message: string; summary: string }[]>([]);
-  const [saved, setSaved] = useState<ResaleRow[]>([]);
-  const [comparing, setComparing] = useState(false);
-  function toggleSaved(row: ResaleRow) { setSaved(items => items.some(item=>item.id===row.id) ? items.filter(item=>item.id!==row.id) : [...items, row]); }
-  const serial = useRef(0);
-  useEffect(() => {
-    const controller = new AbortController();
-    async function init() {
-      try {
-        const response = await fetch("/api/homes", { signal: controller.signal });
-        const value = await response.json() as Info & { error?: string };
-        if (!response.ok) throw new Error(value.error || "Unable to load dataset.");
-        setInfo(value);
-      } catch (e) { if (!controller.signal.aborted) setError((e as Error).message); }
-    }
-    void init();
-    return () => { controller.abort(); };
-  }, []);
-  async function search(next = filters, text = "") {
-    const validation = ResaleFilterSchema.safeParse(next);
-    if (!validation.success) { setError(validation.error.issues[0].message); return; }
-    const requestId = ++serial.current;
-    setBusy(true); setError("");
-    try {
-      const response = await fetch("/api/homes", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ filters: validation.data, message: text }) });
-      const value = await response.json() as ResaleResult & { error?: string };
-      if (requestId !== serial.current) return;
-      if (!response.ok) throw new Error(value.error);
-      setResult(value); setFilters(value.filters); setSelected(null);
-      if (text) {
-        setConversation(items => [...items.slice(-4), { message: text, summary: `${value.count.toLocaleString()} matching homes found. ${value.warnings.join(" ")}` }]);
-        setMessage("");
-      }
-    } catch (e) { if (requestId === serial.current) { setError((e as Error).message); setResult(null); } }
-    finally { if (requestId === serial.current) setBusy(false); }
-  }
-  function submit(e: FormEvent) { e.preventDefault(); void search({ ...filters, page: 1 },message); }
-  function numberField(key: "minPrice"|"maxPrice"|"minArea"|"maxArea", label: string) {
-    return <label className="brief-field"><span>{label}</span><input type="number" min="0" step="any" value={filters[key] ?? ""}
-      placeholder="Any" onChange={e=>setFilters({ ...filters, [key]: e.target.value === "" ? null : Number(e.target.value) })} /></label>;
-  }
-  const applied = result?.filters;
-  return <div className="application resale-app">
-    <header className="topbar"><Link className="brand" href="/"><span className="brand-mark"><Building2 size={23}/></span>PropMatch</Link>
-      <div className="topbar-right"><span className="resale-badge">Home finder · Simulation</span><button className="button ghost" disabled={!saved.length} onClick={()=>setComparing(true)}><Heart size={15}/> Saved homes ({saved.length})</button></div></header>
-    <div className="workspace-heading"><div><h1>Find a home that fits you</h1><p>Tell us what matters. Explore homes within your budget.</p></div></div>
-    <div className="data-caption">Simulated homes, grounded in HDB data. Prices are reference prices; availability is simulated.</div>
-    <main className="workspace-grid">
-      <section className="conversation panel"><div className="conversation-header"><span className="section-step">01</span><div><h2>Buyer conversation</h2><p>Your budget, your space, your preferences.</p></div></div>
-        <form className="conversation-composer" onSubmit={submit}><fieldset className="brief-form-fields" disabled={busy || !info}>
-          <div className="brief-input-grid">
-            <fieldset className="brief-group"><legend>Your budget · SGD</legend><div className="brief-range">{numberField("minPrice","Minimum price")}{numberField("maxPrice","Maximum price")}</div></fieldset>
-            <fieldset className="brief-group"><legend>Floor area · m²</legend><div className="brief-range">{numberField("minArea","Minimum area")}{numberField("maxArea","Maximum area")}</div></fieldset>
-            <div className="brief-range"><label className="brief-field"><span>Town</span><select value={filters.town} onChange={e=>setFilters({...filters,town:e.target.value})}><option value="">All towns</option>{info?.towns.map(t=><option key={t}>{t}</option>)}</select></label>
-            <label className="brief-field"><span>HDB flat type</span><select value={filters.flatType} onChange={e=>setFilters({...filters,flatType:e.target.value as ResaleFilters["flatType"]})}>{["","1 ROOM","2 ROOM","3 ROOM","4 ROOM","5 ROOM","EXECUTIVE","MULTI-GENERATION"].map(t=><option key={t} value={t}>{t || "All types"}</option>)}</select></label></div>
-            <label className="brief-field"><span>Street name</span><input value={filters.street} maxLength={100} placeholder="e.g. ANG MO KIO AVE" onChange={e=>setFilters({...filters,street:e.target.value})}/></label>
-            <label className="brief-field"><span>What else matters to you? <small>Optional</small></span><textarea value={message} onChange={e=>setMessage(e.target.value)} maxLength={4000} placeholder="e.g. I’m looking for a 4 ROOM home in Clementi, under SGD 800k" rows={3}/></label>
-          </div>
-          <div className="resale-model-note">{!info ? "Waiting for dataset connection." : info.model.mode === "demo" ? "Basic language matching · no live AI connected." : `${info.model.mode} language matching${info.model.configured ? "" : " · credentials missing"}`}</div>
-          <div className="brief-submit"><span>Filled filters take priority over your message.</span><button className="button primary" type="submit">{busy ? <LoaderCircle size={16} className="spin"/> : <Search size={16}/>} {busy ? "Searching…" : "Find homes"}</button></div>
-          <button type="button" className="resale-clear" onClick={()=>{setFilters(defaults);setMessage("");setResult(null);setError("");setConversation([]);}}>Clear filters</button>
-        </fieldset></form>
-        {conversation.length > 0 && <details className="resale-conversation"><summary>Our conversation ({conversation.length})</summary>{conversation.map((item,i)=><div key={i}><strong>You</strong><p>{item.message}</p><strong>PropMatch</strong><p>{item.summary}</p></div>)}</details>}
-      </section>
-      <section className="recommendations" aria-label="Matching homes"><div className="results-top"><div><h2><span className="section-step">02</span> Matching homes</h2><p>{result ? `${result.count.toLocaleString()} matching homes` : "Homes selected for your requirements."}</p></div>
-        <label className="resale-sort">Sort<select value={result?.filters.sort ?? filters.sort} disabled={busy || !info} onChange={e=>{const next={...(applied ?? filters),sort:e.target.value as ResaleFilters["sort"],page:1};void search(next);}}><option value="newest">Latest reference</option><option value="price-asc">Lowest price</option><option value="price-desc">Highest price</option><option value="area-desc">Largest area</option></select></label></div>
-        {error && <div className="error-banner" role="alert">{error}<p>Numeric filters work without an AI service. Clear the message to search using filters only.</p></div>}
-        {result && <div className="resale-applied" aria-label="Applied search filters">{[applied?.town || "All towns", applied?.flatType || "All flat types", applied?.minPrice !== null && applied?.minPrice !== undefined ? `From ${money(applied.minPrice)}` : null, applied?.maxPrice !== null && applied?.maxPrice !== undefined ? `Up to ${money(applied.maxPrice)}` : null, applied?.minArea !== null && applied?.minArea !== undefined ? `From ${applied.minArea.toFixed(1)} m²` : null, applied?.maxArea !== null && applied?.maxArea !== undefined ? `Up to ${applied.maxArea.toFixed(1)} m²` : null, applied?.fromMonth, applied?.toMonth,applied?.street].filter(Boolean).map((s,i)=><span key={i}>{s}</span>)}</div>}
-        {result?.warnings.map(w=><p className="resale-warning" key={w}>{w}</p>)}
-        <div aria-live="polite" aria-busy={busy}>
-          {busy ? <div className="resale-empty"><LoaderCircle className="spin" size={24}/><h3>Finding homes for you…</h3></div> : !result ? <div className="resale-empty home-welcome"><div className="home-welcome-image" role="img" aria-label="Illustrative residential building"/><span className="home-image-note">Illustration</span><h3>A place for your next chapter.</h3><p>Set your budget and preferred area, or describe the home you have in mind.</p><p>Browse home details, save your favourites and compare them side by side.</p></div> : result.rows.length === 0 ? <div className="resale-empty"><h3>No matching homes</h3><p>Try a wider budget, a different town or more flexible space requirements.</p></div> : <>
-            <div className="home-grid">{result.rows.map(row=><article className="home-card" key={row.id}>
-              <div className="home-card-top"><span>{row.town}</span><button className="home-save" aria-label={`${saved.some(s=>s.id===row.id) ? "Unsave" : "Save"} ${row.block} ${row.street_name}`} aria-pressed={saved.some(s=>s.id===row.id)} onClick={()=>toggleSaved(row)}><Heart size={19} fill={saved.some(s=>s.id===row.id) ? "currentColor" : "none"}/></button></div>
-              <h3>{row.block} {row.street_name}</h3><p className="home-type">HDB · {row.flat_type}</p>
-              <div className="home-price">{money(row.resale_price)}<span>Simulation price</span></div>
-              <div className="home-facts"><span>{row.floor_area_sqm} m²</span><span>Storeys {row.storey_range}</span></div>
-              <div className="home-card-bottom"><span>Matches your filters</span><button className="button" onClick={()=>setSelected(row)}>View home</button></div>
-            </article>)}</div>
-            <div className="resale-pagination"><span>Page {result.page} of {result.pages.toLocaleString()}</span><div><button className="button" disabled={busy || result.page===1} onClick={()=>search({...result.filters,page:result.page-1})}><ChevronLeft size={16}/>Previous</button><button className="button" disabled={busy || result.page>=result.pages} onClick={()=>search({...result.filters,page:result.page+1})}>Next<ChevronRight size={16}/></button></div></div>
-          </>}
-        </div>
-        {info && <details className="resale-source"><summary>About this simulation</summary><p>These representative homes are built from HDB records, grouping the same address, flat type, floor range and size. The latest matching record supplies each simulation price. They are not identified individual units or live listings.</p><p>Prices are historical references, not current valuations. Bedrooms, photos and travel times are not supplied by this dataset. No real seller or viewing is connected.</p><p><a href={info.dataset.sourceUrl} target="_blank" rel="noreferrer">Kaggle source ↗</a> · {info.dataset.firstMonth}–{info.dataset.lastMonth} · License: {info.dataset.license}</p></details>}
-
-      </section>
-    </main>
-    <Dialog open={!!selected} onOpenChange={open=>!open && setSelected(null)}><DialogContent className="detail-dialog"><DialogHeader><DialogTitle>{selected?.block} {selected?.street_name}</DialogTitle><DialogDescription>{selected?.town} · HDB {selected?.flat_type} · Simulated home</DialogDescription></DialogHeader>{selected && <>
-      <div className="home-price">{money(selected.resale_price)}<span>Simulation price</span></div>
-      <dl className="resale-record">{[["Floor area", `${selected.floor_area_sqm} m²`],["Floor range",selected.storey_range],["Flat model",selected.flat_model],["Lease started",selected.lease_commence_date],["Remaining lease at reference date",selected.remaining_lease]].map(([label,value])=><div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl>
-      <button className="button primary" onClick={()=>toggleSaved(selected)}>{saved.some(s=>s.id===selected.id) ? "Remove from saved" : "Save this home"}</button>
-      <details className="resale-source"><summary>Price reference</summary><p>Based on a {selected.month} recorded sale. Source CSV row {selected.id+1}. This is a representative simulated home, not a live listing or current valuation.</p></details>
-    </>}</DialogContent></Dialog>
-    <Dialog open={comparing} onOpenChange={setComparing}><DialogContent className="home-compare-dialog"><DialogHeader><DialogTitle>Your saved homes</DialogTitle><DialogDescription>Compare simulation prices and space. Saved for this visit.</DialogDescription></DialogHeader>{saved.length ? <div className="resale-table-wrap"><table className="resale-table"><thead><tr><th>Home</th><th>Simulation price</th><th>Size</th><th>Floor range</th><th/></tr></thead><tbody>{saved.map(row=><tr key={row.id}><td><strong>{row.block} {row.street_name}</strong><span>{row.town} · {row.flat_type}</span></td><td>{money(row.resale_price)}</td><td>{row.floor_area_sqm} m²</td><td>{row.storey_range}</td><td><button className="resale-record-link" onClick={()=>toggleSaved(row)}>Remove</button></td></tr>)}</tbody></table></div> : <p>No saved homes yet.</p>}</DialogContent></Dialog>
-  </div>;
+ const [info,setInfo]=useState<Info|null>(null),[session,setSession]=useState<Session|null>(null),[filters,setFilters]=useState<ResaleFilters>(defaults),[commute,setCommute]=useState(defaultCommute);
+ const [dirty,setDirty]=useState<Partial<ResaleFilters>>({}),[commuteDirty,setCommuteDirty]=useState(false),[message,setMessage]=useState("");
+ const [tab,setTab]=useState<"find"|"saved"|"about">("find"),[view,setView]=useState<"shortlist"|"matches">("shortlist");
+ const [busy,setBusy]=useState(""),[error,setError]=useState(""),[selected,setSelected]=useState<HomeCandidate|null>(null),[detailTab,setDetailTab]=useState<"details"|"map">("details");
+ const [rejecting,setRejecting]=useState<HomeCandidate|null>(null),[reason,setReason]=useState("Not for me"),[filtersOpen,setFiltersOpen]=useState(false);
+ const stateRef=useRef(session),busyRef=useRef(busy);stateRef.current=session;busyRef.current=busy;
+ function accept(s:Session,updateForm=false){setSession(s);if(updateForm&&s.homeSearch){setFilters(s.homeSearch.filters);setCommute(s.homeSearch.commute);setDirty({});setCommuteDirty(false);}}
+ useEffect(()=>{
+  const controller=new AbortController();
+  async function init(){try {
+    const [dataResponse,sessionResponse]=await Promise.all([fetch("/api/homes",{signal:controller.signal}),fetch("/api/session",{signal:controller.signal})]);
+    const data=await dataResponse.json() as Info & {error?:string};if(!dataResponse.ok)throw new Error(data.error||"Dataset unavailable.");
+    if(controller.signal.aborted)return;setInfo(data);
+    let current=((await sessionResponse.json()) as Reply).session;
+    if(!current){const created=await fetch("/api/session",{method:"POST",headers:{"Content-Type":"application/json"},body:"{}",signal:controller.signal});current=((await created.json()) as Reply).session;}
+    if(current&&!controller.signal.aborted)accept(current,true);
+  }catch(e){if(!controller.signal.aborted)setError((e as Error).message);}}
+  void init();
+  const interval=setInterval(async()=>{const s=stateRef.current;if(!s?.homeSearch||busyRef.current||document.visibilityState!=="visible")return;try{const r=await fetch("/api/refresh",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({version:s.version})});const data=await r.json() as Reply;if(r.ok&&data.changed&&stateRef.current?.version===s.version)setSession(data.session);}catch{/* Keep the current state; explicit refresh reports errors. */}},60000);
+  return()=>{controller.abort();clearInterval(interval);};
+ },[]);
+ async function post(url:string,payload:unknown){const response=await fetch(url,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});const data=await response.json() as Reply;if(data.session)accept(data.session);if(!response.ok){if(response.status===409){const latest=await fetch("/api/session").then(r=>r.json()) as Reply;if(latest.session)accept(latest.session,true);}throw new Error(data.error||"Request failed.");}return data;}
+ async function search(e?:FormEvent){e?.preventDefault();if(!session)return;setBusy(message?"Understanding your request and finding homes…":"Checking your filters and finding homes…");setError("");try{const data=await post("/api/homes",{version:session.version,message,filters:dirty,...(commuteDirty?{commute}:{} )});accept(data.session,true);setMessage("");setView("shortlist");setFiltersOpen(false);}catch(e){setError((e as Error).message);}finally{setBusy("");}}
+ async function action(action:z.infer<typeof HomeActionInput>["action"],home?:HomeCandidate,text=""){if(!session)return;setBusy(action==="check-commutes"?"Checking routes for this shortlist — this can take a minute…":"Updating your shortlist…");setError("");try{await post("/api/homes/action",{version:session.version,action,key:home?.key,reason:text});if(["alternative","reject","withdraw","raise-price","check-commutes"].includes(action))setView("shortlist");setRejecting(null);if(["withdraw","raise-price"].includes(action))setSelected(null);}catch(e){setError((e as Error).message);}finally{setBusy("");}}
+ async function reset(){setBusy("Starting a new search…");setError("");try{const data=await post("/api/session",{});accept(data.session);setFilters(defaults);setCommute(defaultCommute);setDirty({});setCommuteDirty(false);setMessage("");setSelected(null);setTab("find");}catch(e){setError((e as Error).message);}finally{setBusy("");}}
+ function field<K extends keyof ResaleFilters>(key:K,value:ResaleFilters[K]){setFilters(f=>({...f,[key]:value}));setDirty(d=>({...d,[key]:value}));}
+ const h=session?.homeSearch;
+ const all=h?.candidates.filter(c=>!h.rejected.includes(c.key))??[];
+ const short=h?.shortlist.map(k=>all.find(c=>c.key===k)).filter((c):c is HomeCandidate=>!!c)??[];
+ const rows=view==="shortlist"?short:all;
+ const active=selected?(h?.candidates.find(c=>c.key===selected.key)??h?.saved.find(c=>c.key===selected.key)??selected):null;
+ const lastRun=session?.trace.filter(t=>t.runId===session.lastRunId)??[];
+ const canApprove=short.length>0&&["waiting","approved"].includes(session?.status??"")&&(h?.commute.maxMinutes===null||short.every(c=>c.route&&c.route.destination===h?.commute.destination&&c.route.mode===h?.commute.mode&&c.route.minutes<=h!.commute.maxMinutes!));
+ function open(c:HomeCandidate,map=false){setSelected(c);setDetailTab(map?"map":"details");}
+ function card(c:HomeCandidate,index:number){const saved=h?.saved.some(r=>r.key===c.key),shortlisted=h?.shortlist.includes(c.key),r=c.row;return <article className="home-card calm-card" key={c.key}>
+  <div className="home-card-top"><span>{view==="shortlist"?`0${index+1} / YOUR SHORTLIST`:r.town}</span><button className="home-save" disabled={!!busy} aria-label={`${saved?"Unsave":"Save"} ${r.block} ${r.street_name}`} aria-pressed={saved} onClick={()=>action("save",c)}><Heart size={18} fill={saved?"currentColor":"none"}/></button></div>
+  <h3>{r.block} {r.street_name}</h3><p className="home-type">{r.town} · HDB {r.flat_type}</p><div className="home-price">{money(r.resale_price)}<span>Historical reference · {r.month}</span></div>
+  <div className="home-facts"><span>{r.floor_area_sqm} m²</span><span>Storeys {r.storey_range}</span></div>
+  {c.route&&c.route.destination===h?.commute.destination&&c.route.mode===h?.commute.mode?<button className="commute-pill" onClick={()=>open(c,true)}><MapPin size={14}/>{c.route.minutes} min {c.route.mode==="walk"?"walk":"drive"} to {c.route.destination}</button>:h?.commute.destination?<p className="commute-pending">Travel to {h.commute.destination}: {c.mapError?"unavailable":"not checked yet"}</p>:null}
+  <details className="card-why"><summary>Why this home <ChevronDown size={13}/></summary><ul>{c.why.map(w=><li key={w}>{w}</li>)}</ul><p>Comparison score {c.score}/100, based on budget headroom and space in this result batch.</p></details>
+  <div className="home-card-bottom"><button className="button primary" onClick={()=>open(c)}>Explore home <ArrowUpRight size={15}/></button><button className="text-button" disabled={!!busy} onClick={()=>{setRejecting(c);setReason("Not for me");}}>Not for me</button></div>
+  {view==="matches"&&<button className="text-button shortlist-toggle" disabled={!!busy} onClick={()=>action("shortlist",c)}>{shortlisted?"Remove from shortlist":"Add to shortlist"}</button>}
+ </article>;}
+ return <div className="application calm-app">
+  <header className="topbar calm-topbar"><Link className="brand" href="/"><span className="brand-mark"><Building2 size={22}/></span>PropMatch<span className="brand-caption">A little closer to home.</span></Link><nav aria-label="Main navigation">{(["find","saved","about"] as const).map(t=><button key={t} aria-current={tab===t?"page":undefined} onClick={()=>setTab(t)}>{t==="find"?"Find a home":t==="saved"?`Saved${h?.saved.length?` (${h.saved.length})`:""}`:"About"}</button>)}</nav><button className="new-search" onClick={reset} disabled={!!busy} aria-label="Start a new search"><Plus size={17}/><span>New search</span></button></header>
+  <main className="calm-main">
+   {tab!=="find"&&error&&<div className="error-banner calm-error" role="alert">{error}</div>}
+   {tab!=="find"&&busy&&<div className="working-note" role="status"><LoaderCircle size={16} className="spin"/>{busy}</div>}
+   {tab==="find"&&<>
+    <section className={`search-hero ${h?"has-results":""}`}><div className="eyebrow">SINGAPORE HOMES, THOUGHTFULLY MATCHED</div><h1>{h?"Let's find your fit.":<>Your next chapter.<br/><em>A place that fits.</em></>}</h1><p>Tell us where life takes you. We’ll help you explore the possibilities.</p>
+     <form className="calm-composer" onSubmit={search}><label className="sr-only" htmlFor="home-request">Describe your home requirements</label><textarea id="home-request" rows={h?2:3} value={message} maxLength={1800} onChange={e=>setMessage(e.target.value)} placeholder={h?"Refine your search — e.g. increase my budget to $850k":"A 4-room home in Clementi, under $800k. I’d like to explore parks and travel to NUS."}/>
+      <div className="composer-bottom"><button type="button" className={`filter-toggle ${filtersOpen?"active":""}`} aria-expanded={filtersOpen} onClick={()=>setFiltersOpen(!filtersOpen)}><SlidersHorizontal size={16}/> Filters & commute {Object.keys(dirty).length>0&&<span className="change-dot"/>}</button><button type="submit" className="button primary search-submit" disabled={!!busy||!info||!session}>{busy?<LoaderCircle size={17} className="spin"/>:<ArrowRight size={18}/>}<span>{h?"Update search":"Find my home"}</span></button></div>
+      {filtersOpen&&<fieldset className="calm-filters" disabled={!!busy}><legend className="sr-only">Search filters and commute</legend><div className="filter-grid">
+       <label className="brief-field"><span>Maximum budget · SGD</span><input type="number" min={0} value={filters.maxPrice??""} placeholder="Any budget" onChange={e=>field("maxPrice",e.target.value?Number(e.target.value):null)}/></label>
+       <label className="brief-field"><span>Minimum size · m²</span><input type="number" min={0} value={filters.minArea??""} placeholder="Any size" onChange={e=>field("minArea",e.target.value?Number(e.target.value):null)}/></label>
+       <label className="brief-field"><span>Town</span><select value={filters.town} onChange={e=>field("town",e.target.value)}><option value="">All towns</option>{info?.towns.map(t=><option key={t}>{t}</option>)}</select></label>
+       <label className="brief-field"><span>HDB flat type</span><select value={filters.flatType} onChange={e=>field("flatType",e.target.value as ResaleFilters["flatType"])}>{["","1 ROOM","2 ROOM","3 ROOM","4 ROOM","5 ROOM","EXECUTIVE","MULTI-GENERATION"].map(t=><option key={t} value={t}>{t||"Any type"}</option>)}</select></label>
+      </div><details className="more-filters"><summary>More price, size and street filters</summary><div className="filter-grid">{(["minPrice","maxArea"] as const).map(k=><label className="brief-field" key={k}><span>{k==="minPrice"?"Minimum price · SGD":"Maximum size · m²"}</span><input type="number" min={0} value={filters[k]??""} onChange={e=>field(k,e.target.value?Number(e.target.value):null)}/></label>)}<label className="brief-field"><span>Street</span><input maxLength={100} value={filters.street} onChange={e=>field("street",e.target.value)}/></label><label className="brief-field"><span>Browse order</span><select value={filters.sort} onChange={e=>field("sort",e.target.value as ResaleFilters["sort"])}><option value="newest">Latest reference</option><option value="price-asc">Lowest price</option><option value="price-desc">Highest price</option><option value="area-desc">Largest area</option></select></label></div></details>
+      <div className="commute-form"><span className="commute-form-label"><MapPin size={15}/> Your everyday journey <small>Optional</small></span><div className="filter-grid commute-grid"><label className="brief-field"><span>Destination</span><input value={commute.destination} maxLength={100} placeholder="NUS University Hall" onChange={e=>{setCommute({...commute,destination:e.target.value});setCommuteDirty(true);}}/></label><label className="brief-field"><span>Travel by</span><select value={commute.mode} onChange={e=>{setCommute({...commute,mode:e.target.value as typeof commute.mode,maxMinutes:e.target.value==="transit"?null:commute.maxMinutes});setCommuteDirty(true);}}><option value="walk">Walking</option><option value="car">Driving</option><option value="transit">MRT / bus · external map</option></select></label><label className="brief-field"><span>Maximum minutes</span><input type="number" min={1} max={240} disabled={commute.mode==="transit"} placeholder={commute.mode==="transit"?"Check in Google Maps":"No hard limit"} value={commute.maxMinutes??""} onChange={e=>{setCommute({...commute,maxMinutes:e.target.value?Number(e.target.value):null});setCommuteDirty(true);}}/></label></div></div><p className="filter-help">Only the fields you edit override your message. Travel limits need verified routes before approval.</p></fieldset>}
+     </form>
+     {!h&&<div className="search-examples"><span>Try a starting point</span>{["4 ROOM in Clementi under SGD 800k","At least 90 m² in Tampines under SGD 650k"].map(t=><button key={t} onClick={()=>setMessage(t)}>{t}<ArrowUpRight size={13}/></button>)}</div>}
+     <p className="simulation-caption">Historical HDB data · simulated homes · no live seller listings</p>
+    </section>
+    {error&&<div className="error-banner calm-error" role="alert">{error}<button className="text-button" onClick={()=>setError("")} aria-label="Dismiss error"><X size={16}/></button></div>}
+    {busy&&<div className="working-note" role="status"><LoaderCircle size={16} className="spin"/>{busy}</div>}
+    {h&&<section className="calm-results" aria-label="Your home recommendations"><div className="results-heading"><div><div className="eyebrow">YOUR POSSIBILITIES</div><h2>{view==="shortlist"?"A few places to begin.":"Explore your matches."}</h2><div className="search-chips">{[h.filters.town||"All towns",h.filters.flatType||"All HDB types",h.filters.maxPrice?`Under ${money(h.filters.maxPrice)}`:null,h.filters.minArea?`${h.filters.minArea}+ m²`:null,h.commute.destination?`${h.commute.mode} to ${h.commute.destination}${h.commute.maxMinutes?` · max ${h.commute.maxMinutes} min`:""}`:null].filter(Boolean).map(t=><span key={t}>{t}</span>)}</div></div><div className="view-switch" aria-label="Result view"><button className={view==="shortlist"?"active":""} onClick={()=>setView("shortlist")}>Shortlist ({short.length})</button><button className={view==="matches"?"active":""} onClick={()=>setView("matches")}>Matches ({all.length})</button></div></div>
+     <div className={`decision-note ${session.status==="approved"?"approved":""}`} role="status">{session.status==="approved"?<Check size={17}/>:<Search size={17}/>}<span>{session.notice}</span></div>
+     {!!lastRun.length&&<details className="agent-process"><summary><span className="process-orb"/> How your shortlist was built <span>{lastRun.length} steps</span><ChevronDown size={14}/></summary><ol>{lastRun.map(t=><li key={t.id}><strong>{t.stage.toLowerCase()}</strong><span>{t.summary}</span>{t.data!==undefined&&<details><summary>View evidence</summary><pre>{JSON.stringify(t.data,null,2)}</pre></details>}</li>)}</ol><p>Execution steps and evidence summaries. No private model reasoning is displayed.</p></details>}
+     <div className="home-grid calm-home-grid" aria-busy={!!busy}>{rows.map(card)}</div>
+     {!rows.length&&<div className="calm-empty"><Search size={28}/><h3>{session.status==="clarification"?"One detail to clarify.":"Let's adjust your search."}</h3><p>{session.notice}</p><button className="button" onClick={()=>setFiltersOpen(true)}>Edit filters</button></div>}
+     <div className="shortlist-actions"><button className="button" disabled={!!busy||!all.length} onClick={()=>action("alternative")}><RefreshCw size={15}/> Show alternatives</button>{h.commute.destination&&h.commute.mode!=="transit"&&<button className="button" disabled={!!busy||!all.length} onClick={()=>action("check-commutes")}><MapPin size={15}/> Check travel times</button>}<button className="button primary" disabled={!!busy||!canApprove||session.status==="approved"} onClick={()=>action("approve")}><Check size={15}/>{session.status==="approved"?"Shortlist approved":"Approve shortlist"}</button></div>
+     <p className="results-footnote">{h.total.toLocaleString()} groups match the database filters. Showing a ranked batch; explore alternatives for more. Approval records your choice only.</p>
+     <details className="search-history"><summary>Conversation & feedback</summary>{session.messages.slice(-12).map((m,i)=><div key={i}><strong>{m.role==="user"?"You":"PropMatch"}</strong><p>{m.content}</p></div>)}{h.feedback.map((f,i)=><p key={i}>Rejected: {f.reason}</p>)}</details>
+    </section>}
+    {!h&&<div className="welcome-promise"><span>01 <strong>Tell us your priorities</strong></span><span>02 <strong>Explore homes & their neighbourhoods</strong></span><span>03 <strong>Choose with confidence</strong></span></div>}
+   </>}
+   {tab==="saved"&&<section className="saved-page"><div className="eyebrow">ROOM TO COMPARE</div><h1>Your saved homes.</h1><p>Your favourites stay with this browser’s private session.</p>{!h?.saved.length?<div className="calm-empty"><Heart size={28}/><h3>A space for your favourites.</h3><p>Tap the heart on a home to save it here.</p><button className="button" onClick={()=>setTab("find")}>Find homes</button></div>:<div className="saved-table-wrap"><table className="saved-table"><thead><tr><th>Home</th><th>Reference price</th><th>Floor area</th><th>Travel evidence</th><th/></tr></thead><tbody>{h.saved.map(c=><tr key={c.key}><td><button onClick={()=>open(c)}>{c.row.block} {c.row.street_name}<ArrowUpRight size={13}/></button><small>{c.row.town} · {c.row.flat_type}</small></td><td>{money(c.row.resale_price)}<small>{c.row.month} reference</small></td><td>{c.row.floor_area_sqm} m²</td><td>{c.route?`${c.route.minutes} min ${c.route.mode} to ${c.route.destination}`:"Not checked"}</td><td><button className="text-button" disabled={!!busy} onClick={()=>action("save",c)}>Remove</button></td></tr>)}</tbody></table></div>}</section>}
+   {tab==="about"&&<section className="about-page"><div className="eyebrow">CLEAR ABOUT WHAT WE KNOW</div><h1>Better decisions.<br/>Visible evidence.</h1><p>PropMatch helps you explore HDB homes, remember feedback and review a shortlist. The home scenarios are simulated; map evidence comes from separate services.</p><div className="about-grid"><article><h2>The housing data</h2><p>{info?.dataset.count.toLocaleString()??"228,225"} historical HDB transactions from {info?.dataset.firstMonth??"2017-01"} to {info?.dataset.lastMonth??"2026-04"}. Comparable records are grouped into representative homes. Reference prices are not current asking prices.</p><a href={info?.dataset.sourceUrl??"https://www.kaggle.com/datasets/yingghui233/hdb-resale-pricing-singapore"} target="_blank" rel="noreferrer">View Kaggle source ↗</a><p>Source license label: {info?.dataset.license??"Unknown"}. No claim of a separate redistribution license. Bedrooms and live availability are not recorded.</p></article><article><h2>The maps</h2><p>OneMap verifies block coordinates. OpenStreetMap supplies nearby places, and FOSSGIS OSRM provides walking/driving road routes. Times are estimates without live traffic. Public transport routes open in Google Maps.</p><p>Map coverage and public services can be incomplete or unavailable. Unverified facts are shown as unknown.</p></article><article><h2>The agent</h2><p>A model interprets your request. Typed tools search SQLite, enforce limits, rank results and record feedback. Rejections persist. Data changes trigger a new decision and revoke an old approval.</p><p>Optional route checks require your action. Source revisions are checked every minute while this page is visible; this is not live-listing monitoring.</p></article><article><h2>You stay in control</h2><p>Shortlist approval is required. The app cannot contact a seller, book a viewing or make a payment. Model output cannot run SQL or bypass numeric constraints.</p><p>Development mode: {info?.model.mode??"loading"}. Model credentials remain on the server.</p></article></div>{h&&<div className="about-check"><button className="button" disabled={!!busy} onClick={()=>action("refresh")}><RefreshCw size={15}/> Recheck source data</button><span>Last checked: {new Date(h.checkedAt).toLocaleString()}</span></div>}</section>}
+  </main><footer className="calm-footer"><span>PropMatch · Team 303forward</span><span>Built for thoughtful decisions. Demonstration only.</span></footer>
+  <Dialog open={!!active} onOpenChange={o=>!o&&setSelected(null)}><DialogContent className="calm-detail"><DialogHeader><DialogTitle>{active?.row.block} {active?.row.street_name}</DialogTitle><DialogDescription>{active?.row.town} · HDB {active?.row.flat_type} · Historical-data simulation</DialogDescription></DialogHeader>{active&&session&&<><div className="detail-tabs"><button className={detailTab==="details"?"active":""} onClick={()=>setDetailTab("details")}>The home</button><button className={detailTab==="map"?"active":""} onClick={()=>setDetailTab("map")}><MapPin size={15}/> Map & everyday journeys</button></div>{detailTab==="map"?<HomeMapPanel key={active.key} home={active} session={session} onSession={accept}/>:<><div className="detail-price">{money(active.row.resale_price)}<span>Historical reference · {active.row.month}</span></div><dl className="resale-record">{[["Floor area",`${active.row.floor_area_sqm} m²`],["Storeys",active.row.storey_range],["Flat model",active.row.flat_model],["Lease started",active.row.lease_commence_date],["Remaining lease at sale",active.row.remaining_lease]].map(([k,v])=><div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}</dl><div className="detail-actions"><button className="button primary" onClick={()=>setDetailTab("map")}><MapPin size={15}/> Explore the neighbourhood</button><button className="button" disabled={!!busy} onClick={()=>action("save",active)}><Heart size={15}/>{h?.saved.some(c=>c.key===active.key)?"Saved":"Save home"}</button></div><details className="resale-source"><summary>Source & limitations</summary><p>CSV data row {active.row.id}; sale recorded in {active.row.month}. This group does not identify a unique flat unit. No current availability, seller, bedrooms or property photographs are supplied.</p></details>{h?.shortlist.includes(active.key)&&<details className="simulation-tools"><summary>Demo: test a change in availability or price</summary><p>Changes affect only this session’s simulation. They do not modify the historical dataset or represent real market events.</p><div><button className="button" disabled={!!busy} onClick={()=>action("withdraw",active)}>Simulate withdrawal</button><button className="button" disabled={!!busy} onClick={()=>action("raise-price",active)}>Simulate price increase</button></div></details>}</>}</>}</DialogContent></Dialog>
+  <Dialog open={!!rejecting} onOpenChange={o=>!o&&setRejecting(null)}><DialogContent className="reject-dialog">{error&&<p className="error-banner" role="alert">{error}</p>}<DialogHeader><DialogTitle>What doesn’t fit?</DialogTitle><DialogDescription>We’ll remember this home isn’t for you and update your shortlist.</DialogDescription></DialogHeader><label className="brief-field"><span>Reason</span><select value={reason} onChange={e=>setReason(e.target.value)}>{["Not for me","Too expensive","Too small","Not my preferred area","Journey is too long"].map(r=><option key={r}>{r}</option>)}</select></label><p className="map-help">This excludes the home. To change your budget, size or location for every result, update the search above.</p><button className="button primary" disabled={!!busy} onClick={()=>rejecting&&action("reject",rejecting,reason)}>Remove & update shortlist</button></DialogContent></Dialog>
+ </div>;
 }

@@ -1,3 +1,4 @@
+import { HOME_PROMPT } from "./home-prompt";
 import { BuyerProfile, ParseSchema, PlanSchema } from "../schemas";
 import { LLMProvider } from "./contracts";
 import { DemoLLMProvider } from "./demo-llm";
@@ -79,6 +80,7 @@ export class BedrockProvider implements LLMProvider {
       text.replace(/^```(?:json)?\s*/, "").replace(/\s*```$/, ""),
     );
   }
+  async home(input: unknown) { return this.json(HOME_PROMPT, input, "parse"); }
   async parse(message: string, current: BuyerProfile) {
     if (suspicious(message))
       return new DemoLLMProvider().parse(message, current);

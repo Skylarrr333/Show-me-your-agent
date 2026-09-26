@@ -1,3 +1,4 @@
+import { HOME_PROMPT } from "./home-prompt";
 import { z } from "zod";
 import { ParseSchema, PlanSchema, type BuyerProfile } from "../schemas";
 import type { LLMProvider } from "./contracts";
@@ -41,6 +42,7 @@ export class DeepSeekProvider implements LLMProvider {
     if (!content) throw new Error("DeepSeek returned an empty JSON response.");
     return JSON.parse(content);
   }
+  async home(input: unknown) { return this.json(HOME_PROMPT, input, "parse"); }
   async parse(message: string, current: BuyerProfile) {
     if (suspicious(message)) return new DemoLLMProvider().parse(message, current);
     const parsed = ParseSchema.safeParse(await this.json(PARSE_PROMPT, { current, message }, "parse"));

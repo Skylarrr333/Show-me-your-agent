@@ -24,12 +24,14 @@
     "data:import": "node --env-file-if-exists=.env.local --import tsx scripts/import-listings.ts",
     "check:setup": "node --env-file-if-exists=.env.local --import tsx scripts/check-setup.ts",
     "data:public": "node --import tsx scripts/fetch-public-data.ts",
-    "verify:deployment": "node --import tsx scripts/verify-deployment.ts"
+    "verify:deployment": "node --import tsx scripts/verify-deployment.ts",
+    "data:hdb": "python3 scripts/prepare-hdb.py"
   },
   "dependencies": {
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
     "drizzle-orm": "0.45.2",
+    "leaflet": "^1.9.4",
     "lucide-react": "^1.31.0",
     "next": "16.3.5",
     "radix-ui": "^1.6.7",
@@ -43,6 +45,7 @@
     "@cloudflare/workers-types": "4.20260515.1",
     "@openai/sites-vite-plugin": "0.2.0",
     "@tailwindcss/postcss": "4.2.1",
+    "@types/leaflet": "^1.9.21",
     "@types/node": "22.19.19",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",

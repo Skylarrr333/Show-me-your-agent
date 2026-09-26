@@ -14,6 +14,8 @@ jobs:
       - run: npm ci
       - name: Production dependency security audit
         run: npm audit --omit=dev --audit-level=high
+      - name: Verify and import pinned HDB dataset
+        run: npm run data:hdb
       - run: npm run lint
       - run: npm run typecheck
       - run: npm run test

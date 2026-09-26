@@ -1,9 +1,10 @@
 import { body } from "../../../lib/request";
-import { ResaleRequestSchema } from "../../../lib/resale-schema";
-import { resaleMetadata, searchResales } from "../../../lib/resale-store";
-import { interpretResaleFilters } from "../../../lib/resale-language";
+import { HomeSearchInput } from "../../../lib/home-schema";
+import { runHomeAgent } from "../../../agents/home-agent";
+import { session,errorResponse } from "../../../lib/http";
+import { save } from "../../../lib/store";
+import { resaleMetadata } from "../../../lib/resale-store";
 import { resolveLLMMode, isLLMConfigured } from "../../../providers/config";
-import { SIMULATED_HOME_DISCLOSURE } from "../../../lib/simulated-homes";
 export const dynamic = "force-dynamic";
 export async function GET() {
   try {
@@ -14,19 +15,13 @@ export async function GET() {
   }
 }
 export async function POST(request: Request) {
-  let input;
-  try { input = ResaleRequestSchema.parse(await body(request)); }
-  catch { return Response.json({ error: "Check the filter values, ranges and dates." }, { status: 400 }); }
-  let info;
-  try { info = await resaleMetadata(); }
-  catch { return Response.json({ error: "HDB dataset is unavailable. Check the server import." }, { status: 503 }); }
-  let interpreted;
-  try { interpreted = await interpretResaleFilters(input.filters, input.message, info.towns); }
-  catch (e) {
-    const message = e instanceof Error ? e.message : "Could not interpret the search message.";
-    // Provider adapters redact upstream response bodies and credentials.
-    return Response.json({ error: message, canUseForm: true }, { status: 422 });
+  try {
+    const input=HomeSearchInput.parse(await body(request)),s=await session();
+    if(!s)return Response.json({error:"Create a session first."},{status:401});
+    const result=await runHomeAgent(s,input);
+    return Response.json({session:await save(result,s.version)});
+  } catch(e) {
+    if(e instanceof Error && e.message!=="CONFLICT" && !("issues" in e)) return Response.json({error:e.message},{status:400});
+    return errorResponse(e);
   }
-  try { return Response.json({ ...await searchResales(interpreted.filters, true), simulation: SIMULATED_HOME_DISCLOSURE, warnings: interpreted.warnings, modelMode: interpreted.modelMode }, { headers: { "Cache-Control": "no-store" } }); }
-  catch { return Response.json({ error: "Search could not complete. Try again or check the imported database." }, { status: 503 }); }
 }

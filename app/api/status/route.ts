@@ -1,3 +1,4 @@
+import { resaleMetadata } from "../../../lib/resale-store";
 import { dataMode, readEvidenceFile } from "../../../providers/evidence";
 import { marketMetadata } from "../../../tools/market";
 import { resolveLLMMode, isLLMConfigured } from "../../../providers/config";
@@ -11,10 +12,13 @@ export async function GET() {
       data = { mode, count: source.properties.length, ready: true, note: "Imported source snapshots. Availability is checked against the supplied file, not polled from external listing sites." };
     } else data = { mode, count: 72, ready: true, note: "Fictional listings, routes and amenities." };
   } catch { data = { mode: "file", count: 0, ready: false, note: "Evidence file is missing or invalid. Check server configuration." }; }
+  let homes;
+  try { const {dataset}=await resaleMetadata();homes={ready:true,count:dataset.count,sha256:dataset.sha256,mode:"historical-simulation",source:dataset.sourceUrl}; }
+  catch { homes={ready:false,count:0,mode:"historical-simulation"}; }
   const mode = resolveLLMMode();
   return Response.json({ model: { mode,
     configured: isLLMConfigured(mode),
-    note: "Configuration presence is not proof of a successful model call. See live evaluation." }, data, publicData: marketMetadata,
+    note: "Configuration presence is not proof of a successful model call. See live evaluation." }, homes, data, publicData: marketMetadata,
     release: { commit: /^[a-f0-9]{40}$/.test(process.env.APP_COMMIT_SHA ?? "") ? process.env.APP_COMMIT_SHA : null } },
   { headers: { "Cache-Control": "no-store" } });
 }
