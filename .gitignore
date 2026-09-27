@@ -57,4 +57,4 @@ training/private/
 *.zip
 !submission/*.pdf
 
-!data/hdb/kaggle-v1.zip
+# The external Kaggle HDB archive stays local (covered by *.zip above).

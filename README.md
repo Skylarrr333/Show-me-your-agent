@@ -16,7 +16,7 @@ The main page starts with a single request box. Filters and commute preferences 
 | Capability | Implemented behavior |
 |---|---|
 | Language model | Organiser Claude gateway, DeepSeek or direct Bedrock; structured extraction validated with Zod. Form-only queries make no model call. No local LLM training needed. |
-| Housing dataset | Pinned Kaggle v1 archive, **228,225 historical HDB transactions**, 26 towns, Jan 2017–Apr 2026. Reproducible checksum-verified SQLite import, plus three separately labelled complete fictional listing demos for product walkthroughs. |
+| Housing dataset | Separately obtained Kaggle v1 archive (not included in this repository), **228,225 historical HDB transactions**, 26 towns, Jan 2017–Apr 2026. Reproducible checksum-verified SQLite import, plus three separately labelled complete fictional listing demos for product walkthroughs. |
 | Retrieval | Parameterized SQL for price, area in m², town, flat type, street and reference month. Latest comparable selected before buyer filtering. No vector retrieval or embeddings. |
 | Stateful agent | Shared server session, typed tool execution, constraint checks, transparent batch ranking, feedback memory, human approval and source-change redecision. |
 | Feedback | Reject with a reason, replace a shortlist and save homes. Alternatives advance to unseen groups and another database page when needed. |
@@ -30,7 +30,7 @@ The main page starts with a single request box. Filters and commute preferences 
 
 ## Run locally
 
-Prerequisites: **Node.js 22.13+**, npm, **Python 3.10+** (standard library only for import).
+Prerequisites: **Node.js 22.13+**, npm, **Python 3.10+** (standard library only for import), and a separately obtained Kaggle version 1 archive. The repository does **not** include this dataset. After checking the source permissions, place your local archive at `data/hdb/kaggle-v1.zip` before running the commands below; Git ignores this file. See the [dataset manifest](data/hdb/README.md) for the source and expected checksum.
 
 ```bash
 npm ci
@@ -50,7 +50,7 @@ LLM_GATEWAY_API_KEY=your_team_key_here
 LLM_MODEL=global.anthropic.claude-sonnet-4-5-20250929-v1:0
 ```
 
-Do not commit `.env.local`, personal DeepSeek keys, SSH keys, website passwords or `.propmatch-sessions/`. Teammates can run form/demo searches from the repository without any secrets. [Additional provider setup](docs/LIVE_SETUP_ZH.md).
+Do not commit `.env.local`, personal DeepSeek keys, SSH keys, website passwords or `.propmatch-sessions/`. After supplying and importing the dataset, teammates can run form/demo searches without model credentials. [Additional provider setup](docs/LIVE_SETUP_ZH.md).
 
 Production build:
 
@@ -64,11 +64,25 @@ npm run start:next
 
 ## Data reproducibility and attribution
 
-[HDB resale pricing (Singapore) by yingghui233, Kaggle](https://www.kaggle.com/datasets/yingghui233/hdb-resale-pricing-singapore) is pinned as `data/hdb/kaggle-v1.zip`. `npm run data:hdb` verifies the extracted CSV SHA-256, checks all rows and builds indexed `resales` and `homes` tables atomically. [Manifest and license boundary](data/hdb/README.md).
+[HDB resale pricing (Singapore) by yingghui233, Kaggle](https://www.kaggle.com/datasets/yingghui233/hdb-resale-pricing-singapore) version 1 is the expected external input at `data/hdb/kaggle-v1.zip`; the archive and its extracted CSV are **not included in this repository**. `npm run data:hdb` verifies the extracted CSV SHA-256, checks all rows and builds indexed `resales` and `homes` tables atomically. [Manifest and license boundary](data/hdb/README.md).
 
-The source license label is **Unknown**. The archive is retained in this team's private repository for the requested reproducible handoff; this project does not grant a separate data license or claim permission for public redistribution/commercial reuse. It is not served from `public/`.
+The source license label recorded at download was **Unknown**. Obtain the dataset separately from its source and check the applicable permissions. This project does not grant a separate data license or claim permission for public redistribution/commercial reuse. The dataset is not served from `public/`.
 
 The previous 7,295-record official HDB snapshot remains available to the legacy market-comparison tool. It is separate from the new homepage's Kaggle dataset. The 72 original synthetic fixtures remain for legacy API regression tests; they no longer power the homepage.
+
+### Dataset removal and Git history cleanup — 27 September 2026
+
+`data/hdb/kaggle-v1.zip` was removed from the repository and its branch history using `git-filter-repo`. At cleanup time the repository had one branch (`main`) and no tags. The cleanup used a separate mirror clone and a local backup outside the repository:
+
+```bash
+git filter-repo --invert-paths --path data/hdb/kaggle-v1.zip
+```
+
+The rewritten `main` history and this documentation update were pushed with an explicit `--force-with-lease` against the previously recorded remote commit. Verification checked every reachable commit for the path and confirmed that the original ZIP blob was no longer reachable. The `.gitignore` exception for this archive was removed to prevent accidental recommits.
+
+**Existing contributors should make a fresh clone.** Preserve any uncommitted work separately and reapply only the needed changes; merging or pushing old history can restore the removed dataset. History rewriting does not erase other people's clones, forks or GitHub cached commit views; see [GitHub's history-removal documentation](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository).
+
+The import scripts, checksum and provenance documentation remain. Local imports, Docker builds and the existing dataset-dependent CI steps require the archive to be supplied separately. A fresh clone alone cannot run those steps; CI needs an authorized external data-provisioning step before `npm run data:hdb`. The separate legacy HDB snapshot and synthetic fixtures described above are unchanged.
 
 ## Agent architecture
 
@@ -114,7 +128,7 @@ npm run build:next
 npm run build
 ```
 
-Tests include source freshness and failures, approvals, rejection persistence, alternative replacement, SQL injection, budget anchors, unsupported requirements, hard commute failures and simulated withdrawal/price changes. CI imports the pinned database, runs checks and both builds, builds the production container and exercises authenticated HTTPS workflows plus restart persistence. External model/map calls are opt-in; unit tests use controlled test evidence.
+Tests include source freshness and failures, approvals, rejection persistence, alternative replacement, SQL injection, budget anchors, unsupported requirements, hard commute failures and simulated withdrawal/price changes. Once the external archive is provisioned, CI imports the pinned database, runs checks and both builds, builds the production container and exercises authenticated HTTPS workflows plus restart persistence. External model/map calls are opt-in; unit tests use controlled test evidence.
 
 The release and map-resilience verification passed **81 unit tests** (including two temporary-provider-failure cases), **15 legacy evaluation cases**, lint, type checking and production builds. One organiser-gateway request and actual OneMap/Overpass/OSRM interactions were also checked separately. See [the dated verification record](docs/HOME_RELEASE_VALIDATION_2026-09-26.md) for scope and limitations.
 
@@ -127,7 +141,7 @@ The dated 81-test record above describes the preceding release. OneMap migration
 docker compose --profile https up -d --build
 ```
 
-The Docker data stage imports the checked-in archive. The runtime user reads `/app/data/hdb-resales.sqlite`; the persistent session volume is separate. Health checks verify the HDB API, so a container without its dataset cannot be considered ready. Use the [Lightsail runbook](deployment/LIGHTSAIL_RUNBOOK.md) for HTTPS credentials, fixed IP and rollback.
+The Docker data stage imports the separately supplied local archive from `data/hdb/kaggle-v1.zip`. Place it in the build context before running Docker; it is not included in Git. The runtime user reads `/app/data/hdb-resales.sqlite`; the persistent session volume is separate. Health checks verify the HDB API, so a container without its dataset cannot be considered ready. Use the [Lightsail runbook](deployment/LIGHTSAIL_RUNBOOK.md) for HTTPS credentials, fixed IP and rollback.
 
 `/api/status` reports the running commit, model configuration presence, homepage dataset readiness and the separate legacy fixture mode. Configuration presence alone is not proof that a model call succeeded. The verification command checks release identity and can exercise the homepage without paid inference:
 
