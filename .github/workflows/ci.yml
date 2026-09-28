@@ -1,5 +1,13 @@
 name: Quality gates
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      run_hdb_integration:
+        description: Run HDB import and container checks using the HDB_DATASET_URL secret
+        type: boolean
+        default: false
 permissions:
   contents: read
 jobs:
@@ -14,14 +22,44 @@ jobs:
       - run: npm ci
       - name: Production dependency security audit
         run: npm audit --omit=dev --audit-level=high
-      - name: Verify and import pinned HDB dataset
-        run: npm run data:hdb
       - run: npm run lint
       - run: npm run typecheck
       - run: npm run test
       - run: npm run eval
       - run: npm run build
       - run: npm run build:next
+      - name: Report dataset validation scope
+        run: |
+          echo 'Code checks use test fixtures and do not require the external Kaggle archive. HDB import and container checks run only when manually requested with run_hdb_integration and HDB_DATASET_URL configured.' >> "$GITHUB_STEP_SUMMARY"
+
+  hdb-integration:
+    needs: verify
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.run_hdb_integration }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download externally provided HDB archive
+        env:
+          HDB_DATASET_URL: ${{ secrets.HDB_DATASET_URL }}
+        run: |
+          if [ -z "$HDB_DATASET_URL" ]; then
+            echo '::error::Set the HDB_DATASET_URL repository secret to an authorized HTTPS download URL for the pinned Kaggle v1 archive.'
+            exit 1
+          fi
+          mkdir -p data/hdb
+          curl --fail --silent --show-error --location --retry 3 \
+            --proto '=https' --proto-redir '=https' \
+            --output data/hdb/kaggle-v1.zip "$HDB_DATASET_URL"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify checksum and import pinned HDB dataset
+        run: npm run data:hdb
       - run: docker build -t propmatch-agent:ci .
       - name: HTTPS access, workflow and persistent session smoke test
         run: bash scripts/ci-container-smoke.sh

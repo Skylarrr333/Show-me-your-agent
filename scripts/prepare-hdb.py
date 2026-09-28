@@ -1,8 +1,14 @@
-"""Rebuild SQLite deterministically from the checked-in Kaggle version 1 archive."""
+"""Rebuild SQLite deterministically from a separately supplied Kaggle v1 archive."""
 import hashlib, subprocess, sys, tempfile, zipfile
 from pathlib import Path
 root = Path(__file__).resolve().parent.parent
 archive = root / 'data/hdb/kaggle-v1.zip'
+if not archive.is_file():
+    raise SystemExit(
+        'HDB dataset not found: data/hdb/kaggle-v1.zip is not included in Git. '
+        'Obtain the authorized Kaggle version 1 archive separately and place it '
+        'at that path, then rerun npm run data:hdb. See data/hdb/README.md.'
+    )
 filename = 'INET4061projectdata(housing_price).csv'
 expected = '7b92e29f72ba4167e298e9e1cc1124839b025ebbfa3652622fbeb6eb966189af'
 with zipfile.ZipFile(archive) as z:

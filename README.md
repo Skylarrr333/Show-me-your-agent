@@ -82,7 +82,7 @@ The rewritten `main` history and this documentation update were pushed with an e
 
 **Existing contributors should make a fresh clone.** Preserve any uncommitted work separately and reapply only the needed changes; merging or pushing old history can restore the removed dataset. History rewriting does not erase other people's clones, forks or GitHub cached commit views; see [GitHub's history-removal documentation](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository).
 
-The import scripts, checksum and provenance documentation remain. Local imports, Docker builds and the existing dataset-dependent CI steps require the archive to be supplied separately. A fresh clone alone cannot run those steps; CI needs an authorized external data-provisioning step before `npm run data:hdb`. The separate legacy HDB snapshot and synthetic fixtures described above are unchanged.
+The import scripts, checksum and provenance documentation remain. Local imports and Docker builds require the archive to be supplied separately. A fresh clone can run the default code checks without it; the optional HDB integration job provisions external data before `npm run data:hdb` as described below. The separate legacy HDB snapshot and synthetic fixtures described above are unchanged.
 
 ## Agent architecture
 
@@ -128,7 +128,13 @@ npm run build:next
 npm run build
 ```
 
-Tests include source freshness and failures, approvals, rejection persistence, alternative replacement, SQL injection, budget anchors, unsupported requirements, hard commute failures and simulated withdrawal/price changes. Once the external archive is provisioned, CI imports the pinned database, runs checks and both builds, builds the production container and exercises authenticated HTTPS workflows plus restart persistence. External model/map calls are opt-in; unit tests use controlled test evidence.
+Tests include source freshness and failures, approvals, rejection persistence, alternative replacement, SQL injection, budget anchors, unsupported requirements, hard commute failures and simulated withdrawal/price changes. On every push and pull request, CI runs the production dependency audit, lint, type checking, unit tests, legacy evaluations and both builds without the external Kaggle dataset. Database unit tests create temporary test fixtures. HDB import and production-container validation are separate, opt-in integration checks; a green default CI run does not claim those checks passed. External model/map calls are opt-in; unit tests use controlled test evidence.
+
+To run the full HDB integration checks:
+
+1. Set the repository Actions secret `HDB_DATASET_URL` to an authorized HTTPS URL that downloads the exact Kaggle v1 ZIP (a signed download URL is supported). The source is external; do not add the archive back to Git.
+2. Open **Actions → Quality gates → Run workflow**, select the branch to verify and enable `run_hdb_integration`.
+3. After the normal code checks pass, the `hdb-integration` job downloads the archive on its runner, verifies the existing CSV SHA-256, imports the database, builds the production container and exercises authenticated HTTPS workflows plus restart persistence. It does not upload the dataset or image as an artifact. A missing secret, failed download or checksum mismatch fails the requested integration job instead of silently skipping it.
 
 The release and map-resilience verification passed **81 unit tests** (including two temporary-provider-failure cases), **15 legacy evaluation cases**, lint, type checking and production builds. One organiser-gateway request and actual OneMap/Overpass/OSRM interactions were also checked separately. See [the dated verification record](docs/HOME_RELEASE_VALIDATION_2026-09-26.md) for scope and limitations.
 
